@@ -1,2 +1,3 @@
-# KandaGuide Day 2
-# No external libraries required
+requests
+beautifulsoup4
+pypdf
