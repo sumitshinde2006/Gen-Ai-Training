@@ -2,118 +2,171 @@
     {
         "variety_name": "Bhima Light Red",
         "category": "onion",
-        "season": null,
-        "maturity_days_after_transplanting": null,
-        "yield_t_ha": null,
-        "storage_life": null,
-        "source_url": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit"
+        "season": "Rabi",
+        "maturity_days_after_transplanting": "115 days after transplanting",
+        "yield_t_ha": "38.5 t/ha",
+        "storage_life": "Excellent storage qualities",
+        "source_url": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
+        "maturity_note": null
     },
     {
         "variety_name": "Bhima Dark Red",
         "category": "onion",
-        "season": null,
-        "maturity_days_after_transplanting": null,
-        "yield_t_ha": null,
-        "storage_life": null,
-        "source_url": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit"
-    },
-    {
-        "variety_name": "Bhima Red",
-        "category": "onion",
-        "season": null,
-        "maturity_days_after_transplanting": null,
-        "yield_t_ha": null,
-        "storage_life": null,
-        "source_url": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit"
+        "season": "Kharif",
+        "maturity_days_after_transplanting": "100-110 days after transplanting",
+        "yield_t_ha": "22-24t/ha",
+        "storage_life": "Kharif harvest can be stored up to 2 months",
+        "source_url": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
+        "maturity_note": null
     },
     {
         "variety_name": "Bhima Raj",
         "category": "onion",
-        "season": null,
-        "maturity_days_after_transplanting": null,
-        "yield_t_ha": null,
-        "storage_life": null,
-        "source_url": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit"
+        "season": "Kharif Late Kharif Rabi",
+        "maturity_days_after_transplanting": "100-105 days transplanting (Kharif ),115-120 days after transplanting (late kharif and rabi)",
+        "yield_t_ha": "24-26t/ha (kharif), 40-50t/ha (late kharif) and 25-30t/ha (rabi)",
+        "storage_life": "Late kharif harvest can be stored up to 4months and rabi harvest for 2-3 months",
+        "source_url": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
+        "maturity_note": null
+    },
+    {
+        "variety_name": "Bhima Red",
+        "category": "onion",
+        "season": "Kharif Late Kharif Rabi",
+        "maturity_days_after_transplanting": "105-110 days after transplanting (Kharif),110-120 days after transplanting (late kharif and rabi)",
+        "yield_t_ha": "19-21t/ha (kharif),45-50 t/ha(late kharif), 39t/ha(rabi)",
+        "storage_life": "Kharif harvest can be stored up to 30-45 days, late kharif harvest up to 4 months and rabi harvest for 3 months",
+        "source_url": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
+        "maturity_note": null
     },
     {
         "variety_name": "Bhima Super",
         "category": "onion",
-        "season": null,
-        "maturity_days_after_transplanting": null,
-        "yield_t_ha": null,
-        "storage_life": null,
-        "source_url": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit"
+        "season": "Kharif Late Kharif",
+        "maturity_days_after_transplanting": "100-105 days after transplanting (Kharif), 110-120 days after transplanting (Late Kharif)",
+        "yield_t_ha": "20-22t/ha (kharif), 40-45t/ha (late kharif)",
+        "storage_life": "Kharif harvest can be stored up to 30-35 days and late kharif harvest can be stored up to 3 months",
+        "source_url": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
+        "maturity_note": null
     },
     {
         "variety_name": "Bhima Kiran",
         "category": "onion",
-        "season": null,
-        "maturity_days_after_transplanting": null,
-        "yield_t_ha": null,
-        "storage_life": null,
-        "source_url": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit"
+        "season": "Rabi",
+        "maturity_days_after_transplanting": "125-135 days after transplanting",
+        "yield_t_ha": "28-32t/ha",
+        "storage_life": "Suitable for storage up to 5-6 months",
+        "source_url": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
+        "maturity_note": null
     },
     {
         "variety_name": "Bhima Shakti",
         "category": "onion",
-        "season": null,
-        "maturity_days_after_transplanting": null,
-        "yield_t_ha": null,
-        "storage_life": null,
-        "source_url": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit"
+        "season": "Rabi Late Kharif",
+        "maturity_days_after_transplanting": "125-135 days after Transplanting (rabi and late kharif)",
+        "yield_t_ha": "28-30t/ha (rabi), 35-40t/ha (late kharif)",
+        "storage_life": "Late kharif and rabi harvest suitable for storage up to 5-6 months",
+        "source_url": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
+        "maturity_note": null
     },
     {
         "variety_name": "Bhima Shweta",
         "category": "onion",
-        "season": null,
-        "maturity_days_after_transplanting": null,
-        "yield_t_ha": null,
-        "storage_life": null,
-        "source_url": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit"
+        "season": "Kharif Rabi",
+        "maturity_days_after_transplanting": "110-120 days after transplanting",
+        "yield_t_ha": "18-20 t/ha (Kharif), 26-30 t/ha (Rabi)",
+        "storage_life": "Rabi harvest can be stored up to 3 months",
+        "source_url": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
+        "maturity_note": null
     },
     {
         "variety_name": "Bhima Shubra",
         "category": "onion",
-        "season": null,
-        "maturity_days_after_transplanting": null,
-        "yield_t_ha": null,
-        "storage_life": null,
-        "source_url": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit"
+        "season": "Kharif Late Kharif",
+        "maturity_days_after_transplanting": "110-115 days after transplanting (Kharif), 120-130 days after transplanting (Late Kharif)",
+        "yield_t_ha": "18-20t/ha (Kharif), 36-42 t/ha (Late Kharif)",
+        "storage_life": "Kharif harvest can be stored up to 30 to 45 days and late kharif up to 3 months",
+        "source_url": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
+        "maturity_note": null
     },
     {
         "variety_name": "Bhima Safed",
         "category": "onion",
-        "season": null,
-        "maturity_days_after_transplanting": null,
-        "yield_t_ha": null,
-        "storage_life": null,
-        "source_url": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit"
+        "season": "Kharif",
+        "maturity_days_after_transplanting": "110-120 days after transplanting",
+        "yield_t_ha": "18-20t/ha",
+        "storage_life": "Kharif harvest can be stored up to 30 to 45 days",
+        "source_url": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
+        "maturity_note": null
     },
     {
         "variety_name": "Bhima Prasanskaran",
         "category": "onion",
-        "season": null,
+        "season": "Rabi",
         "maturity_days_after_transplanting": null,
-        "yield_t_ha": null,
-        "storage_life": null,
-        "source_url": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit"
+        "yield_t_ha": "Bulb yield 27.359 t/ha, surpassing the national average yield",
+        "storage_life": "The variety exhibits lower storage losses of 31.11% after four months of storage Recommended Season and Region: Gujarat, Maharashtra, Karnataka, Telangana, Andhra Pradesh and Tamil Nadu. Season: Rabi Yield: Bulb yield 273.59 q/ha, surpassing the national average yield",
+        "source_url": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
+        "maturity_note": null
     },
     {
         "variety_name": "Bhima Omkar",
         "category": "garlic",
-        "season": null,
+        "season": "Rabi",
         "maturity_days_after_transplanting": null,
-        "yield_t_ha": null,
-        "storage_life": null,
-        "source_url": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit"
+        "yield_t_ha": "10-12 t/ha",
+        "storage_life": "6-8 months",
+        "source_url": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
+        "maturity_note": "120-135 days after planting"
     },
     {
         "variety_name": "Bhima Purple",
         "category": "garlic",
-        "season": null,
+        "season": "Rabi",
         "maturity_days_after_transplanting": null,
-        "yield_t_ha": null,
-        "storage_life": null,
-        "source_url": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit"
+        "yield_t_ha": "6-8 t/ha",
+        "storage_life": "6-8 months",
+        "source_url": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
+        "maturity_note": null
+    },
+    {
+        "variety_name": "N-2-4-1",
+        "category": "onion",
+        "season": null,
+        "maturity_days_after_transplanting": "140-145 days",
+        "yield_t_ha": "30-35 t/ha",
+        "storage_life": "Good keeping quality",
+        "source_url": "https://nhb.gov.in/pdf/vegetable/onion/oni013.pdf",
+        "maturity_note": null
+    },
+    {
+        "variety_name": "N-53",
+        "category": "onion",
+        "season": "Kharif",
+        "maturity_days_after_transplanting": "90-100 days",
+        "yield_t_ha": "25 t/ha",
+        "storage_life": "Poor keeping quality",
+        "source_url": "https://nhb.gov.in/pdf/vegetable/onion/oni013.pdf",
+        "maturity_note": null
+    },
+    {
+        "variety_name": "Agrifound Dark Red",
+        "category": "onion",
+        "season": "Kharif",
+        "maturity_days_after_transplanting": "95-110 days",
+        "yield_t_ha": "30-40 t/ha",
+        "storage_life": "Average keeping quality",
+        "source_url": "https://nhb.gov.in/pdf/vegetable/onion/oni013.pdf",
+        "maturity_note": null
+    },
+    {
+        "variety_name": "Agrifound White",
+        "category": "onion",
+        "season": "Kharif, Rabi",
+        "maturity_days_after_transplanting": null,
+        "yield_t_ha": "20-25 t/ha",
+        "storage_life": "Good keeping quality",
+        "source_url": "https://nhb.gov.in/pdf/vegetable/onion/oni013.pdf",
+        "maturity_note": "160-165 days after sowing"
     }
 ]

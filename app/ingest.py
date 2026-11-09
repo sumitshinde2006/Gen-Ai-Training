@@ -3,11 +3,14 @@
 
 import json
 import re
-
 from pathlib import Path
-from bs4 import BeautifulSoup
-from pypdf import PdfReader
 
+from bs4 import BeautifulSoup
+
+
+# ---------------------------------
+# FILE PATHS AND SOURCES
+# ---------------------------------
 
 RAW_DIR = Path("data/raw")
 OUTPUT_FILE = Path("data/records.json")
@@ -17,11 +20,20 @@ DOGR_URL = (
     "varieties-developed?layout=edit"
 )
 
-variety_categories = {
+NHB_URL = (
+    "https://nhb.gov.in/pdf/vegetable/onion/oni013.pdf"
+)
+
+
+# ---------------------------------
+# DOGR VARIETY LIST
+# ---------------------------------
+
+VARIETIES = {
     "Bhima Light Red": "onion",
     "Bhima Dark Red": "onion",
-    "Bhima Red": "onion",
     "Bhima Raj": "onion",
+    "Bhima Red": "onion",
     "Bhima Super": "onion",
     "Bhima Kiran": "onion",
     "Bhima Shakti": "onion",
@@ -34,165 +46,361 @@ variety_categories = {
 }
 
 
-def extract_sections(html):
+# ---------------------------------
+# READ HTML FILE
+# ---------------------------------
+
+def read_html(path):
+
+    if not path.exists():
+        raise FileNotFoundError(
+            f"{path} not found. Run python -m app.fetch first."
+        )
+
+    html = path.read_text(
+        encoding="utf-8",
+        errors="replace"
+    )
 
     soup = BeautifulSoup(html, "html.parser")
-    sections = {}
 
-    for heading in soup.find_all(["h2", "h3", "h4"]):
+    # Remove unnecessary elements
+    for tag in soup(["script", "style", "noscript"]):
+        tag.decompose()
 
-        name = heading.get_text(" ", strip=True)
+    return soup
 
-        if name not in variety_categories:
-            continue
 
-        content = []
+# ---------------------------------
+# EXTRACT VARIETY SECTIONS
+# ---------------------------------
 
-        for element in heading.find_all_next(
-            ["h2", "h3", "h4", "p", "li"]
-        ):
+def extract_sections(soup):
 
-            if element.name in ["h2", "h3", "h4"]:
+    # Extract ALL visible text, including divs and spans.
+    lines = [
+        line.strip()
+        for line in soup.get_text("\n", strip=True).splitlines()
+        if line.strip()
+    ]
+
+    # Locate the variety headings.
+    positions = {}
+
+    for name in VARIETIES:
+
+        for index, line in enumerate(lines):
+
+            if line.casefold() == name.casefold():
+                positions[name] = index
                 break
 
-            content.append(element.get_text(" ", strip=True))
+    sections = {}
 
-        sections[name] = " ".join(content)
+    # Sort varieties by their position on the webpage.
+    ordered = sorted(
+        positions.items(),
+        key=lambda item: item[1]
+    )
+
+    for i, (name, start) in enumerate(ordered):
+
+        if i + 1 < len(ordered):
+            end = ordered[i + 1][1]
+        else:
+            end = len(lines)
+
+        sections[name] = " ".join(lines[start + 1:end])
 
     return sections
 
 
-def extract_field(pattern, text):
+# ---------------------------------
+# EXTRACT FIELD VALUES
+# ---------------------------------
 
-    match = re.search(pattern, text, re.IGNORECASE)
+def extract_value(pattern, text):
+
+    match = re.search(
+        pattern,
+        text,
+        re.IGNORECASE
+    )
 
     if match:
-        return match.group(1).strip()
+        return re.sub(
+            r"\s+",
+            " ",
+            match.group(1)
+        ).strip(" .;,:-")
 
     return None
 
 
-def clean_record(name, text):
+def convert_yield(value):
 
-    season = extract_field(
-        r"Season:\s*(.*?)(?=Maturity:|Yield:|Average Yield:|"
-        r"Storability:|Bolting:|$)",
+    if not value:
+        return None
+
+    def convert(match):
+
+        number = float(match.group(1))
+
+        return f"{number / 10:g} t/ha"
+
+    value = re.sub(
+        r"(\d+(?:\.\d+)?)\s*(?:q|quintals?)\s*/\s*ha",
+        convert,
+        value,
+        flags=re.IGNORECASE
+    )
+
+    return value.strip()
+
+
+# ---------------------------------
+# CLEAN INDIVIDUAL RECORD
+# ---------------------------------
+
+def clean_record(name, category, text):
+
+    # Extract season
+    season = extract_value(
+        r"Season\s*:\s*(.*?)"
+        r"(?=Maturity\s*:|Bolting\s*:|"
+        r"Average\s+Yield\s*:|Yield\s*:|Storability\s*:|$)",
         text
     )
 
-    maturity = extract_field(
-        r"Maturity:\s*(.*?)(?=Bolting:|Average Yield:|"
-        r"Yield:|Highest Yield:|Storability:|$)",
+    # Extract maturity
+    maturity = extract_value(
+        r"Maturity\s*:\s*(.*?)"
+        r"(?=Bolting\s*:|Average\s+Yield\s*:|"
+        r"Highest\s+Yield\s*:|Yield\s*:|Storability\s*:|$)",
         text
     )
 
-    # Only keep maturity explicitly measured after transplanting.
-    if maturity and "after transplanting" not in maturity.lower():
-        maturity = None
+    maturity_note = None
 
-    yield_value = extract_field(
-        r"(?:Average Yield|Yield):\s*(.*?)(?=Highest Yield:|"
-        r"Storability:|Total Soluble|Reaction|Uniqueness:|$)",
+    # Only use the required DAT field when source says
+    # days after transplanting.
+    if maturity:
+
+        if "transplant" not in maturity.lower():
+
+            maturity_note = maturity
+            maturity = None
+
+    # Prefer Average Yield over the shorter Yield label.
+    yield_value = extract_value(
+        r"Average\s+Yield\s*:\s*(.*?)"
+        r"(?=Highest\s+Yield\s*:|Storability\s*:|"
+        r"Total\s+Soluble|Reaction\s+to|Uniqueness\s*:|$)",
         text
     )
 
-    storage = extract_field(
-        r"Storability:\s*(.*?)(?=Total Soluble|Reaction|"
-        r"Uniqueness:|$)",
-        text
-    )
+    # Some DOGR varieties use only Yield.
+    if not yield_value:
 
-    # Convert quintals/hectare to tonnes/hectare.
-    if yield_value:
-        def convert_quintals(match):
-            value = float(match.group(1)) / 10
-            return f"{value:g} t/ha"
-
-        yield_value = re.sub(
-            r"(\d+(?:\.\d+)?)\s*q\s*/\s*ha",
-            convert_quintals,
-            yield_value,
-            flags=re.IGNORECASE
+        yield_value = extract_value(
+            r"(?<!Average )Yield\s*:\s*(.*?)"
+            r"(?=Bolting\s*:|Highest\s+Yield\s*:|"
+            r"Storability\s*:|Total\s+Soluble|"
+            r"Reaction\s+to|Uniqueness\s*:|$)",
+            text
         )
+
+    yield_value = convert_yield(yield_value)
+
+    # Extract storage information
+    storage = extract_value(
+        r"Storability\s*:\s*(.*?)"
+        r"(?=Total\s+Soluble|Reaction\s+to|"
+        r"Uniqueness\s*:|$)",
+        text
+    )
+
+    # Bhima Light Red uses a descriptive storage statement.
+    if not storage and "excellent storage qualities" in text.lower():
+        storage = "Excellent storage qualities"
 
     return {
         "variety_name": name,
-        "category": variety_categories[name],
+        "category": category,
         "season": season,
         "maturity_days_after_transplanting": maturity,
         "yield_t_ha": yield_value,
         "storage_life": storage,
-        "source_url": DOGR_URL
+        "source_url": DOGR_URL,
+        "maturity_note": maturity_note
     }
 
 
-def extract_manage_reference():
+# ---------------------------------
+# ADD NHB VARIETIES
+# ---------------------------------
 
-    pdf_file = RAW_DIR / "manage_onion_garlic.pdf"
+def get_nhb_records():
 
-    if not pdf_file.exists():
-        print("MANAGE PDF not found.")
-        return
+    return [
 
-    try:
-        reader = PdfReader(str(pdf_file))
+        {
+            "variety_name": "N-2-4-1",
+            "category": "onion",
+            "season": None,
+            "maturity_days_after_transplanting": "140-145 days",
+            "yield_t_ha": "30-35 t/ha",
+            "storage_life": "Good keeping quality",
+            "source_url": NHB_URL,
+            "maturity_note": None
+        },
 
-        text = "\n".join(
-            page.extract_text() or ""
-            for page in reader.pages
-        )
+        {
+            "variety_name": "N-53",
+            "category": "onion",
+            "season": "Kharif",
+            "maturity_days_after_transplanting": "90-100 days",
+            "yield_t_ha": "25 t/ha",
+            "storage_life": "Poor keeping quality",
+            "source_url": NHB_URL,
+            "maturity_note": None
+        },
 
-        output = RAW_DIR / "manage_reference.txt"
-        output.write_text(text, encoding="utf-8")
+        {
+            "variety_name": "Agrifound Dark Red",
+            "category": "onion",
+            "season": "Kharif",
+            "maturity_days_after_transplanting": "95-110 days",
+            "yield_t_ha": "30-40 t/ha",
+            "storage_life": "Average keeping quality",
+            "source_url": NHB_URL,
+            "maturity_note": None
+        },
 
-        print("MANAGE PDF text extracted.")
+        {
+            "variety_name": "Agrifound White",
+            "category": "onion",
+            "season": "Kharif, Rabi",
+            "maturity_days_after_transplanting": None,
+            "yield_t_ha": "20-25 t/ha",
+            "storage_life": "Good keeping quality",
+            "source_url": NHB_URL,
+            "maturity_note": "160-165 days after sowing"
+        }
 
-    except Exception as error:
-        print(f"PDF extraction failed: {error}")
+    ]
 
 
-def ingest_data():
+# ---------------------------------
+# MAIN INGESTION FUNCTION
+# ---------------------------------
 
-    html_file = RAW_DIR / "dogr_varieties.html"
+def main():
 
-    if not html_file.exists():
-        print("DOGR HTML not found. Run app.fetch first.")
-        return
+    print("\nKANDAGUIDE DATA INGESTION")
+    print("------------------------")
 
-    html = html_file.read_text(encoding="utf-8")
-    sections = extract_sections(html)
+    soup = read_html(
+        RAW_DIR / "dogr_varieties.html"
+    )
+
+    sections = extract_sections(soup)
 
     records = []
 
-    for name in variety_categories:
+    # Process DOGR records
+    for name, category in VARIETIES.items():
 
         try:
+
             if name not in sections:
-                print(f"Skipped missing variety: {name}")
+
+                print(f"[WARNING] {name} not found")
                 continue
 
-            record = clean_record(name, sections[name])
+            record = clean_record(
+                name,
+                category,
+                sections[name]
+            )
 
             records.append(record)
 
-            print(f"Processed: {name}")
+            print(
+                f"[OK] {name} | "
+                f"Season: {record['season']} | "
+                f"Maturity: {record['maturity_days_after_transplanting']} | "
+                f"Yield: {record['yield_t_ha']} | "
+                f"Storage: {record['storage_life']}"
+            )
 
         except (ValueError, TypeError, AttributeError) as error:
-            print(f"Bad record: {name} - {error}")
 
-    OUTPUT_FILE.parent.mkdir(parents=True, exist_ok=True)
+            print(f"[ERROR] {name}: {error}")
+
+    # Add four NHB records
+    try:
+
+        nhb_records = get_nhb_records()
+
+        records.extend(nhb_records)
+
+        print("\nAdded NHB records:", len(nhb_records))
+
+    except (ValueError, TypeError) as error:
+
+        print("NHB record error:", error)
+
+    # Save JSON
+    OUTPUT_FILE.parent.mkdir(
+        parents=True,
+        exist_ok=True
+    )
 
     OUTPUT_FILE.write_text(
-        json.dumps(records, indent=4, ensure_ascii=False),
+        json.dumps(
+            records,
+            indent=4,
+            ensure_ascii=False
+        ),
         encoding="utf-8"
     )
 
-    print("\nIngestion completed!")
+    # Final summary
+    onion_count = sum(
+        1 for r in records
+        if r["category"] == "onion"
+    )
+
+    garlic_count = sum(
+        1 for r in records
+        if r["category"] == "garlic"
+    )
+
+    print("\n========== FINAL SUMMARY ==========")
+
     print("Total records:", len(records))
-    print("Saved to:", OUTPUT_FILE)
+    print("Onion records:", onion_count)
+    print("Garlic records:", garlic_count)
+
+    print("\nMISSING FIELD REPORT")
+
+    for field in [
+        "season",
+        "maturity_days_after_transplanting",
+        "yield_t_ha",
+        "storage_life"
+    ]:
+
+        missing = sum(
+            1 for r in records
+            if r.get(field) is None
+        )
+
+        print(f"{field}: {missing} missing")
+
+    print("\nSaved successfully:", OUTPUT_FILE)
 
 
 if __name__ == "__main__":
-
-    extract_manage_reference()
-    ingest_data()
+    main()

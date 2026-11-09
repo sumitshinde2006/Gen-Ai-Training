@@ -1,6 +1,4 @@
 
-# app/models.py
-
 from dataclasses import dataclass
 from typing import Optional
 
@@ -15,3 +13,4 @@ class Record:
     yield_t_ha: Optional[str]
     storage_life: Optional[str]
     source_url: str
+    maturity_note: Optional[str] = None
