@@ -107,54 +107,61 @@ KandaGuide/
 └── analysis/
     └── explore.py
 ```
-
 ## 8. How to Run
 
-### Create virtual environment
+### 1. Activate the virtual environment
 
-```bash
-python -m venv .venv
+**Windows PowerShell:**
+
+```powershell
+myenv\Scripts\activate
 ```
 
-### Activate on Windows
-
-```bash
-.venv\Scripts\activate
-```
-
-### Install dependencies
+### 2. Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### Download agricultural documents
+### 3. Download agricultural documents
 
 ```bash
 python -m app.fetch
 ```
 
-### Process agricultural data
+### 4. Process agricultural data
 
 ```bash
 python -m app.ingest
 ```
 
-### Run data analysis
+This generates the cleaned agricultural dataset in `data/records.json`.
+
+### 5. Run data analysis
 
 ```bash
 python -m analysis.explore
 ```
 
-### Start FastAPI
+### 6. Start FastAPI
 
 ```bash
 uvicorn app.main:app --reload
 ```
 
-### Open API documentation
+### 7. Open API documentation
 
 http://127.0.0.1:8000/docs
+
+### 8. Test the API
+
+- `GET /health` – Check API status.
+- `GET /records` – Retrieve agricultural records.
+- `GET /records/1` – Retrieve a specific variety.
+- `GET /search?q=Bhima` – Search agricultural varieties.
+- `POST /questions` – Submit a farming question.
+
+**Note:** The current question endpoint acknowledges submitted questions. RAG-based AI question answering with source citations is planned for a future development stage.
 
 ## 9. API Endpoints
 

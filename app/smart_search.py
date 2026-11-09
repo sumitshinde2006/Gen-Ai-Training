@@ -6,40 +6,43 @@ from app.records import load_records
 
 
 def smart_search(query, top_k=5):
+    """Return the most relevant agricultural records for a query."""
+
+    if not query or not query.strip():
+        return []
 
     records = load_records()
 
-    if not records or not query.strip():
+    if not records:
         return []
 
     documents = []
 
     for item in records:
-
-        text = " ".join([
-            str(item.get("variety_name") or ""),
-            str(item.get("category") or ""),
-            str(item.get("season") or ""),
-            str(item.get("maturity_days_after_transplanting") or ""),
-            str(item.get("maturity_note") or ""),
-            str(item.get("yield_t_ha") or ""),
-            str(item.get("storage_life") or "")
-        ])
-
-        documents.append(text)
-
-    vectorizer = TfidfVectorizer(
-        stop_words="english",
-        ngram_range=(1, 2)
-    )
-
-    try:
-
-        matrix = vectorizer.fit_transform(
-            documents + [query]
+        searchable_text = " ".join(
+            str(item.get(field) or "")
+            for field in [
+                "variety_name",
+                "category",
+                "season",
+                "maturity_days_after_transplanting",
+                "maturity_note",
+                "yield_t_ha",
+                "storage_life",
+            ]
         )
 
-        similarity = cosine_similarity(
+        documents.append(searchable_text)
+
+    try:
+        vectorizer = TfidfVectorizer(
+            stop_words="english",
+            ngram_range=(1, 2)
+        )
+
+        matrix = vectorizer.fit_transform(documents + [query])
+
+        scores = cosine_similarity(
             matrix[-1],
             matrix[:-1]
         ).flatten()
@@ -47,21 +50,21 @@ def smart_search(query, top_k=5):
     except ValueError:
         return []
 
-    ranked = similarity.argsort()[::-1]
+    ranked_indices = scores.argsort()[::-1]
 
     results = []
 
-    for index in ranked:
+    for index in ranked_indices:
+        score = float(scores[index])
 
-        score = float(similarity[index])
-
+        # Do not return unrelated records.
         if score <= 0:
             continue
 
-        record = records[index].copy()
-        record["similarity_score"] = round(score, 4)
+        result = records[index].copy()
+        result["similarity_score"] = round(score, 4)
 
-        results.append(record)
+        results.append(result)
 
         if len(results) >= top_k:
             break
