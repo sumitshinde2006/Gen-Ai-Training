@@ -163,6 +163,15 @@ http://127.0.0.1:8000/docs
 
 **Note:** The current question endpoint acknowledges submitted questions. RAG-based AI question answering with source citations is planned for a future development stage.
 
+## Checkpoint 1
+
+- Checkpoint 1 documentation and API smoke-test results are available in
+  [`docs/checkpoint-1.md`](docs/checkpoint-1.md).
+- Learn how LLMs and RAG could fit KandaGuide in
+  [`docs/how_llms_work.md`](docs/how_llms_work.md).
+- The FastAPI run steps above use the existing `myenv` environment and
+  `uvicorn app.main:app --reload` command.
+
 ## 9. API Endpoints
 
 | Method | Endpoint | Purpose |
@@ -179,6 +188,8 @@ http://127.0.0.1:8000/docs
 - Day 2: Variety dataset and record operations.
 - Day 3: Agricultural data ingestion pipeline.
 - Day 4: FastAPI, Pandas and smart search.
+- Checkpoint 1: LLM/RAG documentation and HTTP validation of the existing
+  FastAPI endpoints.
 
 ## 11. Expected Outcome
 
