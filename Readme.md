@@ -160,8 +160,12 @@ http://127.0.0.1:8000/docs
 - `GET /records/1` – Retrieve a specific variety.
 - `GET /search?q=Bhima` – Search agricultural varieties.
 - `POST /questions` – Submit a farming question.
+- `POST /chat` – Generate an evidence-grounded answer using retrieved
+  variety records and a configured Groq or Gemini provider.
 
-**Note:** The current question endpoint acknowledges submitted questions. RAG-based AI question answering with source citations is planned for a future development stage.
+`POST /questions` remains an acknowledgement endpoint for compatibility.
+See [LLM integration](docs/llm-integration.md) for provider setup and
+`POST /chat` details.
 
 ## Checkpoint 1
 
@@ -181,6 +185,53 @@ http://127.0.0.1:8000/docs
 | GET | /records/{id} | Get one variety |
 | GET | /search?q=Bhima | Search varieties |
 | POST | /questions | Submit a farming question |
+| POST | /chat | Ask a source-grounded agricultural question |
+
+## LLM integration (S1/S2)
+
+KandaGuide can use Groq or Google Gemini without application-code changes.
+Install dependencies and prepare a local environment file:
+
+```powershell
+.\myenv\Scripts\python.exe -m pip install -r requirements.txt
+if (-not (Test-Path .env)) { Copy-Item .env.example .env }
+```
+
+If `.env` already exists, keep it and edit it without overwriting it.
+Set `LLM_PROVIDER=groq` and `GROQ_API_KEY`, or use
+`LLM_PROVIDER=gemini` and `GEMINI_API_KEY`. Optionally set `LLM_MODEL` to a
+model ID supported by the selected provider; when blank, the documented
+provider default is used. Never commit `.env`; `.env.example` has empty
+credential fields.
+
+Run FastAPI from the repository root:
+
+```powershell
+.\myenv\Scripts\python.exe -m uvicorn app.main:app --reload
+```
+
+Example request:
+
+```json
+{"question": "Which onion varieties have good storage life?"}
+```
+
+Example response:
+
+```json
+{
+  "answer": "Answer based on retrieved agricultural records, with source URLs.",
+  "confidence": "medium",
+  "follow_up": "Would you like to compare Rabi onion varieties?"
+}
+```
+
+The exact answer depends on retrieved records. If information is unavailable,
+KandaGuide states that limitation instead of filling the gap. Prompt V1 is
+the default; V1/V2 evaluation status is documented in
+[`eval/prompt_compare.md`](eval/prompt_compare.md). See
+[`docs/llm-integration.md`](docs/llm-integration.md) for model IDs, provider
+architecture, setup, and error behavior.
 
 ## 10. Development Progress
 

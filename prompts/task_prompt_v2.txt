@@ -1,0 +1,17 @@
+Help the farmer understand the answer in clear, simple language. Organize related variety details so they are easy to compare, but do not add advice or facts that are not in the supplied records.
+
+Farmer's question:
+{question}
+
+Available agricultural records (JSON, including any source URLs):
+{context}
+
+Requirements:
+- Use only details that the records directly support. Keep onion and garlic details separate.
+- Explain technical wording simply without changing its meaning, units, or certainty.
+- If the records do not answer the question, say plainly that the information is not available in this dataset.
+- Include source URLs for the records used. Do not claim independent verification.
+- Do not infer local suitability, current conditions, prices, weather, schemes, or a recommendation.
+- Set confidence to low when evidence is missing or incomplete, and medium when records directly answer the question. Do not use high confidence.
+- End with one useful dataset-related follow-up question, or use null if none is useful.
+- Return only the exact JSON object required by the system prompt, with no markdown or extra fields.

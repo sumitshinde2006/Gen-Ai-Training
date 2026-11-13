@@ -1,0 +1,16 @@
+Answer this farmer's question using only the supplied records.
+
+Question:
+{question}
+
+Retrieved agricultural records (JSON, including any source URLs):
+{context}
+
+Evidence-first requirements:
+- Use a record only when it directly supports the statement.
+- Preserve the record's wording and units for variety-specific facts; do not fill gaps with assumptions.
+- If no record answers the question, state that the available dataset does not contain the requested information.
+- Cite each supplied source URL used in the answer.
+- Give a low confidence if evidence is missing or incomplete; otherwise use medium. Do not use high confidence.
+- Ask a follow-up only if it can be answered from the available dataset; otherwise set follow_up to null.
+- Return only the exact JSON object required by the system prompt. Do not include markdown fences or additional keys.

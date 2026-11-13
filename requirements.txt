@@ -6,3 +6,6 @@ beautifulsoup4
 pypdf
 pandas
 scikit-learn
+groq
+google-genai
+python-dotenv
