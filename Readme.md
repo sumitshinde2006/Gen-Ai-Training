@@ -233,6 +233,35 @@ the default; V1/V2 evaluation status is documented in
 [`docs/llm-integration.md`](docs/llm-integration.md) for model IDs, provider
 architecture, setup, and error behavior.
 
+## Semantic document search (S1/S2)
+
+KandaGuide also supports persistent semantic search over the HTML and PDF
+documents in `data/raw/`. Install the added dependencies and build the local
+index:
+
+```powershell
+.\myenv\Scripts\python.exe -m pip install -r requirements.txt
+.\myenv\Scripts\python.exe -m app.vectorstore
+```
+
+The index command extracts and chunks the documents, generates
+`sentence-transformers/all-MiniLM-L6-v2` embeddings, and stores them in the
+`kandaguide_knowledge` Chroma collection under `data/chroma/`. The first
+embedding run may download the model. The MANAGE `.txt` sidecar is skipped
+when its original PDF is available, avoiding duplicate chunks and retaining
+PDF page numbers.
+
+Start FastAPI as shown above and query the separate semantic endpoint:
+
+```text
+GET http://127.0.0.1:8000/search/semantic?q=Which%20onion%20varieties%20have%20good%20storage%20life%3F&top_k=5
+```
+
+The existing `GET /search` remains a TF-IDF search over variety records.
+Semantic-search setup, provenance, persistence, and evaluation are described
+in [`docs/semantic-search.md`](docs/semantic-search.md) and
+[`eval/search_results.md`](eval/search_results.md).
+
 ## 10. Development Progress
 
 - Day 1: Project introduction and Python fundamentals.

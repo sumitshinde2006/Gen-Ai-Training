@@ -39,8 +39,10 @@ limits are measured in tokens rather than simply in words.
 An embedding is a list of numbers representing an item such as a word,
 sentence, or document. Learned embeddings can place items with related
 meanings near each other in a vector space. Search systems can compare
-vectors to find potentially related text. KandaGuide's current
-`smart_search()` uses TF-IDF vectors, not learned neural embeddings.
+vectors to find potentially related text. KandaGuide's existing
+`smart_search()` uses TF-IDF vectors; the separate semantic document search
+uses sentence-transformer embeddings. See
+[`docs/semantic-search.md`](./semantic-search.md).
 
 ### Transformers and attention
 
@@ -116,10 +118,11 @@ available data cannot answer a question. For example, the current dataset
 does not contain live mandi prices, so the system must not invent today's
 price.
 
-**Current implementation status:** KandaGuide currently searches its
-variety records using TF-IDF and cosine similarity. Its question endpoint
-only acknowledges receipt. Complete LLM and RAG integration, including
-source-grounded answer generation, is not implemented yet.
+**Current implementation status:** KandaGuide provides TF-IDF search over
+variety records and semantic search over chunked HTML/PDF source documents
+using persistent Chroma storage. `POST /chat` still retrieves variety
+records with TF-IDF; semantic search is a separate endpoint and is not yet
+connected to chat generation.
 
 ## How `smart_search()` works
 

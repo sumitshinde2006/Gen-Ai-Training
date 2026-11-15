@@ -11,6 +11,7 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError
 from app.llm import LLMError, generate_response
 from app.records import load_records, get_by_id
 from app.smart_search import smart_search
+from app.vectorstore import VectorStoreError, semantic_search as search_chunks
 
 PROMPTS_DIR = Path(__file__).resolve().parent.parent / "prompts"
 PRICE_LIMITATION = (
@@ -194,6 +195,32 @@ def search_records(
         "query": q,
         "total_results": len(results),
         "results": results
+    }
+
+
+@app.get("/search/semantic")
+def semantic_search_records(
+    q: str = Query(min_length=1, max_length=500),
+    top_k: int = Query(default=5, ge=1, le=20),
+):
+    if not q.strip():
+        raise HTTPException(
+            status_code=422,
+            detail="Query must contain non-whitespace characters.",
+        )
+
+    try:
+        results = search_chunks(q, top_k=top_k)
+    except VectorStoreError:
+        raise HTTPException(
+            status_code=503,
+            detail="Semantic search is temporarily unavailable.",
+        ) from None
+
+    return {
+        "query": q,
+        "total_results": len(results),
+        "results": results,
     }
 
 

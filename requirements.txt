@@ -9,3 +9,5 @@ scikit-learn
 groq
 google-genai
 python-dotenv
+chromadb
+sentence-transformers
