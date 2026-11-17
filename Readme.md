@@ -186,6 +186,7 @@ See [LLM integration](docs/llm-integration.md) for provider setup and
 | GET | /search?q=Bhima | Search varieties |
 | POST | /questions | Submit a farming question |
 | POST | /chat | Ask a source-grounded agricultural question |
+| POST | /ask | Ask over indexed source documents and receive chunk citations |
 
 ## LLM integration (S1/S2)
 
@@ -278,3 +279,24 @@ searchable and source-backed agricultural information assistant.
 
 **Developed by Sumit Gorakshanath Shinde**  
 Sanjivani University – SJ-09 Agriculture
+
+## RAG Evaluation Results
+
+The evaluation script built isolated indexes for each chunk size and kept the existing persistent collection intact. Retrieval ran with the local embedding model. The configured LLM provider was unavailable during answer generation, so generated-answer and citation scores remain pending; no winner is selected yet.
+
+| Metric | Configuration A | Configuration B |
+|---|---:|---:|
+| Chunk size | 400 | 600 |
+| Top-k | 3 | 5 |
+| Retrieval hit rate | 84.62% | 100.0% |
+| Citation accuracy | Pending | Pending |
+| Answer correctness | Pending | Pending |
+| Unsupported-answer rate | 0.0%* | 0.0%* |
+| Q6 refusal correctness | True | True |
+| Average retrieval latency | 30.13 ms | 29.84 ms |
+
+**Winning configuration:** Pending. Configuration B had higher measured retrieval hit rate; Configuration A had lower measured retrieval latency. Generated-answer and citation metrics still need a successful LLM evaluation before selecting a winner.
+
+\* Unsupported-answer rate is based only on the two unanswerable questions receiving the exact refusal; generated-answer evaluation was otherwise unavailable.
+
+Evaluation materials: [dataset](eval/eval_set.json), [runner](eval/run_eval.py), [Configuration A results](eval/results_config_a.json), [Configuration B results](eval/results_config_b.json), and [summary](eval/evaluation_summary.md). Retrieval hit rate measures whether any expected source URL appears in retrieved chunks. Answer correctness uses keyword coverage as a reproducible proxy, not objective ground truth. Citation accuracy requires each citation's source and chunk ID to match retrieved evidence and expected sources.

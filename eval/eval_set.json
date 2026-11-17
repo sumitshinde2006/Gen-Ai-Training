@@ -1,0 +1,122 @@
+[
+  {
+    "id": "Q1",
+    "question": "Which onion varieties in the dataset are listed for the Rabi season?",
+    "expected_answer": "List onion variety names whose source record includes Rabi; retrieved passages may not be exhaustive.",
+    "expected_sources": ["https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit"],
+    "expected_keywords": ["onion", "rabi"],
+    "answerable": true
+  },
+  {
+    "id": "Q2",
+    "question": "Which garlic varieties are listed, and what yield and storage-life values does the dataset record for each?",
+    "expected_answer": "Use the garlic records or DOGR garlic source for variety names and only the yield and storage details explicitly provided.",
+    "expected_sources": ["https://dogr.res.in/index.php/component/content/article/garlicagropedia?layout=edit"],
+    "expected_keywords": ["garlic", "yield", "storage"],
+    "answerable": true
+  },
+  {
+    "id": "Q3",
+    "question": "Which onion varieties are listed for the Kharif season?",
+    "expected_answer": "List onion variety names whose source record includes Kharif; do not claim the retrieved passages are exhaustive.",
+    "expected_sources": ["https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit"],
+    "expected_keywords": ["onion", "kharif"],
+    "answerable": true
+  },
+  {
+    "id": "Q4",
+    "question": "What maturity period is recorded for Bhima Light Red onion?",
+    "expected_answer": "The dataset records 115 days after transplanting for Bhima Light Red.",
+    "expected_sources": ["https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit"],
+    "expected_keywords": ["bhima light red", "115"],
+    "answerable": true
+  },
+  {
+    "id": "Q5",
+    "question": "What yield value is recorded for Bhima Light Red onion?",
+    "expected_answer": "The dataset records a yield of 38.5 t/ha for Bhima Light Red.",
+    "expected_sources": ["https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit"],
+    "expected_keywords": ["bhima light red", "38.5"],
+    "answerable": true
+  },
+  {
+    "id": "Q6",
+    "question": "What is today's onion mandi price per quintal in Lasalgaon?",
+    "expected_answer": "Live mandi prices are not available in the current source documents; the exact refusal is required.",
+    "expected_sources": [],
+    "expected_keywords": [],
+    "answerable": false
+  },
+  {
+    "id": "Q7",
+    "question": "What storage-life information is recorded for Bhima Kiran onion?",
+    "expected_answer": "The source record says Bhima Kiran is suitable for storage up to 5-6 months.",
+    "expected_sources": ["https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit"],
+    "expected_keywords": ["bhima kiran", "5", "6", "months"],
+    "answerable": true
+  },
+  {
+    "id": "Q8",
+    "question": "Which cultivation practices for onion and garlic should I follow on my farm?",
+    "expected_answer": "The repository includes general practices in its DOGR and MANAGE sources, but they are not personalized to a farmer's field.",
+    "expected_sources": ["https://dogr.res.in/index.php/component/content/article/garlicagropedia?layout=edit", "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf"],
+    "expected_keywords": ["onion", "garlic", "planting"],
+    "answerable": true
+  },
+  {
+    "id": "Q9",
+    "question": "What region and season are recorded as recommended for Bhima Prasanskaran?",
+    "expected_answer": "The DOGR variety entry describes Bhima Prasanskaran as a short-day white onion Rabi variety suited for processing and identifies its development location as Rajgurunagar, Pune, Maharashtra.",
+    "expected_sources": ["https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit"],
+    "expected_keywords": ["bhima prasanskaran", "rabi", "pune"],
+    "answerable": true
+  },
+  {
+    "id": "Q10",
+    "question": "Which onion variety should I choose for my field and local market?",
+    "expected_answer": "The available documents do not include this farmer's field conditions or current local-market information, so no personalized choice is supported.",
+    "expected_sources": [],
+    "expected_keywords": [],
+    "answerable": false
+  },
+  {
+    "id": "Q11",
+    "question": "How should garlic cloves be selected and planted according to DOGR?",
+    "expected_answer": "DOGR describes selecting large, healthy cloves and planting them vertically about 2 cm deep, with 10 cm plant spacing and 15 cm row spacing.",
+    "expected_sources": ["https://dogr.res.in/index.php/component/content/article/garlicagropedia?layout=edit"],
+    "expected_keywords": ["cloves", "plant", "spacing"],
+    "answerable": true
+  },
+  {
+    "id": "Q12",
+    "question": "How long can well-cured garlic bulbs be stored at ambient temperature?",
+    "expected_answer": "The DOGR source says well-cured garlic bulbs can be stored for 5-6 months at ambient temperature in ventilated structures with low relative humidity.",
+    "expected_sources": ["https://dogr.res.in/index.php/component/content/article/garlicagropedia?layout=edit"],
+    "expected_keywords": ["garlic", "5", "6", "months"],
+    "answerable": true
+  },
+  {
+    "id": "Q13",
+    "question": "Which season is listed for Bhima Dark Red onion?",
+    "expected_answer": "The DOGR variety entry lists Bhima Dark Red for Kharif.",
+    "expected_sources": ["https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit"],
+    "expected_keywords": ["bhima dark red", "kharif"],
+    "answerable": true
+  },
+  {
+    "id": "Q14",
+    "question": "What does the DOGR source say about garlic harvest timing in different regions?",
+    "expected_answer": "Report the regional planting or harvest timing only as stated in the DOGR table; do not infer a universal date.",
+    "expected_sources": ["https://dogr.res.in/index.php/component/content/article/garlicagropedia?layout=edit"],
+    "expected_keywords": ["garlic", "harvesting"],
+    "answerable": true
+  },
+  {
+    "id": "Q15",
+    "question": "How should garlic bulbs be cured and stored after harvest according to DOGR?",
+    "expected_answer": "DOGR describes curing garlic bundles in shade and then storing bulbs in a dry, well-ventilated area; use only steps present in the retrieved passage.",
+    "expected_sources": ["https://dogr.res.in/index.php/component/content/article/garlicagropedia?layout=edit"],
+    "expected_keywords": ["garlic", "curing", "stored"],
+    "answerable": true
+  }
+]

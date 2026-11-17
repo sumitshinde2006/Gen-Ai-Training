@@ -9,6 +9,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from app.llm import LLMError, generate_response
+from app.rag import RAGError, answer_question
 from app.records import load_records, get_by_id
 from app.smart_search import smart_search
 from app.vectorstore import VectorStoreError, semantic_search as search_chunks
@@ -65,6 +66,10 @@ class Question(BaseModel):
 
 
 class ChatQuestion(Question):
+    model_config = ConfigDict(str_strip_whitespace=True)
+
+
+class AskQuestion(Question):
     model_config = ConfigDict(str_strip_whitespace=True)
 
 
@@ -234,6 +239,21 @@ def ask_question(data: Question):
             "AI-powered answers will be added in a later milestone."
         )
     }
+
+
+@app.post("/ask")
+def ask_rag(data: AskQuestion, top_k: int = Query(default=5, ge=1, le=20)):
+    """Answer using retrieved agricultural chunks and return their citations."""
+    if not data.question.strip():
+        raise HTTPException(status_code=422, detail="Question must not be empty.")
+    try:
+        result = answer_question(data.question, top_k=top_k)
+    except RAGError:
+        raise HTTPException(
+            status_code=503,
+            detail="KandaGuide could not answer this question right now.",
+        ) from None
+    return {key: value for key, value in result.items() if key != "retrieved_chunks"}
 
 
 @app.post("/chat", response_model=ChatResponse)
