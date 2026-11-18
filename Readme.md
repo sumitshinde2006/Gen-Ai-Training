@@ -359,21 +359,37 @@ Sanjivani University – SJ-09 Agriculture
 
 ## RAG Evaluation Results
 
-The evaluation script built isolated indexes for each chunk size and kept the existing persistent collection intact. Retrieval ran with the local embedding model. The configured LLM provider was unavailable during answer generation, so generated-answer and citation scores remain pending; no winner is selected yet.
+Evaluation ran on 18 November 2026 (UTC timestamp: 2026-11-18T01:01:47Z) using isolated Chroma indexes and the local embedding model. The existing persistent collection was not changed. Groq was explicitly selected for this run using the existing `GROQ_API_KEY`; the `.env` provider setting was left untouched. Twelve of the 13 answerable questions failed during RAG answer generation with `RAGError`, so the answer evaluation is incomplete and no winner is selected.
 
 | Metric | Configuration A | Configuration B |
 |---|---:|---:|
 | Chunk size | 400 | 600 |
 | Top-k | 3 | 5 |
 | Retrieval hit rate | 84.62% | 100.0% |
-| Citation accuracy | Pending | Pending |
-| Answer correctness | Pending | Pending |
-| Unsupported-answer rate | 0.0%* | 0.0%* |
+| Answer correctness | 66.67% (2/3 completed responses) | 66.67% (2/3 completed responses) |
+| Citation correctness | 66.67% (2/3 completed responses) | 66.67% (2/3 completed responses) |
+| Grounded answer rate | 0.0% (0/1 completed answerable response) | 0.0% (0/1 completed answerable response) |
+| Correct abstention rate | 100.0% (2/2) | 100.0% (2/2) |
+| Unsupported-answer rate | 0.0% (0/2) | 0.0% (0/2) |
+| Groq answer calls completed / failed | 1 / 12 | 1 / 12 |
 | Q6 refusal correctness | True | True |
-| Average retrieval latency | 30.13 ms | 29.84 ms |
+| Mean retrieval latency | 21.34 ms | 20.37 ms |
 
-**Winning configuration:** Pending. Configuration B had higher measured retrieval hit rate; Configuration A had lower measured retrieval latency. Generated-answer and citation metrics still need a successful LLM evaluation before selecting a winner.
+**Winning configuration:** Pending. Both configurations failed to complete all 15 answer evaluations. Config B had the higher retrieval hit rate, but answer quality is not comparable enough to select a winner.
 
-\* Unsupported-answer rate is based only on the two unanswerable questions receiving the exact refusal; generated-answer evaluation was otherwise unavailable.
+The completed-response correctness metrics use only successful answer evaluations; failed API calls are excluded from score denominators and listed in the result JSON. Each configuration completed three answer evaluations: the two deterministic abstentions (Q6 and Q10) plus Q9, which returned “I don't know.” despite retrieving DOGR chunks. Q9 failed answer correctness, citation correctness, and groundedness scoring and needs manual review. The other 12 failed answer evaluations are Q1–Q5, Q7–Q8, and Q11–Q15.
 
-Evaluation materials: [dataset](eval/eval_set.json), [runner](eval/run_eval.py), [Configuration A results](eval/results_config_a.json), [Configuration B results](eval/results_config_b.json), and [summary](eval/evaluation_summary.md). Retrieval hit rate measures whether any expected source URL appears in retrieved chunks. Answer correctness uses keyword coverage as a reproducible proxy, not objective ground truth. Citation accuracy requires each citation's source and chunk ID to match retrieved evidence and expected sources.
+Evaluation materials: [dataset](eval/eval_set.json), [runner](eval/run_eval.py), [Configuration A results](eval/results_config_a.json), [Configuration B results](eval/results_config_b.json), and [summary](eval/evaluation_summary.md). Answer correctness uses at least 60% expected-keyword coverage as a transparent proxy, not objective ground truth. Citation correctness checks cited chunk IDs, source matches, and expected sources. Groundedness additionally checks expected-keyword coverage in retrieved context. See the summary for full scoring and winner criteria.
+
+To repeat the Groq evaluation in PowerShell (with `GROQ_API_KEY` configured):
+
+```powershell
+$env:LLM_PROVIDER = "groq"
+.\myenv\Scripts\python.exe eval/run_eval.py
+```
+
+The evaluator refuses to switch providers. Offline scoring tests use mocks and do not make paid calls:
+
+```powershell
+.\myenv\Scripts\python.exe -m unittest eval.test_run_eval
+```

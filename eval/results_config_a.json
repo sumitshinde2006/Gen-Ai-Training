@@ -1,4 +1,5 @@
 {
+  "evaluation_timestamp_utc": "2026-11-18T01:01:47+00:00",
   "configuration": {
     "name": "A",
     "chunk_size_words": 400,
@@ -8,17 +9,35 @@
       "data\\raw\\dogr_garlic.html",
       "data\\raw\\dogr_varieties.html",
       "data\\raw\\manage_onion_garlic.pdf"
-    ]
+    ],
+    "llm_provider": "groq"
   },
   "metrics": {
     "questions_evaluated": 15,
     "answerable_questions": 13,
     "unanswerable_questions": 2,
     "retrieval_hit_rate_percent": 84.62,
-    "citation_accuracy_percent": null,
-    "answer_correctness_proxy_percent": null,
+    "answer_correctness_percent": 66.67,
+    "answer_correctness_proxy_percent": 66.67,
+    "answer_correctness_scored": 3,
+    "answer_correctness_correct": 2,
+    "citation_correctness_percent": 66.67,
+    "citation_accuracy_percent": 66.67,
+    "citation_correctness_scored": 3,
+    "citation_correctness_correct": 2,
+    "grounded_answer_percent": 0.0,
+    "grounded_answer_scored": 1,
+    "grounded_answer_correct": 0,
+    "correct_abstention_percent": 100.0,
+    "correct_abstention_scored": 2,
+    "correct_abstention_correct": 2,
     "unsupported_answer_rate_percent": 0.0,
     "q6_refusal_correct": true,
+    "answer_evaluations_completed": 3,
+    "groq_answer_calls_completed": 1,
+    "groq_answer_calls_failed": 12,
+    "answer_evaluations_skipped": 0,
+    "answer_evaluations_failed": 12,
     "execution_errors": [
       "Q1: RAGError",
       "Q2: RAGError",
@@ -33,14 +52,18 @@
       "Q14: RAGError",
       "Q15: RAGError"
     ],
-    "average_retrieval_latency_ms": 30.13,
-    "llm_evaluation_status": "pending: one or more LLM requests failed",
-    "answer_correctness_method": "Keyword coverage proxy against manually prepared expected_keywords; not an objective or semantic ground-truth judge."
+    "average_retrieval_latency_ms": 21.34,
+    "llm_evaluation_status": "incomplete: one or more answer evaluations failed",
+    "answer_correctness_method": "For answerable questions, at least 60% of manually prepared expected_keywords must occur in the answer. For unanswerable questions, the exact response \"I don't know.\" is required. This transparent keyword/refusal proxy is not a semantic judge.",
+    "citation_correctness_method": "A response passes if every emitted citation's chunk ID exists in the retrieved chunks, its source matches that chunk, and the source is listed in expected_sources. An abstention with no citations is not treated as a correct citation for an answerable question.",
+    "grounded_answer_method": "For answerable questions, at least 60% of expected_keywords must occur in the retrieved chunk text. A grounded answer additionally must pass answer correctness and citation correctness. This is a reproducible support proxy, not claim-level entailment.",
+    "winner_method": "Both configurations must complete all 15 answer evaluations without errors. The primary quality score is the unweighted mean of answer correctness, citation correctness, grounded answers, and correct abstention. Retrieval hit rate is the first tie-breaker; lower unsupported-answer rate is the second. If all are tied, report a tie."
   },
   "results": [
     {
       "id": "Q1",
       "question": "Which onion varieties in the dataset are listed for the Rabi season?",
+      "expected_answer": "List onion variety names whose source record includes Rabi; retrieved passages may not be exhaustive.",
       "answerable": true,
       "retrieved_chunks": [
         {
@@ -72,14 +95,23 @@
       "answer": null,
       "citations": [],
       "confidence": null,
+      "answer_correctness": null,
       "answer_correctness_proxy": null,
+      "citation_correctness": null,
+      "supported_by_retrieved_context": null,
+      "grounded_answer": null,
+      "correct_abstention": null,
       "unsupported_answer": null,
-      "citation_accuracy": null,
-      "execution_error": "RAGError"
+      "evaluation_status": "failed",
+      "execution_error": "RAGError",
+      "execution_error_chain": [
+        "RAGError"
+      ]
     },
     {
       "id": "Q2",
       "question": "Which garlic varieties are listed, and what yield and storage-life values does the dataset record for each?",
+      "expected_answer": "Use the garlic records or DOGR garlic source for variety names and only the yield and storage details explicitly provided.",
       "answerable": true,
       "retrieved_chunks": [
         {
@@ -111,14 +143,23 @@
       "answer": null,
       "citations": [],
       "confidence": null,
+      "answer_correctness": null,
       "answer_correctness_proxy": null,
+      "citation_correctness": null,
+      "supported_by_retrieved_context": null,
+      "grounded_answer": null,
+      "correct_abstention": null,
       "unsupported_answer": null,
-      "citation_accuracy": null,
-      "execution_error": "RAGError"
+      "evaluation_status": "failed",
+      "execution_error": "RAGError",
+      "execution_error_chain": [
+        "RAGError"
+      ]
     },
     {
       "id": "Q3",
       "question": "Which onion varieties are listed for the Kharif season?",
+      "expected_answer": "List onion variety names whose source record includes Kharif; do not claim the retrieved passages are exhaustive.",
       "answerable": true,
       "retrieved_chunks": [
         {
@@ -150,14 +191,23 @@
       "answer": null,
       "citations": [],
       "confidence": null,
+      "answer_correctness": null,
       "answer_correctness_proxy": null,
+      "citation_correctness": null,
+      "supported_by_retrieved_context": null,
+      "grounded_answer": null,
+      "correct_abstention": null,
       "unsupported_answer": null,
-      "citation_accuracy": null,
-      "execution_error": "RAGError"
+      "evaluation_status": "failed",
+      "execution_error": "RAGError",
+      "execution_error_chain": [
+        "RAGError"
+      ]
     },
     {
       "id": "Q4",
       "question": "What maturity period is recorded for Bhima Light Red onion?",
+      "expected_answer": "The dataset records 115 days after transplanting for Bhima Light Red.",
       "answerable": true,
       "retrieved_chunks": [
         {
@@ -189,14 +239,23 @@
       "answer": null,
       "citations": [],
       "confidence": null,
+      "answer_correctness": null,
       "answer_correctness_proxy": null,
+      "citation_correctness": null,
+      "supported_by_retrieved_context": null,
+      "grounded_answer": null,
+      "correct_abstention": null,
       "unsupported_answer": null,
-      "citation_accuracy": null,
-      "execution_error": "RAGError"
+      "evaluation_status": "failed",
+      "execution_error": "RAGError",
+      "execution_error_chain": [
+        "RAGError"
+      ]
     },
     {
       "id": "Q5",
       "question": "What yield value is recorded for Bhima Light Red onion?",
+      "expected_answer": "The dataset records a yield of 38.5 t/ha for Bhima Light Red.",
       "answerable": true,
       "retrieved_chunks": [
         {
@@ -228,14 +287,23 @@
       "answer": null,
       "citations": [],
       "confidence": null,
+      "answer_correctness": null,
       "answer_correctness_proxy": null,
+      "citation_correctness": null,
+      "supported_by_retrieved_context": null,
+      "grounded_answer": null,
+      "correct_abstention": null,
       "unsupported_answer": null,
-      "citation_accuracy": null,
-      "execution_error": "RAGError"
+      "evaluation_status": "failed",
+      "execution_error": "RAGError",
+      "execution_error_chain": [
+        "RAGError"
+      ]
     },
     {
       "id": "Q6",
       "question": "What is today's onion mandi price per quintal in Lasalgaon?",
+      "expected_answer": "Live mandi prices are not available in the current source documents; the exact refusal is required.",
       "answerable": false,
       "retrieved_chunks": [
         {
@@ -267,14 +335,21 @@
       "answer": "I don't know.",
       "citations": [],
       "confidence": "low",
+      "answer_correctness": true,
       "answer_correctness_proxy": true,
+      "citation_correctness": true,
+      "supported_by_retrieved_context": null,
+      "grounded_answer": false,
+      "correct_abstention": true,
       "unsupported_answer": false,
-      "citation_accuracy": true,
-      "execution_error": null
+      "evaluation_status": "completed",
+      "execution_error": null,
+      "execution_error_chain": []
     },
     {
       "id": "Q7",
       "question": "What storage-life information is recorded for Bhima Kiran onion?",
+      "expected_answer": "The source record says Bhima Kiran is suitable for storage up to 5-6 months.",
       "answerable": true,
       "retrieved_chunks": [
         {
@@ -306,14 +381,23 @@
       "answer": null,
       "citations": [],
       "confidence": null,
+      "answer_correctness": null,
       "answer_correctness_proxy": null,
+      "citation_correctness": null,
+      "supported_by_retrieved_context": null,
+      "grounded_answer": null,
+      "correct_abstention": null,
       "unsupported_answer": null,
-      "citation_accuracy": null,
-      "execution_error": "RAGError"
+      "evaluation_status": "failed",
+      "execution_error": "RAGError",
+      "execution_error_chain": [
+        "RAGError"
+      ]
     },
     {
       "id": "Q8",
       "question": "Which cultivation practices for onion and garlic should I follow on my farm?",
+      "expected_answer": "The repository includes general practices in its DOGR and MANAGE sources, but they are not personalized to a farmer's field.",
       "answerable": true,
       "retrieved_chunks": [
         {
@@ -345,14 +429,23 @@
       "answer": null,
       "citations": [],
       "confidence": null,
+      "answer_correctness": null,
       "answer_correctness_proxy": null,
+      "citation_correctness": null,
+      "supported_by_retrieved_context": null,
+      "grounded_answer": null,
+      "correct_abstention": null,
       "unsupported_answer": null,
-      "citation_accuracy": null,
-      "execution_error": "RAGError"
+      "evaluation_status": "failed",
+      "execution_error": "RAGError",
+      "execution_error_chain": [
+        "RAGError"
+      ]
     },
     {
       "id": "Q9",
       "question": "What region and season are recorded as recommended for Bhima Prasanskaran?",
+      "expected_answer": "The DOGR variety entry describes Bhima Prasanskaran as a short-day white onion Rabi variety suited for processing and identifies its development location as Rajgurunagar, Pune, Maharashtra.",
       "answerable": true,
       "retrieved_chunks": [
         {
@@ -384,14 +477,21 @@
       "answer": "I don't know.",
       "citations": [],
       "confidence": "low",
+      "answer_correctness": false,
       "answer_correctness_proxy": false,
+      "citation_correctness": false,
+      "supported_by_retrieved_context": false,
+      "grounded_answer": false,
+      "correct_abstention": null,
       "unsupported_answer": null,
-      "citation_accuracy": true,
-      "execution_error": null
+      "evaluation_status": "completed",
+      "execution_error": null,
+      "execution_error_chain": []
     },
     {
       "id": "Q10",
       "question": "Which onion variety should I choose for my field and local market?",
+      "expected_answer": "The available documents do not include this farmer's field conditions or current local-market information, so no personalized choice is supported.",
       "answerable": false,
       "retrieved_chunks": [
         {
@@ -423,14 +523,21 @@
       "answer": "I don't know.",
       "citations": [],
       "confidence": "low",
+      "answer_correctness": true,
       "answer_correctness_proxy": true,
+      "citation_correctness": true,
+      "supported_by_retrieved_context": null,
+      "grounded_answer": false,
+      "correct_abstention": true,
       "unsupported_answer": false,
-      "citation_accuracy": true,
-      "execution_error": null
+      "evaluation_status": "completed",
+      "execution_error": null,
+      "execution_error_chain": []
     },
     {
       "id": "Q11",
       "question": "How should garlic cloves be selected and planted according to DOGR?",
+      "expected_answer": "DOGR describes selecting large, healthy cloves and planting them vertically about 2 cm deep, with 10 cm plant spacing and 15 cm row spacing.",
       "answerable": true,
       "retrieved_chunks": [
         {
@@ -462,14 +569,23 @@
       "answer": null,
       "citations": [],
       "confidence": null,
+      "answer_correctness": null,
       "answer_correctness_proxy": null,
+      "citation_correctness": null,
+      "supported_by_retrieved_context": null,
+      "grounded_answer": null,
+      "correct_abstention": null,
       "unsupported_answer": null,
-      "citation_accuracy": null,
-      "execution_error": "RAGError"
+      "evaluation_status": "failed",
+      "execution_error": "RAGError",
+      "execution_error_chain": [
+        "RAGError"
+      ]
     },
     {
       "id": "Q12",
       "question": "How long can well-cured garlic bulbs be stored at ambient temperature?",
+      "expected_answer": "The DOGR source says well-cured garlic bulbs can be stored for 5-6 months at ambient temperature in ventilated structures with low relative humidity.",
       "answerable": true,
       "retrieved_chunks": [
         {
@@ -501,14 +617,23 @@
       "answer": null,
       "citations": [],
       "confidence": null,
+      "answer_correctness": null,
       "answer_correctness_proxy": null,
+      "citation_correctness": null,
+      "supported_by_retrieved_context": null,
+      "grounded_answer": null,
+      "correct_abstention": null,
       "unsupported_answer": null,
-      "citation_accuracy": null,
-      "execution_error": "RAGError"
+      "evaluation_status": "failed",
+      "execution_error": "RAGError",
+      "execution_error_chain": [
+        "RAGError"
+      ]
     },
     {
       "id": "Q13",
       "question": "Which season is listed for Bhima Dark Red onion?",
+      "expected_answer": "The DOGR variety entry lists Bhima Dark Red for Kharif.",
       "answerable": true,
       "retrieved_chunks": [
         {
@@ -540,14 +665,23 @@
       "answer": null,
       "citations": [],
       "confidence": null,
+      "answer_correctness": null,
       "answer_correctness_proxy": null,
+      "citation_correctness": null,
+      "supported_by_retrieved_context": null,
+      "grounded_answer": null,
+      "correct_abstention": null,
       "unsupported_answer": null,
-      "citation_accuracy": null,
-      "execution_error": "RAGError"
+      "evaluation_status": "failed",
+      "execution_error": "RAGError",
+      "execution_error_chain": [
+        "RAGError"
+      ]
     },
     {
       "id": "Q14",
       "question": "What does the DOGR source say about garlic harvest timing in different regions?",
+      "expected_answer": "Report the regional planting or harvest timing only as stated in the DOGR table; do not infer a universal date.",
       "answerable": true,
       "retrieved_chunks": [
         {
@@ -579,14 +713,23 @@
       "answer": null,
       "citations": [],
       "confidence": null,
+      "answer_correctness": null,
       "answer_correctness_proxy": null,
+      "citation_correctness": null,
+      "supported_by_retrieved_context": null,
+      "grounded_answer": null,
+      "correct_abstention": null,
       "unsupported_answer": null,
-      "citation_accuracy": null,
-      "execution_error": "RAGError"
+      "evaluation_status": "failed",
+      "execution_error": "RAGError",
+      "execution_error_chain": [
+        "RAGError"
+      ]
     },
     {
       "id": "Q15",
       "question": "How should garlic bulbs be cured and stored after harvest according to DOGR?",
+      "expected_answer": "DOGR describes curing garlic bundles in shade and then storing bulbs in a dry, well-ventilated area; use only steps present in the retrieved passage.",
       "answerable": true,
       "retrieved_chunks": [
         {
@@ -618,10 +761,18 @@
       "answer": null,
       "citations": [],
       "confidence": null,
+      "answer_correctness": null,
       "answer_correctness_proxy": null,
+      "citation_correctness": null,
+      "supported_by_retrieved_context": null,
+      "grounded_answer": null,
+      "correct_abstention": null,
       "unsupported_answer": null,
-      "citation_accuracy": null,
-      "execution_error": "RAGError"
+      "evaluation_status": "failed",
+      "execution_error": "RAGError",
+      "execution_error_chain": [
+        "RAGError"
+      ]
     }
   ]
 }
