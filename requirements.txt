@@ -11,3 +11,4 @@ google-genai
 python-dotenv
 chromadb
 sentence-transformers
+langgraph>=0.2,<2

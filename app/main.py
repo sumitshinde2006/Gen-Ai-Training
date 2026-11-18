@@ -81,6 +81,14 @@ class ChatResponse(BaseModel):
     follow_up: str | None
 
 
+class AgentRequest(BaseModel):
+    model_config = ConfigDict(str_strip_whitespace=True)
+
+    message: str = Field(min_length=1, max_length=1000)
+    thread_id: str = Field(min_length=1, max_length=128, pattern=r"^[A-Za-z0-9][A-Za-z0-9._:-]*$")
+    approval: Literal["approved", "rejected"] | None = None
+
+
 class PromptLoadError(RuntimeError):
     """Raised when a required prompt file cannot be loaded."""
 
@@ -254,6 +262,50 @@ def ask_rag(data: AskQuestion, top_k: int = Query(default=5, ge=1, le=20)):
             detail="KandaGuide could not answer this question right now.",
         ) from None
     return {key: value for key, value in result.items() if key != "retrieved_chunks"}
+
+
+@app.post("/agent")
+def agent_endpoint(data: AgentRequest):
+    """Run or resume a per-thread LangGraph agent conversation."""
+    try:
+        from app.graph import graph, invoke
+    except ImportError:
+        raise HTTPException(status_code=503, detail="Agent workflow dependencies are unavailable.") from None
+
+    config = {"configurable": {"thread_id": data.thread_id}}
+    if data.approval is not None:
+        snapshot = graph.get_state(config)
+        if not snapshot or "approval" not in snapshot.next:
+            raise HTTPException(status_code=409, detail="This thread has no pending approval to resume.")
+        result = invoke(data.message, data.thread_id, approval_response=data.approval)
+    else:
+        snapshot = graph.get_state(config)
+        if snapshot and snapshot.next:
+            raise HTTPException(status_code=409, detail="This thread has a pending workflow; resume it with an approval response.")
+        result = invoke(data.message, data.thread_id)
+
+    interrupts = result.get("__interrupt__", ())
+    if interrupts:
+        pending = interrupts[0].value if hasattr(interrupts[0], "value") else {}
+        return {
+            "thread_id": data.thread_id,
+            "status": "awaiting_approval",
+            "answer": pending.get("message", "Please review the proposed storage calculation."),
+            "tools_used": result.get("tools_used", []),
+            "citations": result.get("citations", []),
+            "calculation_result": pending.get("calculation_result"),
+            "requires_approval": True,
+        }
+    return {
+        "thread_id": data.thread_id,
+        "status": result.get("status", "completed"),
+        "answer": result.get("answer", "The workflow did not produce an answer."),
+        "tools_used": result.get("tools_used", []),
+        "citations": result.get("citations", []),
+        "calculation_result": result.get("calculation_result"),
+        "requires_approval": False,
+        "follow_up": result.get("follow_up"),
+    }
 
 
 @app.post("/chat", response_model=ChatResponse)

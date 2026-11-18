@@ -15,6 +15,83 @@ varieties, growing seasons, maturity periods, yield, storage and cultivation.
 The project aims to develop a searchable agricultural knowledge base
 and eventually an AI assistant using RAG and Agentic AI.
 
+## 8. Agentic AI milestone
+
+KandaGuide now includes a deterministic `storage_break_even` tool, an
+independent hand-written agent loop, and a LangGraph workflow with
+thread-scoped memory and an interrupt/resume approval step for storage
+recommendations. The agents reuse the existing `app.rag.answer_question()`
+retrieval and LLM pipeline. See [docs/agentic-ai.md](docs/agentic-ai.md) for
+the workflow, memory limitations, source review, and implementation details.
+
+### Storage break-even tool
+
+For quantity `Q`, today's price `P`, and loss fraction `L`, the gross-revenue
+break-even price is:
+
+```text
+today's revenue = Q × P
+saleable quantity = Q × (1 − L)
+break-even price per quintal = today's revenue ÷ saleable quantity
+```
+
+An explicit loss percentage is used exactly. If omitted, the tool returns
+both 30% and 40% loss scenarios and labels the range unverified. The local
+MANAGE reference associates 30–40% with Fusarium basal rot; it does not
+verify a general DOGR default. A local DOGR variety record reports 31.11%
+after four months specifically for Bhima Prasanskaran. The output is a
+gross-revenue calculation, not full profit; storage months do not imply a
+time-based loss rate.
+
+### Install and run
+
+```powershell
+python -m pip install -r requirements.txt
+uvicorn app.main:app --reload
+```
+
+### `POST /agent`
+
+Request a calculation:
+
+```json
+{
+  "message": "I have 100 quintals of onion. Today's price is 2000 per quintal. Calculate the break-even price for 3 months with 30% storage loss.",
+  "thread_id": "farmer-session-001",
+  "approval": null
+}
+```
+
+The response includes `status`, `answer`, `tools_used`, `citations`,
+`calculation_result`, `requires_approval`, and `follow_up`. Calculation
+results are marked as calculated results; agricultural claims come from RAG
+and include citations.
+
+For a storage decision request, the graph pauses and returns
+`status: "awaiting_approval"`, the proposed `calculation_result`, and
+`requires_approval: true`. Resume the same thread to approve:
+
+```json
+{
+  "message": "Review the proposed storage decision",
+  "thread_id": "farmer-session-001",
+  "approval": "approved"
+}
+```
+
+Or reject with `"approval": "rejected"`. Approval accepts only the proposed
+decision response; no sale, order, buyer contact, or external transaction is
+performed. The local in-memory checkpointer loses state when the server
+restarts and is not shared across worker processes. A production deployment
+should use persistent checkpoint storage and authenticate thread access.
+
+### Tests
+
+```powershell
+python -m unittest test_agentic_ai test_graph_agent
+python -m unittest discover -p "test_*.py"
+```
+
 ## 2. Target Users
 
 - Onion and garlic farmers
