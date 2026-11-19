@@ -393,3 +393,68 @@ The evaluator refuses to switch providers. Offline scoring tests use mocks and d
 ```powershell
 .\myenv\Scripts\python.exe -m unittest eval.test_run_eval
 ```
+
+## Checkpoint 2 — Streamlit farming assistant
+
+KandaGuide includes a Streamlit frontend connected to the existing FastAPI
+backend. The sidebar provides Chat, Season-to-variety picker, and About pages,
+and reports backend health. Chat supports the source-grounded `/ask` RAG route
+and the existing `/agent` workflow when its route is available. Messages and
+citations remain visible for the current Streamlit session.
+
+The picker reads `data/records.json` directly. It filters the verified season
+labels (including records suitable for multiple seasons), supports onion and
+garlic filters, and sorts explicit numeric storage durations before records
+without comparable month values. Maturity text is shown with the original
+planting, sowing, or transplanting wording. Only explicit numeric storage
+durations receive a “Stores up to N months” badge; qualitative keeping-quality
+descriptions and loss-study intervals are not converted to durations. Each
+variety card links to its recorded source URL.
+
+Assistant feedback is stored locally in `data/feedback.sqlite`. Each response
+can receive one thumbs-up or thumbs-down vote with an optional comment. The
+database does not store API credentials. `.env` is ignored by Git; start from
+`.env.example` to configure local settings.
+
+### Install and run
+
+From the project root, install dependencies (including Streamlit):
+
+```powershell
+python -m pip install -r requirements.txt
+```
+
+Set `API_BASE_URL` to the FastAPI base URL when it differs from the default
+`http://127.0.0.1:8000`. For model-backed chat, configure the existing provider
+variables described in [LLM integration](docs/llm-integration.md). Start the
+backend and frontend in separate terminals:
+
+```powershell
+python -m uvicorn app.main:app --reload
+```
+
+```powershell
+python -m streamlit run ui/app.py
+```
+
+The backend routes used by the frontend are:
+
+| Method | Route | Request body | Frontend use |
+|---|---|---|---|
+| GET | `/health` | — | Backend connection status |
+| GET | `/openapi.json` | — | Detect whether `/agent` is available |
+| POST | `/ask` | `{"question": "..."}` | RAG answer and citations (`answer`, `citations`, `confidence`, `follow_up`) |
+| POST | `/agent` | `{"message": "...", "thread_id": "...", "approval": null}` | Agent answer, citations, tools, and workflow status |
+
+The frontend does not synthesize citations: it displays citations returned by
+the backend and clearly marks answers without returned sources. Backend
+timeouts, unavailable routes, and invalid response bodies produce an error
+message while preserving the chat history. Agent mode is offered when the API
+schema advertises `/agent`; runtime errors from unavailable agent dependencies
+are reported in chat.
+
+### Checkpoint 2 demo screenshot
+
+The screenshot below is captured from the running Streamlit application:
+
+![KandaGuide Checkpoint 2 Demo](docs/screenshots/checkpoint-2.png)
