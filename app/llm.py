@@ -67,8 +67,18 @@ def _generate_with_groq(
         )
     except APITimeoutError:
         raise LLMProviderError("The Groq request timed out.") from None
-    except APIError:
-        raise LLMProviderError("The Groq provider could not complete the request.") from None
+    except APIError as error:
+        # Keep provider diagnostics actionable without retaining an exception
+        # body, which could contain request or account details.
+        status_code = getattr(error, "status_code", None)
+        error_type = type(error).__name__
+        diagnostic = f" ({error_type}"
+        if isinstance(status_code, int):
+            diagnostic += f", HTTP {status_code}"
+        diagnostic += ")"
+        raise LLMProviderError(
+            f"The Groq provider could not complete the request{diagnostic}."
+        ) from None
 
     if not response.choices:
         raise LLMProviderError("The Groq provider returned an empty response.")

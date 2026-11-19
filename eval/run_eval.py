@@ -121,6 +121,7 @@ def _empty_record(row: dict[str, Any]) -> dict[str, Any]:
         "grounded_answer": None, "correct_abstention": None,
         "unsupported_answer": None,
         "evaluation_status": "pending", "execution_error": None,
+        "execution_error_detail": None,
         "execution_error_chain": [],
     }
 
@@ -171,6 +172,8 @@ def _metrics(rows: list[dict[str, Any]], results: list[dict[str, Any]],
     completed_unanswerable = [item for item in completed if not item["answerable"]]
     scored_unanswerable = [item for item in unanswerable if item["evaluation_status"] == "completed"]
     all_answer_evaluated = provider_ready and len(completed) == len(rows) and not errors
+    all_answerable_evaluated = provider_ready and len(completed_answerable) == len(answerable)
+    all_unanswerable_evaluated = provider_ready and len(completed_unanswerable) == len(unanswerable)
 
     def measured_percent(field: str, denominator: int) -> float | None:
         if not provider_ready:
@@ -185,30 +188,38 @@ def _metrics(rows: list[dict[str, Any]], results: list[dict[str, Any]],
         "retrieval_hit_rate_percent": _percent(
             sum(item["retrieval_hit"] is True for item in answerable), len(answerable)
         ),
-        "answer_correctness_percent": measured_percent("answer_correctness", len(completed)),
-        "answer_correctness_proxy_percent": measured_percent("answer_correctness", len(completed)),
+        "answer_correctness_percent": (
+            measured_percent("answer_correctness", len(rows)) if all_answer_evaluated else None
+        ),
+        "answer_correctness_proxy_percent": (
+            measured_percent("answer_correctness", len(rows)) if all_answer_evaluated else None
+        ),
         "answer_correctness_scored": len(completed),
         "answer_correctness_correct": sum(item.get("answer_correctness") is True for item in completed),
-        "citation_correctness_percent": measured_percent("citation_correctness", len(completed)),
-        "citation_accuracy_percent": measured_percent("citation_correctness", len(completed)),
+        "citation_correctness_percent": (
+            measured_percent("citation_correctness", len(rows)) if all_answer_evaluated else None
+        ),
+        "citation_accuracy_percent": (
+            measured_percent("citation_correctness", len(rows)) if all_answer_evaluated else None
+        ),
         "citation_correctness_scored": len(completed),
         "citation_correctness_correct": sum(item.get("citation_correctness") is True for item in completed),
         "grounded_answer_percent": _percent(
             sum(item["grounded_answer"] is True for item in completed_answerable),
             len(completed_answerable),
-        ) if provider_ready else None,
+        ) if all_answerable_evaluated else None,
         "grounded_answer_scored": len(completed_answerable) if provider_ready else 0,
         "grounded_answer_correct": sum(item["grounded_answer"] is True for item in completed_answerable),
         "correct_abstention_percent": _percent(
             sum(item["correct_abstention"] is True for item in completed_unanswerable),
             len(completed_unanswerable),
-        ) if provider_ready else None,
+        ) if all_unanswerable_evaluated else None,
         "correct_abstention_scored": len(completed_unanswerable) if provider_ready else 0,
         "correct_abstention_correct": sum(item["correct_abstention"] is True for item in completed_unanswerable),
         "unsupported_answer_rate_percent": _percent(
             sum(item["unsupported_answer"] is True for item in unsupported_values),
             len(unsupported_values),
-        ) if provider_ready else None,
+        ) if all_unanswerable_evaluated else None,
         "q6_refusal_correct": next((item["correct_abstention"] for item in results if item["id"] == "Q6"), None),
         "answer_evaluations_completed": len(completed),
         "groq_answer_calls_completed": len(completed_answerable),
@@ -270,6 +281,12 @@ def _run_configuration(rows: list[dict[str, Any]], name: str, size: int, top_k: 
                         record["evaluation_status"] = "failed"
                         record["execution_error"] = type(error).__name__
                         record["execution_error_chain"] = _exception_types(error)
+                        cause = error.__cause__
+                        while cause is not None and not isinstance(cause, LLMConfigurationError):
+                            if type(cause).__name__ == "LLMProviderError":
+                                record["execution_error_detail"] = str(cause)
+                                break
+                            cause = cause.__cause__
                         errors.append(f"{row['id']}: {' -> '.join(record['execution_error_chain'])}")
                     else:
                         _score_answer(record, row, result)
@@ -395,7 +412,8 @@ def _summary(config_a: dict[str, Any], config_b: dict[str, Any], timestamp: str,
 
     def failed_items(payload: dict[str, Any]) -> str:
         failed = [
-            f"{item['id']} ({' -> '.join(item.get('execution_error_chain') or [item.get('execution_error') or 'error'])})"
+            f"{item['id']} ({' -> '.join(item.get('execution_error_chain') or [item.get('execution_error') or 'error'])}"
+            f"{': ' + item['execution_error_detail'] if item.get('execution_error_detail') else ''})"
             for item in payload["results"] if item["evaluation_status"] == "failed"
         ]
         skipped = [item["id"] for item in payload["results"] if item["evaluation_status"] == "skipped"]
@@ -416,13 +434,14 @@ Evaluation timestamp (UTC): {timestamp}. Both configurations use isolated tempor
 | Top-k | 3 | 5 |
 | Questions | {a['questions_evaluated']} | {b['questions_evaluated']} |
 | Retrieval hit rate | {value(a, 'retrieval_hit_rate_percent')} | {value(b, 'retrieval_hit_rate_percent')} |
-| Answer correctness (scored responses) | {value(a, 'answer_correctness_percent')} ({a['answer_correctness_correct']}/{a['answer_correctness_scored']}) | {value(b, 'answer_correctness_percent')} ({b['answer_correctness_correct']}/{b['answer_correctness_scored']}) |
-| Citation correctness (scored responses) | {value(a, 'citation_correctness_percent')} ({a['citation_correctness_correct']}/{a['citation_correctness_scored']}) | {value(b, 'citation_correctness_percent')} ({b['citation_correctness_correct']}/{b['citation_correctness_scored']}) |
-| Grounded answer rate (successful answerable responses) | {value(a, 'grounded_answer_percent')} ({a['grounded_answer_correct']}/{a['grounded_answer_scored']}) | {value(b, 'grounded_answer_percent')} ({b['grounded_answer_correct']}/{b['grounded_answer_scored']}) |
-| Correct abstention rate (successful unanswerable responses) | {value(a, 'correct_abstention_percent')} ({a['correct_abstention_correct']}/{a['correct_abstention_scored']}) | {value(b, 'correct_abstention_percent')} ({b['correct_abstention_correct']}/{b['correct_abstention_scored']}) |
+| Answer correctness (all 15 questions) | {value(a, 'answer_correctness_percent')} | {value(b, 'answer_correctness_percent')} |
+| Citation correctness (all 15 questions) | {value(a, 'citation_correctness_percent')} | {value(b, 'citation_correctness_percent')} |
+| Grounded answer rate (all answerable questions) | {value(a, 'grounded_answer_percent')} | {value(b, 'grounded_answer_percent')} |
+| Correct abstention rate (both unanswerable questions) | {value(a, 'correct_abstention_percent')} ({a['correct_abstention_correct']}/{a['correct_abstention_scored']}) | {value(b, 'correct_abstention_percent')} ({b['correct_abstention_correct']}/{b['correct_abstention_scored']}) |
 | Unsupported-answer rate (unanswerable questions) | {value(a, 'unsupported_answer_rate_percent')} | {value(b, 'unsupported_answer_rate_percent')} |
 | Groq answer calls completed / failed | {a['groq_answer_calls_completed']} / {a['groq_answer_calls_failed']} | {b['groq_answer_calls_completed']} / {b['groq_answer_calls_failed']} |
 | All answer evaluations completed / failed / skipped | {a['answer_evaluations_completed']} / {a['answer_evaluations_failed']} / {a['answer_evaluations_skipped']} | {b['answer_evaluations_completed']} / {b['answer_evaluations_failed']} / {b['answer_evaluations_skipped']} |
+| Partial completed-response observations | {a['answer_correctness_correct']}/{a['answer_correctness_scored']} passed the answer proxy; grounded {a['grounded_answer_correct']}/{a['grounded_answer_scored']} | {b['answer_correctness_correct']}/{b['answer_correctness_scored']} passed the answer proxy; grounded {b['grounded_answer_correct']}/{b['grounded_answer_scored']} |
 | Q6 exact refusal | {a['q6_refusal_correct']} | {b['q6_refusal_correct']} |
 | Mean retrieval latency | {value(a, 'average_retrieval_latency_ms', ' ms')} | {value(b, 'average_retrieval_latency_ms', ' ms')} |
 | Failed or skipped questions | {failed_items(config_a)} | {failed_items(config_b)} |

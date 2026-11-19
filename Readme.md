@@ -359,27 +359,28 @@ Sanjivani University – SJ-09 Agriculture
 
 ## RAG Evaluation Results
 
-Evaluation ran on 18 November 2026 (UTC timestamp: 2026-11-18T01:01:47Z) using isolated Chroma indexes and the local embedding model. The existing persistent collection was not changed. Groq was explicitly selected for this run using the existing `GROQ_API_KEY`; the `.env` provider setting was left untouched. Twelve of the 13 answerable questions failed during RAG answer generation with `RAGError`, so the answer evaluation is incomplete and no winner is selected.
+Evaluation ran on 19 November 2026 (UTC timestamp: 2026-11-19T01:47:07Z) across the original 15 questions using isolated Chroma indexes and the local embedding model. The persistent collection was not changed. `GROQ_API_KEY` was available and Groq was explicitly selected for this run; 12 of 13 answerable calls per configuration failed with `APIConnectionError`. The key was not printed or included in the results. Answer quality metrics and the winner remain Pending because both runs did not complete.
 
 | Metric | Configuration A | Configuration B |
 |---|---:|---:|
 | Chunk size | 400 | 600 |
 | Top-k | 3 | 5 |
 | Retrieval hit rate | 84.62% | 100.0% |
-| Answer correctness | 66.67% (2/3 completed responses) | 66.67% (2/3 completed responses) |
-| Citation correctness | 66.67% (2/3 completed responses) | 66.67% (2/3 completed responses) |
-| Grounded answer rate | 0.0% (0/1 completed answerable response) | 0.0% (0/1 completed answerable response) |
+| Answer correctness (all 15 questions) | Pending | Pending |
+| Citation correctness (all 15 questions) | Pending | Pending |
+| Grounded answer rate (all 13 answerable questions) | Pending | Pending |
 | Correct abstention rate | 100.0% (2/2) | 100.0% (2/2) |
 | Unsupported-answer rate | 0.0% (0/2) | 0.0% (0/2) |
 | Groq answer calls completed / failed | 1 / 12 | 1 / 12 |
+| All answer evaluations completed / failed / skipped | 3 / 12 / 0 | 3 / 12 / 0 |
 | Q6 refusal correctness | True | True |
-| Mean retrieval latency | 21.34 ms | 20.37 ms |
+| Mean retrieval latency | 16.03 ms | 16.03 ms |
 
-**Winning configuration:** Pending. Both configurations failed to complete all 15 answer evaluations. Config B had the higher retrieval hit rate, but answer quality is not comparable enough to select a winner.
+**Winning configuration:** Pending. The selection rule requires all 15 answer evaluations to complete in both configurations. Config B has a higher retrieval hit rate, but incomplete Groq evaluations prevent a quality comparison.
 
-The completed-response correctness metrics use only successful answer evaluations; failed API calls are excluded from score denominators and listed in the result JSON. Each configuration completed three answer evaluations: the two deterministic abstentions (Q6 and Q10) plus Q9, which returned “I don't know.” despite retrieving DOGR chunks. Q9 failed answer correctness, citation correctness, and groundedness scoring and needs manual review. The other 12 failed answer evaluations are Q1–Q5, Q7–Q8, and Q11–Q15.
+Each configuration completed three responses: deterministic abstentions Q6 and Q10, and Q9, which returned "I don't know." despite retrieving DOGR chunks. Q9 is an incorrect abstention for an answerable question. The other 12 answerable questions (Q1-Q5, Q7-Q8, Q11-Q15) failed with `APIConnectionError`. Partial response observations remain in the per-question results and are not presented as complete aggregate answer or citation scores.
 
-Evaluation materials: [dataset](eval/eval_set.json), [runner](eval/run_eval.py), [Configuration A results](eval/results_config_a.json), [Configuration B results](eval/results_config_b.json), and [summary](eval/evaluation_summary.md). Answer correctness uses at least 60% expected-keyword coverage as a transparent proxy, not objective ground truth. Citation correctness checks cited chunk IDs, source matches, and expected sources. Groundedness additionally checks expected-keyword coverage in retrieved context. See the summary for full scoring and winner criteria.
+Evaluation materials: [dataset](eval/eval_set.json), [runner](eval/run_eval.py), [Configuration A results](eval/results_config_a.json), [Configuration B results](eval/results_config_b.json), and [summary](eval/evaluation_summary.md). Answer correctness uses at least 60% expected-keyword coverage as a transparent proxy, not objective ground truth. Citation correctness checks cited chunk IDs, source matches, and expected sources. Groundedness also checks expected-keyword coverage in retrieved context. See the summary for full scoring and winner criteria.
 
 To repeat the Groq evaluation in PowerShell (with `GROQ_API_KEY` configured):
 

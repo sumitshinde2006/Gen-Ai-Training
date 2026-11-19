@@ -1,5 +1,5 @@
 {
-  "evaluation_timestamp_utc": "2026-11-18T01:01:47+00:00",
+  "evaluation_timestamp_utc": "2026-11-19T01:47:07+00:00",
   "configuration": {
     "name": "B",
     "chunk_size_words": 600,
@@ -17,15 +17,15 @@
     "answerable_questions": 13,
     "unanswerable_questions": 2,
     "retrieval_hit_rate_percent": 100.0,
-    "answer_correctness_percent": 66.67,
-    "answer_correctness_proxy_percent": 66.67,
+    "answer_correctness_percent": null,
+    "answer_correctness_proxy_percent": null,
     "answer_correctness_scored": 3,
     "answer_correctness_correct": 2,
-    "citation_correctness_percent": 66.67,
-    "citation_accuracy_percent": 66.67,
+    "citation_correctness_percent": null,
+    "citation_accuracy_percent": null,
     "citation_correctness_scored": 3,
     "citation_correctness_correct": 2,
-    "grounded_answer_percent": 0.0,
+    "grounded_answer_percent": null,
     "grounded_answer_scored": 1,
     "grounded_answer_correct": 0,
     "correct_abstention_percent": 100.0,
@@ -39,20 +39,20 @@
     "answer_evaluations_skipped": 0,
     "answer_evaluations_failed": 12,
     "execution_errors": [
-      "Q1: RAGError",
-      "Q2: RAGError",
-      "Q3: RAGError",
-      "Q4: RAGError",
-      "Q5: RAGError",
-      "Q7: RAGError",
-      "Q8: RAGError",
-      "Q11: RAGError",
-      "Q12: RAGError",
-      "Q13: RAGError",
-      "Q14: RAGError",
-      "Q15: RAGError"
+      "Q1: RAGError -> LLMProviderError",
+      "Q2: RAGError -> LLMProviderError",
+      "Q3: RAGError -> LLMProviderError",
+      "Q4: RAGError -> LLMProviderError",
+      "Q5: RAGError -> LLMProviderError",
+      "Q7: RAGError -> LLMProviderError",
+      "Q8: RAGError -> LLMProviderError",
+      "Q11: RAGError -> LLMProviderError",
+      "Q12: RAGError -> LLMProviderError",
+      "Q13: RAGError -> LLMProviderError",
+      "Q14: RAGError -> LLMProviderError",
+      "Q15: RAGError -> LLMProviderError"
     ],
-    "average_retrieval_latency_ms": 20.37,
+    "average_retrieval_latency_ms": 16.03,
     "llm_evaluation_status": "incomplete: one or more answer evaluations failed",
     "answer_correctness_method": "For answerable questions, at least 60% of manually prepared expected_keywords must occur in the answer. For unanswerable questions, the exact response \"I don't know.\" is required. This transparent keyword/refusal proxy is not a semantic judge.",
     "citation_correctness_method": "A response passes if every emitted citation's chunk ID exists in the retrieved chunks, its source matches that chunk, and the source is listed in expected_sources. An abstention with no citations is not treated as a correct citation for an answerable question.",
@@ -120,8 +120,10 @@
       "unsupported_answer": null,
       "evaluation_status": "failed",
       "execution_error": "RAGError",
+      "execution_error_detail": "The Groq provider could not complete the request (APIConnectionError).",
       "execution_error_chain": [
-        "RAGError"
+        "RAGError",
+        "LLMProviderError"
       ]
     },
     {
@@ -184,8 +186,10 @@
       "unsupported_answer": null,
       "evaluation_status": "failed",
       "execution_error": "RAGError",
+      "execution_error_detail": "The Groq provider could not complete the request (APIConnectionError).",
       "execution_error_chain": [
-        "RAGError"
+        "RAGError",
+        "LLMProviderError"
       ]
     },
     {
@@ -248,8 +252,10 @@
       "unsupported_answer": null,
       "evaluation_status": "failed",
       "execution_error": "RAGError",
+      "execution_error_detail": "The Groq provider could not complete the request (APIConnectionError).",
       "execution_error_chain": [
-        "RAGError"
+        "RAGError",
+        "LLMProviderError"
       ]
     },
     {
@@ -312,8 +318,10 @@
       "unsupported_answer": null,
       "evaluation_status": "failed",
       "execution_error": "RAGError",
+      "execution_error_detail": "The Groq provider could not complete the request (APIConnectionError).",
       "execution_error_chain": [
-        "RAGError"
+        "RAGError",
+        "LLMProviderError"
       ]
     },
     {
@@ -376,8 +384,10 @@
       "unsupported_answer": null,
       "evaluation_status": "failed",
       "execution_error": "RAGError",
+      "execution_error_detail": "The Groq provider could not complete the request (APIConnectionError).",
       "execution_error_chain": [
-        "RAGError"
+        "RAGError",
+        "LLMProviderError"
       ]
     },
     {
@@ -440,6 +450,7 @@
       "unsupported_answer": false,
       "evaluation_status": "completed",
       "execution_error": null,
+      "execution_error_detail": null,
       "execution_error_chain": []
     },
     {
@@ -502,8 +513,10 @@
       "unsupported_answer": null,
       "evaluation_status": "failed",
       "execution_error": "RAGError",
+      "execution_error_detail": "The Groq provider could not complete the request (APIConnectionError).",
       "execution_error_chain": [
-        "RAGError"
+        "RAGError",
+        "LLMProviderError"
       ]
     },
     {
@@ -566,8 +579,10 @@
       "unsupported_answer": null,
       "evaluation_status": "failed",
       "execution_error": "RAGError",
+      "execution_error_detail": "The Groq provider could not complete the request (APIConnectionError).",
       "execution_error_chain": [
-        "RAGError"
+        "RAGError",
+        "LLMProviderError"
       ]
     },
     {
@@ -630,6 +645,7 @@
       "unsupported_answer": null,
       "evaluation_status": "completed",
       "execution_error": null,
+      "execution_error_detail": null,
       "execution_error_chain": []
     },
     {
@@ -692,6 +708,7 @@
       "unsupported_answer": false,
       "evaluation_status": "completed",
       "execution_error": null,
+      "execution_error_detail": null,
       "execution_error_chain": []
     },
     {
@@ -754,8 +771,10 @@
       "unsupported_answer": null,
       "evaluation_status": "failed",
       "execution_error": "RAGError",
+      "execution_error_detail": "The Groq provider could not complete the request (APIConnectionError).",
       "execution_error_chain": [
-        "RAGError"
+        "RAGError",
+        "LLMProviderError"
       ]
     },
     {
@@ -818,8 +837,10 @@
       "unsupported_answer": null,
       "evaluation_status": "failed",
       "execution_error": "RAGError",
+      "execution_error_detail": "The Groq provider could not complete the request (APIConnectionError).",
       "execution_error_chain": [
-        "RAGError"
+        "RAGError",
+        "LLMProviderError"
       ]
     },
     {
@@ -882,8 +903,10 @@
       "unsupported_answer": null,
       "evaluation_status": "failed",
       "execution_error": "RAGError",
+      "execution_error_detail": "The Groq provider could not complete the request (APIConnectionError).",
       "execution_error_chain": [
-        "RAGError"
+        "RAGError",
+        "LLMProviderError"
       ]
     },
     {
@@ -946,8 +969,10 @@
       "unsupported_answer": null,
       "evaluation_status": "failed",
       "execution_error": "RAGError",
+      "execution_error_detail": "The Groq provider could not complete the request (APIConnectionError).",
       "execution_error_chain": [
-        "RAGError"
+        "RAGError",
+        "LLMProviderError"
       ]
     },
     {
@@ -1010,8 +1035,10 @@
       "unsupported_answer": null,
       "evaluation_status": "failed",
       "execution_error": "RAGError",
+      "execution_error_detail": "The Groq provider could not complete the request (APIConnectionError).",
       "execution_error_chain": [
-        "RAGError"
+        "RAGError",
+        "LLMProviderError"
       ]
     }
   ]

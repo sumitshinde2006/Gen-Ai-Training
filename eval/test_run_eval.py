@@ -87,6 +87,23 @@ class EvaluationScoringTests(unittest.TestCase):
             self.assertEqual(payload["metrics"]["answer_evaluations_failed"], 1)
             self.assertEqual(payload["results"][0]["evaluation_status"], "failed")
 
+    def test_partial_api_failures_leave_aggregate_quality_pending(self):
+        answerable = row()
+        unanswerable = row(answerable=False)
+        completed = run_eval._empty_record(unanswerable)
+        run_eval._score_answer(completed, unanswerable, {
+            "answer": "I don't know.", "citations": [], "confidence": "low",
+        })
+        failed = run_eval._empty_record(answerable)
+        failed["evaluation_status"] = "failed"
+        metrics = run_eval._metrics(
+            [answerable, unanswerable], [completed, failed], True, ["QX: LLMProviderError"]
+        )
+        self.assertIsNone(metrics["answer_correctness_percent"])
+        self.assertIsNone(metrics["citation_correctness_percent"])
+        self.assertIsNone(metrics["grounded_answer_percent"])
+        self.assertEqual(metrics["correct_abstention_percent"], 100.0)
+
     def test_groq_provider_is_required(self):
         with patch.dict("os.environ", {"LLM_PROVIDER": "gemini"}, clear=False):
             ready, message = run_eval._groq_status()
