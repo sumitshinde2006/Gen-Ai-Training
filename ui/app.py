@@ -359,18 +359,111 @@ def chat_page(agent_available: bool) -> None:
 def main() -> None:
     st.set_page_config(page_title="KandaGuide – Your AI Farming Assistant", page_icon="🌱", layout="wide")
     st.markdown("""<style>
-    .stApp { background: #f7faf6; }
-    [data-testid="stSidebar"] { background: #edf5ec; }
-    h1, h2, h3 { color: #205c39; }
-    div[data-testid="stMetric"] { background: white; border-radius: 12px; padding: 14px; }
+    :root {
+      --forest: #143d2e;
+      --leaf: #2f7654;
+      --lime: #d8ed9b;
+      --ink: #20362b;
+      --muted: #68766d;
+      --paper: #f3f6f0;
+      --line: #e1e8df;
+    }
+    .stApp {
+      background: radial-gradient(ellipse at 75% 0%, #edf5e8 0, transparent 34%), var(--paper);
+      color: var(--ink);
+    }
+    [data-testid="stMainBlockContainer"] { max-width: 1240px; padding-top: 2.1rem; }
+    [data-testid="stSidebar"] {
+      background: linear-gradient(165deg, #12382b 0%, #174633 60%, #1b5039 100%);
+      border-right: 1px solid rgba(255,255,255,.08);
+    }
+    [data-testid="stSidebar"] * { color: #edf5ed; }
+    [data-testid="stSidebar"] [data-testid="stRadio"] > div { gap: .35rem; }
+    [data-testid="stSidebar"] [role="radiogroup"] label {
+      padding: .55rem .7rem; border-radius: .7rem; transition: background .15s ease;
+    }
+    [data-testid="stSidebar"] [role="radiogroup"] label:hover { background: rgba(255,255,255,.08); }
+    [data-testid="stSidebar"] [role="radiogroup"] label:has(input:checked) {
+      background: rgba(216,237,155,.15); outline: 1px solid rgba(216,237,155,.22);
+    }
+    [data-testid="stSidebar"] input[type="radio"] { accent-color: var(--lime); }
+    [data-testid="stSidebar"] [data-testid="stAlert"] {
+      background: #e5f1de !important; border-color: #c8dfb4 !important;
+    }
+    [data-testid="stSidebar"] [data-testid="stAlert"] * { color: #214d35 !important; }
+    h1, h2, h3 { color: var(--forest); letter-spacing: -.025em; }
+    h2 { margin-top: .4rem; }
+    a { color: var(--leaf) !important; font-weight: 650; }
+    [data-testid="stVerticalBlockBorderWrapper"] {
+      background: rgba(255,255,255,.88); border: 1px solid var(--line) !important;
+      border-radius: 1rem !important; box-shadow: 0 8px 24px rgba(23,55,37,.055);
+      transition: transform .16s ease, box-shadow .16s ease;
+    }
+    [data-testid="stVerticalBlockBorderWrapper"]:hover {
+      transform: translateY(-2px); box-shadow: 0 12px 28px rgba(23,55,37,.09);
+    }
+    [data-testid="stVerticalBlockBorderWrapper"] h3 { margin-bottom: .25rem; }
+    [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stAlert"] {
+      border: 1px solid #dbe9c2; border-radius: .75rem;
+    }
+    [data-testid="stChatMessage"] {
+      background: rgba(255,255,255,.84); border: 1px solid var(--line);
+      border-radius: 1rem; padding: 1rem 1.1rem; margin-bottom: .7rem;
+    }
+    [data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-assistant"]) {
+      background: #fff; border-left: 3px solid #80a96c;
+    }
+    [data-testid="stChatInput"] textarea,
+    [data-testid="stTextInput"] input,
+    [data-testid="stSelectbox"] [data-baseweb="select"] > div {
+      border-radius: .7rem;
+    }
+    [data-testid="stChatInput"] textarea:focus,
+    [data-testid="stTextInput"] input:focus { border-color: #6d9b6e; }
+    [data-testid="stButton"] button, [data-testid="stFormSubmitButton"] button {
+      border-radius: .7rem; font-weight: 650; transition: transform .12s ease, box-shadow .12s ease;
+    }
+    [data-testid="stButton"] button:hover, [data-testid="stFormSubmitButton"] button:hover {
+      transform: translateY(-1px); box-shadow: 0 5px 14px rgba(22,67,43,.12);
+      border-color: #7ea47c;
+    }
+    .brand-hero {
+      position: relative; overflow: hidden; margin: 0 0 1.55rem; padding: 1.6rem 1.85rem;
+      color: #f4f8f1; border-radius: 1.2rem;
+      background: linear-gradient(112deg, #143d2e 0%, #1e5a40 72%, #39754b 100%);
+      box-shadow: 0 14px 32px rgba(24,65,43,.16);
+    }
+    .brand-hero:after {
+      content: ""; position: absolute; right: -3rem; top: -6rem; width: 19rem; height: 19rem;
+      border: 1px solid rgba(216,237,155,.2); border-radius: 50%;
+      box-shadow: 0 0 0 2.2rem rgba(216,237,155,.045), 0 0 0 4.4rem rgba(216,237,155,.035);
+      pointer-events: none;
+    }
+    .brand-kicker { color: var(--lime); font-size: .72rem; font-weight: 750; letter-spacing: .16em; }
+    .brand-hero h1 { color: white; margin: .55rem 0 .25rem; font-size: clamp(1.8rem, 3vw, 2.45rem); }
+    .brand-hero h1 span { color: #d8e8d8; font-weight: 450; }
+    .brand-hero p { color: #d9e8dd; margin: 0; font-size: 1rem; }
+    .section-kicker { color: var(--leaf); font-size: .72rem; font-weight: 750; letter-spacing: .13em; margin: .2rem 0 .35rem; }
+    .section-intro { color: var(--muted); margin: -.25rem 0 1rem; }
+    @media (max-width: 760px) {
+      [data-testid="stMainBlockContainer"] { padding: 1rem .8rem 2rem; }
+      .brand-hero { padding: 1.3rem; }
+      .brand-hero h1 span { display: block; }
+    }
     </style>""", unsafe_allow_html=True)
-    st.title("KandaGuide – Your AI Farming Assistant")
-    st.caption("AI-powered guidance for onion and garlic farmers.")
+    st.markdown("""<div class="brand-hero">
+      <div class="brand-kicker">FIELD GUIDE &nbsp;·&nbsp; ONION + GARLIC</div>
+      <h1>KandaGuide <span>&ndash; Your AI Farming Assistant</span></h1>
+      <p>AI-powered guidance for onion and garlic farmers.</p>
+    </div>""", unsafe_allow_html=True)
     with st.sidebar:
         st.markdown("## 🌱 KandaGuide")
+        st.caption("Your source-backed farming companion")
+        st.divider()
         page = st.radio("Navigation", ("Chat", "Season-to-variety picker", "About KandaGuide"), label_visibility="collapsed")
         st.divider()
-        st.caption(f"Backend: `{API_BASE_URL}`")
+        st.caption("CONNECTION")
+        st.caption(f"`{API_BASE_URL}`")
         with st.spinner("Checking backend…"):
             healthy, agent_available, detail = check_backend()
         if healthy:
