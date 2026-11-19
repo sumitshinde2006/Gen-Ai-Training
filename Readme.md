@@ -459,3 +459,59 @@ are reported in chat.
 The screenshot below is captured from the running Streamlit application:
 
 ![KandaGuide Checkpoint 2 Demo](docs/screenshots/checkpoint-2.png)
+
+## Run with Docker
+
+### Prerequisites
+
+- Docker Desktop with Docker Compose.
+- A Groq API key for model-backed `/chat`, `/ask`, and RAG-powered agent answers. Health, records, variety search, and the deterministic storage calculation can run without an LLM key.
+
+### Clone and configure
+
+Clone the repository and open a terminal in the project root:
+
+```powershell
+git clone <repository-url>
+cd <repository-directory>
+Copy-Item .env.example .env
+```
+
+Edit `.env` and set `GROQ_API_KEY` to your key. `LLM_PROVIDER` defaults to `groq`; set it to `gemini` and provide `GEMINI_API_KEY` if you use Gemini. Keep `.env` local; it is ignored by Git and is never copied into the image. Docker Compose reads these values from `.env` and passes them to the API container at runtime.
+
+### Build and start both services
+
+```powershell
+docker compose up --build
+```
+
+Compose builds the shared Python image, starts the FastAPI service, waits for its `/health` check, and then starts Streamlit. Open:
+
+- Streamlit: <http://localhost:8501>
+- FastAPI: <http://localhost:8000>
+- Swagger: <http://localhost:8000/docs>
+
+The Streamlit container connects to FastAPI at `http://api:8000` over the Compose network. If you want semantic `/ask` answers, create the document index once after startup:
+
+```powershell
+docker compose exec api python -m app.vectorstore
+```
+
+The Chroma index is stored in the named `chroma_data` volume and remains available across container rebuilds and restarts. Streamlit feedback is stored separately in `feedback_data`. `docker compose down` stops and removes containers but keeps both named volumes. To remove the stored indexes and feedback too, run `docker compose down --volumes`.
+
+### Stop or rebuild
+
+```powershell
+docker compose down
+docker compose up --build
+```
+
+The second command rebuilds the image and starts both services again after code or dependency changes.
+
+### Troubleshooting
+
+- **Port already in use:** Change the host side of the `ports` mapping in `docker-compose.yml` (for example, `8502:8501`), then use the new host port in your browser.
+- **Missing API key:** Records, search, health, and deterministic calculations still work. Set `GROQ_API_KEY` in `.env` (or select Gemini and set `GEMINI_API_KEY`) to enable model-backed responses, then restart with `docker compose up -d`.
+- **API health check failing:** Inspect `docker compose logs api`. Check that the image built successfully and that port 8000 is available inside the container.
+- **UI cannot connect to backend:** Keep `API_BASE_URL=http://api:8000` for the UI service. `localhost` inside the UI container points back to the UI container itself.
+- **Docker image build errors:** Check Docker Desktop is running and that the build has network access to download Python packages and the embedding model. Retry with `docker compose build --no-cache` for a clean rebuild.
