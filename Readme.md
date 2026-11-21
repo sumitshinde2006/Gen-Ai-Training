@@ -12,11 +12,11 @@
 
 | Checkpoint | Status |
 |---|---|
-| CI workflow | Configured for pushes to `main` and pull requests targeting `main`; GitHub run pending |
-| Ruff | Passed locally with `ruff check .` |
-| Pytest | Passed locally: 79 tests and 26 subtests |
-| Docker image build | Pending: local Docker daemon is unavailable; GitHub run pending |
-| Feature branch / pull request | `feature/ci-cd-deployment`; pull request pending |
+| CI workflow | Configured for pushes to `main` and pull requests targeting `main`; rerun pending |
+| Ruff | Passed locally with `ruff check .`; rerun pending |
+| Pytest | Passed locally: 79 tests and 26 subtests; rerun pending |
+| Docker image build | Local Docker daemon unavailable; GitHub Actions build pending |
+| Feature branch / pull request | `feature/ci-cd-deployment`; [#1 open](https://github.com/sumitshinde2006/Gen-Ai-Training/pull/1) |
 | Render API / Streamlit services | Blueprint configured; deployment pending |
 | Public API health check | Pending deployment |
 | Public application URLs | Not available until a Render deployment is verified |
@@ -27,7 +27,8 @@ The [CI workflow](https://github.com/sumitshinde2006/Gen-Ai-Training/actions/wor
 runs three independent checks: `ruff check .`, `python -m pytest -v` with
 project and development dependencies, and a Docker Buildx image build from the
 root `Dockerfile`. Tests run with empty Groq and Gemini keys; provider calls in
-the test suite are mocked, so CI does not need paid LLM credentials.
+the test suite are mocked, and embedding tests use deterministic fixtures so
+CI does not need paid LLM credentials or external model downloads.
 
 The CI badge above reports the workflow's actual status; it is not a claim that
 the checks have passed. The requested pull request title is **Add GitHub
@@ -480,11 +481,11 @@ Evaluation ran on 21 November 2026 (UTC timestamp: 2026-11-21T00:04:39Z) across 
 | Groq answer calls completed / failed | 1 / 12 | 1 / 12 |
 | All answer evaluations completed / failed / skipped | 3 / 12 / 0 | 3 / 12 / 0 |
 | Q6 refusal correctness | True | True |
-| Mean retrieval latency | 16.03 ms | 16.03 ms |
+| Mean retrieval latency | 17.52 ms | 20.49 ms |
 
-**Winning configuration:** Pending. The selection rule requires all 15 answer evaluations to complete in both configurations. Config B has a higher retrieval hit rate, but incomplete Groq evaluations prevent a quality comparison.
+**Winning configuration:** Pending. The selection rule compares answer correctness, citation correctness, grounding, correct abstention, and then retrieval performance; incomplete Groq evaluations prevent a full quality comparison. Config B had the higher retrieval hit rate (100.0% vs. 84.62%), but that alone is insufficient to select a winner.
 
-Each configuration completed three responses: deterministic abstentions Q6 and Q10, and Q9, which returned "I don't know." despite retrieving DOGR chunks. Q9 is an incorrect abstention for an answerable question. The other 12 answerable questions (Q1-Q5, Q7-Q8, Q11-Q15) failed with `APIConnectionError`. Partial response observations remain in the per-question results and are not presented as complete aggregate answer or citation scores.
+Each configuration completed three answer evaluations: deterministic abstentions Q6 and Q10, and Q9, which returned "I don't know." despite retrieving DOGR chunks. Q9 is an incorrect abstention for an answerable question. Of these three partial responses, 2 passed the answer proxy and 0 of 1 answerable responses was grounded. The other 12 answerable questions (Q1-Q5, Q7-Q8, Q11-Q15) failed with `APIConnectionError`. Partial observations are recorded in the per-question results but are not presented as complete aggregate answer or citation scores.
 
 Evaluation materials: [dataset](eval/eval_set.json), [runner](eval/run_eval.py), [Configuration A results](eval/results_config_a.json), [Configuration B results](eval/results_config_b.json), and [summary](eval/evaluation_summary.md). Answer correctness uses at least 60% expected-keyword coverage as a transparent proxy, not objective ground truth. Citation correctness checks cited chunk IDs, source matches, and expected sources. Groundedness also checks expected-keyword coverage in retrieved context. See the summary for full scoring and winner criteria.
 
