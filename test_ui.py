@@ -79,6 +79,16 @@ class FeedbackTests(unittest.TestCase):
 
 
 class BackendClientTests(unittest.TestCase):
+    def test_api_base_url_accepts_render_hostport_and_full_urls(self):
+        self.assertEqual(
+            app._normalize_api_base_url("kandaguide-api:10000"),
+            "http://kandaguide-api:10000",
+        )
+        self.assertEqual(
+            app._normalize_api_base_url("https://api.example.org/"),
+            "https://api.example.org",
+        )
+
     def test_rag_and_agent_use_the_existing_api_payloads(self):
         response = Mock()
         citation = {"title": "Source title", "source": "https://example.org/source.pdf", "page": 4}

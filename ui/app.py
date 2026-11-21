@@ -20,7 +20,19 @@ ROOT = Path(__file__).resolve().parents[1]
 load_dotenv(ROOT / ".env")
 DATA_FILE = ROOT / "data" / "records.json"
 FEEDBACK_DB = Path(os.getenv("FEEDBACK_DB_PATH", str(ROOT / "data" / "feedback.sqlite")))
-API_BASE_URL = os.getenv("API_BASE_URL", "http://127.0.0.1:8000").rstrip("/")
+
+
+def _normalize_api_base_url(value: str) -> str:
+    """Accept full URLs and Render's internal host:port service reference."""
+    value = value.strip().rstrip("/")
+    if not value.lower().startswith(("http://", "https://")):
+        value = f"http://{value}"
+    return value
+
+
+API_BASE_URL = _normalize_api_base_url(
+    os.getenv("API_BASE_URL", "http://127.0.0.1:8000")
+)
 REQUEST_TIMEOUT = (3.05, 30)
 SEASONS = ("Kharif", "Late Kharif", "Rabi")
 

@@ -1,0 +1,42 @@
+services:
+  - type: web
+    name: kandaguide-api
+    runtime: docker
+    plan: standard
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    dockerCommand: >-
+      sh -c 'exec uvicorn app.main:app --host 0.0.0.0 --port "${PORT:-10000}"'
+    healthCheckPath: /health
+    disk:
+      name: kandaguide-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: LLM_PROVIDER
+        value: groq
+      - key: GROQ_API_KEY
+        sync: false
+      - key: KANDAGUIDE_CHROMA_PATH
+        value: /var/data/chroma
+      - key: HF_HOME
+        value: /var/data/huggingface
+
+  - type: web
+    name: kandaguide-ui
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    dockerCommand: >-
+      sh -c 'exec streamlit run ui/app.py --server.address=0.0.0.0 --server.port="${PORT:-10000}"'
+    envVars:
+      - key: API_BASE_URL
+        fromService:
+          type: web
+          name: kandaguide-api
+          property: hostport
+      - key: FEEDBACK_DB_PATH
+        value: /tmp/feedback.sqlite
+      - key: STREAMLIT_SERVER_HEADLESS
+        value: "true"
