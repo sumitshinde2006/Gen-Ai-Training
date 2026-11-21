@@ -12,7 +12,7 @@
 
 | Checkpoint | Status |
 |---|---|
-| CI workflow | All three PR jobs passed on [run #3](https://github.com/sumitshinde2006/Gen-Ai-Training/actions/runs/44845132528); [post-merge `main` run #4](https://github.com/sumitshinde2006/Gen-Ai-Training/actions/runs/44846096770) triggered |
+| CI workflow | All three PR jobs passed on [run #3](https://github.com/sumitshinde2006/Gen-Ai-Training/actions/runs/44845132528); all three jobs passed on post-merge [`main` run #4](https://github.com/sumitshinde2006/Gen-Ai-Training/actions/runs/44846096770) |
 | Ruff | Passed on PR run #3 and locally with `ruff check .` |
 | Pytest | Passed on PR run #3: 79 tests and 26 subtests; local run also passed |
 | Docker image build | Docker Buildx passed on PR run #3; local Docker Desktop could not start |
