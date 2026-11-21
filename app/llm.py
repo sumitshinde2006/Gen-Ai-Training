@@ -26,6 +26,21 @@ class LLMProviderError(LLMError):
     """Raised when a configured provider cannot generate a response."""
 
 
+def _groq_error_message(error: BaseException) -> str:
+    """Return actionable, credential-safe diagnostics for Groq API errors."""
+    status_code = getattr(error, "status_code", None)
+    if status_code == 401:
+        return "Groq rejected the API key (HTTP 401); verify GROQ_API_KEY in .env."
+    if status_code == 429:
+        return "Groq rate limit reached (HTTP 429); retry after the provider limit resets."
+
+    diagnostic = f" ({type(error).__name__}"
+    if isinstance(status_code, int):
+        diagnostic += f", HTTP {status_code}"
+    diagnostic += ")"
+    return f"The Groq provider could not complete the request{diagnostic}."
+
+
 def _provider_config() -> Tuple[str, str, str]:
     provider = os.getenv("LLM_PROVIDER", "groq").strip().lower()
     if provider not in DEFAULT_MODELS:
@@ -70,15 +85,7 @@ def _generate_with_groq(
     except APIError as error:
         # Keep provider diagnostics actionable without retaining an exception
         # body, which could contain request or account details.
-        status_code = getattr(error, "status_code", None)
-        error_type = type(error).__name__
-        diagnostic = f" ({error_type}"
-        if isinstance(status_code, int):
-            diagnostic += f", HTTP {status_code}"
-        diagnostic += ")"
-        raise LLMProviderError(
-            f"The Groq provider could not complete the request{diagnostic}."
-        ) from None
+        raise LLMProviderError(_groq_error_message(error)) from None
 
     if not response.choices:
         raise LLMProviderError("The Groq provider returned an empty response.")
