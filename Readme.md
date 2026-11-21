@@ -12,11 +12,11 @@
 
 | Checkpoint | Status |
 |---|---|
-| CI workflow | Configured for pushes to `main` and pull requests targeting `main`; rerun pending |
-| Ruff | Passed locally with `ruff check .`; rerun pending |
-| Pytest | Passed locally: 79 tests and 26 subtests; rerun pending |
-| Docker image build | Local Docker daemon unavailable; GitHub Actions build pending |
-| Feature branch / pull request | `feature/ci-cd-deployment`; [#1 open](https://github.com/sumitshinde2006/Gen-Ai-Training/pull/1) |
+| CI workflow | All three PR jobs passed on [run #3](https://github.com/sumitshinde2006/Gen-Ai-Training/actions/runs/44845132528); [post-merge `main` run #4](https://github.com/sumitshinde2006/Gen-Ai-Training/actions/runs/44846096770) triggered |
+| Ruff | Passed on PR run #3 and locally with `ruff check .` |
+| Pytest | Passed on PR run #3: 79 tests and 26 subtests; local run also passed |
+| Docker image build | Docker Buildx passed on PR run #3; local Docker Desktop could not start |
+| Feature branch / pull request | `feature/ci-cd-deployment`; [#1 merged](https://github.com/sumitshinde2006/Gen-Ai-Training/pull/1) |
 | Render API / Streamlit services | Blueprint configured; deployment pending |
 | Public API health check | Pending deployment |
 | Public application URLs | Not available until a Render deployment is verified |
@@ -30,10 +30,11 @@ root `Dockerfile`. Tests run with empty Groq and Gemini keys; provider calls in
 the test suite are mocked, and embedding tests use deterministic fixtures so
 CI does not need paid LLM credentials or external model downloads.
 
-The CI badge above reports the workflow's actual status; it is not a claim that
-the checks have passed. The requested pull request title is **Add GitHub
-Actions CI and Render deployment configuration**. It must not be merged until
-all three PR checks pass and any required approval is present.
+The CI badge above reports the live workflow status. Pull request
+[#1](https://github.com/sumitshinde2006/Gen-Ai-Training/pull/1), titled
+**Add GitHub Actions CI and Render deployment configuration**, was merged only
+after all three PR checks passed; the post-merge `main` workflow is linked in
+the status table above.
 
 ### Render deployment
 
