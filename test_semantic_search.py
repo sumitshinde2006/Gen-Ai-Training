@@ -82,9 +82,14 @@ class EmbeddingTests(unittest.TestCase):
         self.assertEqual(embed_texts([]), [])
         self.assertEqual(embed_query("  "), [])
 
-    def test_real_model_returns_numeric_vectors(self):
-        vectors = embed_texts(["onion bulb production", "garlic storage"])
-        query = embed_query("How should garlic bulbs be stored?")
+    def test_embedding_functions_return_numeric_vectors(self):
+        class FakeModel:
+            def encode(self, texts, **kwargs):
+                return [[1.0] * 384 for _ in texts]
+
+        with patch("app.embed._load_model", return_value=FakeModel()):
+            vectors = embed_texts(["onion bulb production", "garlic storage"])
+            query = embed_query("How should garlic bulbs be stored?")
 
         self.assertEqual(len(vectors), 2)
         self.assertEqual(len(vectors[0]), 384)
@@ -106,42 +111,55 @@ class PersistentVectorStoreTests(unittest.TestCase):
         self.assertEqual(len(source_chunks), 2)
 
         with tempfile.TemporaryDirectory() as directory:
-            try:
-                self.assertEqual(index_chunks(source_chunks, directory), 2)
-                collection = get_collection(directory)
-                self.assertEqual(collection.name, COLLECTION_NAME)
-                self.assertEqual(
-                    collection.metadata["embedding_model"],
-                    "sentence-transformers/all-MiniLM-L6-v2",
-                )
-                self.assertEqual(collection.metadata["hnsw:search_ef"], 100)
-                self.assertEqual(collection.count(), 2)
+            first_embedding = [1.0, 0.0]
+            second_embedding = [0.0, 1.0]
 
-                index_chunks(source_chunks, directory)
-                self.assertEqual(get_collection(directory).count(), 2)
+            def fake_embed_texts(texts):
+                return [
+                    first_embedding if text == source_chunks[0]["text"] else second_embedding
+                    for text in texts
+                ]
 
-                matches = semantic_search(
-                    source_chunks[0]["text"][:160],
-                    top_k=1,
-                    persist_directory=directory,
-                )
-                self.assertEqual(matches[0]["chunk_id"], source_chunks[0]["chunk_id"])
-                self.assertIsNone(matches[0]["page"])
-                self.assertGreaterEqual(matches[0]["distance"], 0)
+            with (
+                patch("app.vectorstore.embed_texts", side_effect=fake_embed_texts),
+                patch("app.vectorstore.embed_query", return_value=first_embedding),
+            ):
+                try:
+                    self.assertEqual(index_chunks(source_chunks, directory), 2)
+                    collection = get_collection(directory)
+                    self.assertEqual(collection.name, COLLECTION_NAME)
+                    self.assertEqual(
+                        collection.metadata["embedding_model"],
+                        "sentence-transformers/all-MiniLM-L6-v2",
+                    )
+                    self.assertEqual(collection.metadata["hnsw:search_ef"], 100)
+                    self.assertEqual(collection.count(), 2)
 
-                self.close_database(directory)
-                reopened = get_collection(directory)
-                self.assertEqual(reopened.count(), 2)
+                    index_chunks(source_chunks, directory)
+                    self.assertEqual(get_collection(directory).count(), 2)
 
-                self.assertEqual(index_chunks(source_chunks[:1], directory), 1)
-                self.assertEqual(get_collection(directory).count(), 1)
+                    matches = semantic_search(
+                        source_chunks[0]["text"][:160],
+                        top_k=1,
+                        persist_directory=directory,
+                    )
+                    self.assertEqual(matches[0]["chunk_id"], source_chunks[0]["chunk_id"])
+                    self.assertIsNone(matches[0]["page"])
+                    self.assertGreaterEqual(matches[0]["distance"], 0)
 
-                self.assertEqual(
-                    rebuild_index(source_chunks[1:], persist_directory=directory), 1
-                )
-                self.assertEqual(get_collection(directory).count(), 1)
-            finally:
-                self.close_database(directory)
+                    self.close_database(directory)
+                    reopened = get_collection(directory)
+                    self.assertEqual(reopened.count(), 2)
+
+                    self.assertEqual(index_chunks(source_chunks[:1], directory), 1)
+                    self.assertEqual(get_collection(directory).count(), 1)
+
+                    self.assertEqual(
+                        rebuild_index(source_chunks[1:], persist_directory=directory), 1
+                    )
+                    self.assertEqual(get_collection(directory).count(), 1)
+                finally:
+                    self.close_database(directory)
 
     def test_empty_collection_and_invalid_search_inputs(self):
         with tempfile.TemporaryDirectory() as directory:

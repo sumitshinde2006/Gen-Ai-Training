@@ -4,9 +4,11 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
 from unittest.mock import patch
 
-from app.rag import RAGError
+from app.llm import _groq_error_message
+from app.rag import RAGError, answer_question
 from eval import run_eval
 
 
@@ -22,6 +24,10 @@ def row(answerable=True):
 
 
 class EvaluationScoringTests(unittest.TestCase):
+    def test_groq_invalid_key_and_rate_limit_errors_are_actionable(self):
+        self.assertIn("verify GROQ_API_KEY", _groq_error_message(SimpleNamespace(status_code=401)))
+        self.assertIn("rate limit", _groq_error_message(SimpleNamespace(status_code=429)))
+
     def test_answer_and_context_keyword_scoring(self):
         self.assertTrue(run_eval._answer_proxy("alpha beta result", ["alpha", "beta"]))
         self.assertFalse(run_eval._answer_proxy("alpha only", ["alpha", "beta"]))
@@ -59,6 +65,26 @@ class EvaluationScoringTests(unittest.TestCase):
             self.assertEqual(payload["metrics"]["grounded_answer_percent"], 100.0)
             self.assertEqual(payload["results"][0]["evaluation_status"], "completed")
             self.assertEqual(json.loads(out.read_text(encoding="utf-8"))["evaluation_timestamp_utc"], "2026-01-01T00:00:00+00:00")
+
+    def test_mocked_llm_response_flows_through_rag_and_citation_scoring(self):
+        retrieved = [{
+            "chunk_id": "chunk-1", "source": "source-a", "title": "Fixture",
+            "page": 1, "text": "alpha beta facts", "distance": 0.1,
+        }]
+        mocked_response = json.dumps({
+            "answer": "Alpha beta facts.", "confidence": "high", "follow_up": "",
+        })
+        with patch("app.rag.semantic_search", return_value=retrieved), \
+             patch("app.rag.generate_response", return_value=mocked_response) as generate:
+            result = answer_question("What alpha beta?", top_k=3)
+
+        generate.assert_called_once()
+        record = run_eval._empty_record(row())
+        record["retrieved_chunks"] = result["retrieved_chunks"]
+        run_eval._score_answer(record, row(), result)
+        self.assertTrue(record["answer_correctness"])
+        self.assertTrue(record["citation_correctness"])
+        self.assertTrue(record["grounded_answer"])
 
     def test_missing_groq_skips_answers_without_calling_rag(self):
         retrieved = [{"chunk_id": "chunk-1", "source": "source-a", "text": "alpha beta facts", "distance": 0.1}]

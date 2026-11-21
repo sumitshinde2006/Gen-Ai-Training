@@ -1,10 +1,117 @@
 
 # KandaGuide – AI-Powered Onion & Garlic Farming Assistant
 
+[![CI](https://github.com/sumitshinde2006/Gen-Ai-Training/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/sumitshinde2006/Gen-Ai-Training/actions/workflows/ci.yml)
+
 **Student Name:** Sumit Gorakshanath Shinde  
 **Student ID:** 2124UDSM2018  
 **Department:** CSE (Data Science)  
 **Project ID:** SJ-09 – Agriculture
+
+## S1/S2 CI and deployment status
+
+| Checkpoint | Status |
+|---|---|
+| CI workflow | Configured for pushes to `main` and pull requests targeting `main`; rerun pending |
+| Ruff | Passed locally with `ruff check .`; rerun pending |
+| Pytest | Passed locally: 79 tests and 26 subtests; rerun pending |
+| Docker image build | Local Docker daemon unavailable; GitHub Actions build pending |
+| Feature branch / pull request | `feature/ci-cd-deployment`; [#1 open](https://github.com/sumitshinde2006/Gen-Ai-Training/pull/1) |
+| Render API / Streamlit services | Blueprint configured; deployment pending |
+| Public API health check | Pending deployment |
+| Public application URLs | Not available until a Render deployment is verified |
+
+### GitHub Actions
+
+The [CI workflow](https://github.com/sumitshinde2006/Gen-Ai-Training/actions/workflows/ci.yml)
+runs three independent checks: `ruff check .`, `python -m pytest -v` with
+project and development dependencies, and a Docker Buildx image build from the
+root `Dockerfile`. Tests run with empty Groq and Gemini keys; provider calls in
+the test suite are mocked, and embedding tests use deterministic fixtures so
+CI does not need paid LLM credentials or external model downloads.
+
+The CI badge above reports the workflow's actual status; it is not a claim that
+the checks have passed. The requested pull request title is **Add GitHub
+Actions CI and Render deployment configuration**. It must not be merged until
+all three PR checks pass and any required approval is present.
+
+### Render deployment
+
+`render.yaml` defines two Docker web services using the existing root
+`Dockerfile`: a FastAPI API service with `/health` checking and persistent
+storage for Chroma/model cache, and a Streamlit UI service. The UI receives the
+API service's internal Render `hostport` reference, normalized to HTTP; it does
+not connect to `localhost`. The UI already displays backend health and uses the
+existing season picker, RAG chat, and citation rendering.
+
+No public Render URL has been verified yet. Add the actual service URLs here
+only after deployment and public checks:
+
+| Service | Verified URL / status |
+|---|---|
+| Streamlit application | Pending Render deployment |
+| FastAPI API | Pending Render deployment |
+| FastAPI `/health` | Pending HTTP 200 verification |
+
+To deploy after connecting this repository to Render:
+
+1. In the Render Dashboard, create a **Blueprint** from this repository and
+   review `render.yaml`. The API uses the Standard plan and a 1 GB persistent
+   disk; confirm the current cost and plan availability before creating it.
+   The UI uses the Free plan and may sleep when idle.
+2. Set `GROQ_API_KEY` in the API service's Render environment dashboard. The
+   Blueprint marks it `sync: false`, so the key is not stored in Git. Keep
+   `LLM_PROVIDER=groq`; optionally set `LLM_MODEL`. For Gemini, set
+   `LLM_PROVIDER=gemini` and provide `GEMINI_API_KEY` in the dashboard instead.
+3. After the API service is running, open its Render Shell and run
+   `python -m app.vectorstore` once to build the document index. This downloads
+   the configured sentence-transformer model and indexes `data/raw/`; allow
+   network access and enough time for the first run. The API disk stores
+   Chroma under `/var/data/chroma` and the model cache under
+   `/var/data/huggingface`. Re-run indexing after changing source documents.
+4. Confirm the API's public `/health` returns HTTP 200 with a JSON body, open
+   the Streamlit URL, and verify its sidebar reports **Backend connected**.
+   Then check the season-to-variety picker, a Groq-backed chat, and returned
+   citations before recording the verified URLs above.
+
+Render provides `PORT` at runtime; both service commands bind to `0.0.0.0`
+and use that port. The required runtime settings are:
+
+| Service | Variable | Configuration |
+|---|---|---|
+| API | `GROQ_API_KEY` | Required for model-backed chat; set as a Render secret |
+| API | `LLM_PROVIDER` | `groq` (Blueprint default); use `gemini` only with its key |
+| API | `LLM_MODEL` | Optional provider-supported model override |
+| API | `KANDAGUIDE_CHROMA_PATH` | `/var/data/chroma` on the persistent API disk |
+| API | `HF_HOME` | `/var/data/huggingface` on the persistent API disk |
+| UI | `API_BASE_URL` | Render internal service reference supplied by the Blueprint |
+| UI | `FEEDBACK_DB_PATH` | `/tmp/feedback.sqlite` |
+| Both | `PORT` | Supplied by Render; do not hard-code it in the dashboard |
+
+The API's persistent disk is required to retain the Chroma index and model
+cache across restarts. Other container filesystem locations are temporary:
+the UI feedback database at `/tmp/feedback.sqlite` can be lost on restart or
+redeploy. Do not use the Free plan for the API if durable Chroma storage is
+required. Public health and UI verification remain pending until the services
+are deployed and tested.
+
+#### Render troubleshooting
+
+- **API stays unhealthy:** Check the API logs for startup errors and verify
+  that the service command binds to `0.0.0.0:$PORT`; inspect `/health` before
+  troubleshooting model configuration.
+- **Chat has no indexed sources:** In the API service Shell, run
+  `python -m app.vectorstore` and confirm the Chroma path is on the mounted
+  disk. Health and variety records can work before indexing; RAG chat needs it.
+- **UI says the backend is unavailable:** Confirm both services are running
+  and that the UI's `API_BASE_URL` is sourced from the API service reference,
+  not `localhost`; inspect the API health response and UI logs.
+- **Chat cannot call Groq:** Set or rotate `GROQ_API_KEY` in the Render
+  dashboard, confirm `LLM_PROVIDER=groq`, and redeploy/restart the API. Never
+  put the key in `render.yaml`, the Dockerfile, or a committed environment file.
+- **Index or feedback data disappeared:** Chroma and model cache must remain
+  under `/var/data` on the API's mounted disk. The UI feedback database is
+  intentionally temporary unless a separate persistent-storage design is added.
 
 ## 1. Product
 
@@ -359,7 +466,7 @@ Sanjivani University – SJ-09 Agriculture
 
 ## RAG Evaluation Results
 
-Evaluation ran on 19 November 2026 (UTC timestamp: 2026-11-19T01:47:07Z) across the original 15 questions using isolated Chroma indexes and the local embedding model. The persistent collection was not changed. `GROQ_API_KEY` was available and Groq was explicitly selected for this run; 12 of 13 answerable calls per configuration failed with `APIConnectionError`. The key was not printed or included in the results. Answer quality metrics and the winner remain Pending because both runs did not complete.
+Evaluation ran on 21 November 2026 (UTC timestamp: 2026-11-21T00:04:39Z) across all 15 questions using isolated Chroma indexes and the local embedding model. The persistent collection was not changed. `GROQ_API_KEY` was loaded from the root `.env` without displaying or recording its value, and Groq was selected for this run. Twelve of the 13 answerable calls in each configuration failed with `APIConnectionError`; the per-question results record the failures. Full-set answer quality scores remain Pending because neither run completed all 15 answer evaluations.
 
 | Metric | Configuration A | Configuration B |
 |---|---:|---:|
@@ -374,11 +481,11 @@ Evaluation ran on 19 November 2026 (UTC timestamp: 2026-11-19T01:47:07Z) across 
 | Groq answer calls completed / failed | 1 / 12 | 1 / 12 |
 | All answer evaluations completed / failed / skipped | 3 / 12 / 0 | 3 / 12 / 0 |
 | Q6 refusal correctness | True | True |
-| Mean retrieval latency | 16.03 ms | 16.03 ms |
+| Mean retrieval latency | 17.52 ms | 20.49 ms |
 
-**Winning configuration:** Pending. The selection rule requires all 15 answer evaluations to complete in both configurations. Config B has a higher retrieval hit rate, but incomplete Groq evaluations prevent a quality comparison.
+**Winning configuration:** Pending. The selection rule compares answer correctness, citation correctness, grounding, correct abstention, and then retrieval performance; incomplete Groq evaluations prevent a full quality comparison. Config B had the higher retrieval hit rate (100.0% vs. 84.62%), but that alone is insufficient to select a winner.
 
-Each configuration completed three responses: deterministic abstentions Q6 and Q10, and Q9, which returned "I don't know." despite retrieving DOGR chunks. Q9 is an incorrect abstention for an answerable question. The other 12 answerable questions (Q1-Q5, Q7-Q8, Q11-Q15) failed with `APIConnectionError`. Partial response observations remain in the per-question results and are not presented as complete aggregate answer or citation scores.
+Each configuration completed three answer evaluations: deterministic abstentions Q6 and Q10, and Q9, which returned "I don't know." despite retrieving DOGR chunks. Q9 is an incorrect abstention for an answerable question. Of these three partial responses, 2 passed the answer proxy and 0 of 1 answerable responses was grounded. The other 12 answerable questions (Q1-Q5, Q7-Q8, Q11-Q15) failed with `APIConnectionError`. Partial observations are recorded in the per-question results but are not presented as complete aggregate answer or citation scores.
 
 Evaluation materials: [dataset](eval/eval_set.json), [runner](eval/run_eval.py), [Configuration A results](eval/results_config_a.json), [Configuration B results](eval/results_config_b.json), and [summary](eval/evaluation_summary.md). Answer correctness uses at least 60% expected-keyword coverage as a transparent proxy, not objective ground truth. Citation correctness checks cited chunk IDs, source matches, and expected sources. Groundedness also checks expected-keyword coverage in retrieved context. See the summary for full scoring and winner criteria.
 

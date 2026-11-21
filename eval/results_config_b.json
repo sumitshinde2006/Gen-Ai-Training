@@ -1,5 +1,5 @@
 {
-  "evaluation_timestamp_utc": "2026-11-19T01:47:07+00:00",
+  "evaluation_timestamp_utc": "2026-11-21T00:04:39+00:00",
   "configuration": {
     "name": "B",
     "chunk_size_words": 600,
@@ -52,7 +52,7 @@
       "Q14: RAGError -> LLMProviderError",
       "Q15: RAGError -> LLMProviderError"
     ],
-    "average_retrieval_latency_ms": 16.03,
+    "average_retrieval_latency_ms": 20.49,
     "llm_evaluation_status": "incomplete: one or more answer evaluations failed",
     "answer_correctness_method": "For answerable questions, at least 60% of manually prepared expected_keywords must occur in the answer. For unanswerable questions, the exact response \"I don't know.\" is required. This transparent keyword/refusal proxy is not a semantic judge.",
     "citation_correctness_method": "A response passes if every emitted citation's chunk ID exists in the retrieved chunks, its source matches that chunk, and the source is listed in expected_sources. An abstention with no citations is not treated as a correct citation for an answerable question.",
