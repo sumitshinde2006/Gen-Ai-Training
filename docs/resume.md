@@ -1,0 +1,3 @@
+- Built a source-grounded RAG pipeline for agricultural documents using Python, sentence-transformer embeddings, Chroma semantic search, Groq LLM responses, and source/page/chunk citations.
+- Implemented agentic AI workflows with LangGraph tools and deterministic storage break-even calculations that use explicit values and approval for actionable decisions.
+- Delivered a FastAPI and Streamlit application with mocked and real RAG evaluation coverage, pytest and Ruff CI, Docker packaging, request logging, caching, input limits, and verified production telemetry.

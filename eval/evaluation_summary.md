@@ -1,6 +1,6 @@
 # RAG evaluation summary
 
-Evaluation timestamp (UTC): 2026-11-21T00:04:39+00:00. Both configurations use isolated temporary Chroma indexes; the existing persistent collection is untouched. The evaluation set contains the original 15 questions.
+Evaluation timestamp (UTC): 2026-11-22T00:53:27+00:00. Both configurations use isolated temporary Chroma indexes; the existing persistent collection is untouched. The evaluation set contains the original 15 questions.
 
 | Metric | Configuration A | Configuration B |
 |---|---:|---:|
@@ -8,21 +8,21 @@ Evaluation timestamp (UTC): 2026-11-21T00:04:39+00:00. Both configurations use i
 | Top-k | 3 | 5 |
 | Questions | 15 | 15 |
 | Retrieval hit rate | 84.62% | 100.0% |
-| Answer correctness (all 15 questions) | Pending | Pending |
-| Citation correctness (all 15 questions) | Pending | Pending |
-| Grounded answer rate (all answerable questions) | Pending | Pending |
+| Answer correctness (all 15 questions) | 40.0% | 53.33% |
+| Citation correctness (all 15 questions) | 26.67% | 26.67% |
+| Grounded answer rate (all answerable questions) | 7.69% | 7.69% |
 | Correct abstention rate (both unanswerable questions) | 100.0% (2/2) | 100.0% (2/2) |
 | Unsupported-answer rate (unanswerable questions) | 0.0% | 0.0% |
-| Groq answer calls completed / failed | 1 / 12 | 1 / 12 |
-| All answer evaluations completed / failed / skipped | 3 / 12 / 0 | 3 / 12 / 0 |
-| Partial completed-response observations | 2/3 passed the answer proxy; grounded 0/1 | 2/3 passed the answer proxy; grounded 0/1 |
+| Groq answer calls completed / failed | 13 / 0 | 13 / 0 |
+| All answer evaluations completed / failed / skipped | 15 / 0 / 0 | 15 / 0 / 0 |
+| Partial completed-response observations | 6/15 passed the answer proxy; grounded 1/13 | 8/15 passed the answer proxy; grounded 1/13 |
 | Q6 exact refusal | True | True |
-| Mean retrieval latency | 17.52 ms | 20.49 ms |
-| Failed or skipped questions | failed: Q1 (RAGError -> LLMProviderError: The Groq provider could not complete the request (APIConnectionError).), Q2 (RAGError -> LLMProviderError: The Groq provider could not complete the request (APIConnectionError).), Q3 (RAGError -> LLMProviderError: The Groq provider could not complete the request (APIConnectionError).), Q4 (RAGError -> LLMProviderError: The Groq provider could not complete the request (APIConnectionError).), Q5 (RAGError -> LLMProviderError: The Groq provider could not complete the request (APIConnectionError).), Q7 (RAGError -> LLMProviderError: The Groq provider could not complete the request (APIConnectionError).), Q8 (RAGError -> LLMProviderError: The Groq provider could not complete the request (APIConnectionError).), Q11 (RAGError -> LLMProviderError: The Groq provider could not complete the request (APIConnectionError).), Q12 (RAGError -> LLMProviderError: The Groq provider could not complete the request (APIConnectionError).), Q13 (RAGError -> LLMProviderError: The Groq provider could not complete the request (APIConnectionError).), Q14 (RAGError -> LLMProviderError: The Groq provider could not complete the request (APIConnectionError).), Q15 (RAGError -> LLMProviderError: The Groq provider could not complete the request (APIConnectionError).) | failed: Q1 (RAGError -> LLMProviderError: The Groq provider could not complete the request (APIConnectionError).), Q2 (RAGError -> LLMProviderError: The Groq provider could not complete the request (APIConnectionError).), Q3 (RAGError -> LLMProviderError: The Groq provider could not complete the request (APIConnectionError).), Q4 (RAGError -> LLMProviderError: The Groq provider could not complete the request (APIConnectionError).), Q5 (RAGError -> LLMProviderError: The Groq provider could not complete the request (APIConnectionError).), Q7 (RAGError -> LLMProviderError: The Groq provider could not complete the request (APIConnectionError).), Q8 (RAGError -> LLMProviderError: The Groq provider could not complete the request (APIConnectionError).), Q11 (RAGError -> LLMProviderError: The Groq provider could not complete the request (APIConnectionError).), Q12 (RAGError -> LLMProviderError: The Groq provider could not complete the request (APIConnectionError).), Q13 (RAGError -> LLMProviderError: The Groq provider could not complete the request (APIConnectionError).), Q14 (RAGError -> LLMProviderError: The Groq provider could not complete the request (APIConnectionError).), Q15 (RAGError -> LLMProviderError: The Groq provider could not complete the request (APIConnectionError).) |
+| Mean retrieval latency | 26.94 ms | 27.23 ms |
+| Failed or skipped questions | None | None |
 
 ## Winner
 
-**Pending.** At least one configuration did not complete all 15 Groq answer evaluations without errors.
+**Configuration B.** It had the higher primary quality score (43.59% vs. 46.92%).
 
 ## Scoring and comparison method
 

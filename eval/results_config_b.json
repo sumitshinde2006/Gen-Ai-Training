@@ -1,5 +1,5 @@
 {
-  "evaluation_timestamp_utc": "2026-11-21T00:04:39+00:00",
+  "evaluation_timestamp_utc": "2026-11-22T00:53:27+00:00",
   "configuration": {
     "name": "B",
     "chunk_size_words": 600,
@@ -17,43 +17,30 @@
     "answerable_questions": 13,
     "unanswerable_questions": 2,
     "retrieval_hit_rate_percent": 100.0,
-    "answer_correctness_percent": null,
-    "answer_correctness_proxy_percent": null,
-    "answer_correctness_scored": 3,
-    "answer_correctness_correct": 2,
-    "citation_correctness_percent": null,
-    "citation_accuracy_percent": null,
-    "citation_correctness_scored": 3,
-    "citation_correctness_correct": 2,
-    "grounded_answer_percent": null,
-    "grounded_answer_scored": 1,
-    "grounded_answer_correct": 0,
+    "answer_correctness_percent": 53.33,
+    "answer_correctness_proxy_percent": 53.33,
+    "answer_correctness_scored": 15,
+    "answer_correctness_correct": 8,
+    "citation_correctness_percent": 26.67,
+    "citation_accuracy_percent": 26.67,
+    "citation_correctness_scored": 15,
+    "citation_correctness_correct": 4,
+    "grounded_answer_percent": 7.69,
+    "grounded_answer_scored": 13,
+    "grounded_answer_correct": 1,
     "correct_abstention_percent": 100.0,
     "correct_abstention_scored": 2,
     "correct_abstention_correct": 2,
     "unsupported_answer_rate_percent": 0.0,
     "q6_refusal_correct": true,
-    "answer_evaluations_completed": 3,
-    "groq_answer_calls_completed": 1,
-    "groq_answer_calls_failed": 12,
+    "answer_evaluations_completed": 15,
+    "groq_answer_calls_completed": 13,
+    "groq_answer_calls_failed": 0,
     "answer_evaluations_skipped": 0,
-    "answer_evaluations_failed": 12,
-    "execution_errors": [
-      "Q1: RAGError -> LLMProviderError",
-      "Q2: RAGError -> LLMProviderError",
-      "Q3: RAGError -> LLMProviderError",
-      "Q4: RAGError -> LLMProviderError",
-      "Q5: RAGError -> LLMProviderError",
-      "Q7: RAGError -> LLMProviderError",
-      "Q8: RAGError -> LLMProviderError",
-      "Q11: RAGError -> LLMProviderError",
-      "Q12: RAGError -> LLMProviderError",
-      "Q13: RAGError -> LLMProviderError",
-      "Q14: RAGError -> LLMProviderError",
-      "Q15: RAGError -> LLMProviderError"
-    ],
-    "average_retrieval_latency_ms": 20.49,
-    "llm_evaluation_status": "incomplete: one or more answer evaluations failed",
+    "answer_evaluations_failed": 0,
+    "execution_errors": [],
+    "average_retrieval_latency_ms": 27.23,
+    "llm_evaluation_status": "completed",
     "answer_correctness_method": "For answerable questions, at least 60% of manually prepared expected_keywords must occur in the answer. For unanswerable questions, the exact response \"I don't know.\" is required. This transparent keyword/refusal proxy is not a semantic judge.",
     "citation_correctness_method": "A response passes if every emitted citation's chunk ID exists in the retrieved chunks, its source matches that chunk, and the source is listed in expected_sources. An abstention with no citations is not treated as a correct citation for an answerable question.",
     "grounded_answer_method": "For answerable questions, at least 60% of expected_keywords must occur in the retrieved chunk text. A grounded answer additionally must pass answer correctness and citation correctness. This is a reproducible support proxy, not claim-level entailment.",
@@ -108,23 +95,51 @@
         }
       ],
       "retrieval_hit": true,
-      "answer": null,
-      "citations": [],
-      "confidence": null,
-      "answer_correctness": null,
-      "answer_correctness_proxy": null,
-      "citation_correctness": null,
-      "supported_by_retrieved_context": null,
-      "grounded_answer": null,
+      "answer": "Bhima Light Red, Bhima Prasanskaran, Bhima Shakti [Source: Good Agricultural Practices in Onion and Garlic Production, Page 81] [Source: Varieties Developed] [Source: Good Agricultural Practices in Onion and Garlic Production, Page 18]",
+      "citations": [
+        {
+          "title": "Good Agricultural Practices in Onion and Garlic Production",
+          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
+          "page": 81,
+          "chunk_id": "478173282c2516e7a7c07e09e02883d96a49dd0cf5b7c4b04255892164b2d3b6"
+        },
+        {
+          "title": "Varieties Developed",
+          "source": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
+          "page": null,
+          "chunk_id": "b35873edfc253b085e90a0ead69c288ffd280538ce45f5ac8d2f45d5341b7ce5"
+        },
+        {
+          "title": "Varieties Developed",
+          "source": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
+          "page": null,
+          "chunk_id": "8c625f0ceb72ce48813d2eadde34517f6da8b656b606a918b3dc9d5435829e43"
+        },
+        {
+          "title": "Varieties Developed",
+          "source": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
+          "page": null,
+          "chunk_id": "0bf80510d04fc00e2388b35f4b385f4ee890dde0483a34a3dedbad86bab5ee53"
+        },
+        {
+          "title": "Good Agricultural Practices in Onion and Garlic Production",
+          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
+          "page": 18,
+          "chunk_id": "d38aeb07ccd40739e53ee43213b0f2ab5a04739c0f4fc633317435dc457ce751"
+        }
+      ],
+      "confidence": "medium",
+      "answer_correctness": false,
+      "answer_correctness_proxy": false,
+      "citation_correctness": false,
+      "supported_by_retrieved_context": true,
+      "grounded_answer": false,
       "correct_abstention": null,
       "unsupported_answer": null,
-      "evaluation_status": "failed",
-      "execution_error": "RAGError",
-      "execution_error_detail": "The Groq provider could not complete the request (APIConnectionError).",
-      "execution_error_chain": [
-        "RAGError",
-        "LLMProviderError"
-      ]
+      "evaluation_status": "completed",
+      "execution_error": null,
+      "execution_error_detail": null,
+      "execution_error_chain": []
     },
     {
       "id": "Q2",
@@ -174,23 +189,20 @@
         }
       ],
       "retrieval_hit": true,
-      "answer": null,
+      "answer": "I don't know.",
       "citations": [],
-      "confidence": null,
-      "answer_correctness": null,
-      "answer_correctness_proxy": null,
-      "citation_correctness": null,
-      "supported_by_retrieved_context": null,
-      "grounded_answer": null,
+      "confidence": "low",
+      "answer_correctness": false,
+      "answer_correctness_proxy": false,
+      "citation_correctness": false,
+      "supported_by_retrieved_context": true,
+      "grounded_answer": false,
       "correct_abstention": null,
       "unsupported_answer": null,
-      "evaluation_status": "failed",
-      "execution_error": "RAGError",
-      "execution_error_detail": "The Groq provider could not complete the request (APIConnectionError).",
-      "execution_error_chain": [
-        "RAGError",
-        "LLMProviderError"
-      ]
+      "evaluation_status": "completed",
+      "execution_error": null,
+      "execution_error_detail": null,
+      "execution_error_chain": []
     },
     {
       "id": "Q3",
@@ -240,23 +252,51 @@
         }
       ],
       "retrieval_hit": true,
-      "answer": null,
-      "citations": [],
-      "confidence": null,
-      "answer_correctness": null,
-      "answer_correctness_proxy": null,
-      "citation_correctness": null,
-      "supported_by_retrieved_context": null,
-      "grounded_answer": null,
+      "answer": "Bhima Super and Bhima Shakti (the latter is suitable for Late Kharif). [Source: Good Agricultural Practices in Onion and Garlic Production, Page 81] [Source: Good Agricultural Practices in Onion and Garlic Production, Page 26] [Source: Good Agricultural Practices in Onion and Garlic Production, Page 18] [Source: Good Agricultural Practices in Onion and Garlic Production, Page 163] [Source: Varieties Developed]",
+      "citations": [
+        {
+          "title": "Good Agricultural Practices in Onion and Garlic Production",
+          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
+          "page": 81,
+          "chunk_id": "478173282c2516e7a7c07e09e02883d96a49dd0cf5b7c4b04255892164b2d3b6"
+        },
+        {
+          "title": "Good Agricultural Practices in Onion and Garlic Production",
+          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
+          "page": 26,
+          "chunk_id": "a4093fd6b6838f520cd2e9a306380af40977c86e56f40ef0de642047f7c307b0"
+        },
+        {
+          "title": "Good Agricultural Practices in Onion and Garlic Production",
+          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
+          "page": 18,
+          "chunk_id": "d38aeb07ccd40739e53ee43213b0f2ab5a04739c0f4fc633317435dc457ce751"
+        },
+        {
+          "title": "Good Agricultural Practices in Onion and Garlic Production",
+          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
+          "page": 163,
+          "chunk_id": "365a2d2800839f57dea6de4c223da7fc374c1766a3d556ed202ca87ed5c3520b"
+        },
+        {
+          "title": "Varieties Developed",
+          "source": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
+          "page": null,
+          "chunk_id": "eadf047df6bd1788e73ee16b5557c916e55699fa1a8fe8dadedf4e51742c8549"
+        }
+      ],
+      "confidence": "medium",
+      "answer_correctness": true,
+      "answer_correctness_proxy": true,
+      "citation_correctness": false,
+      "supported_by_retrieved_context": true,
+      "grounded_answer": false,
       "correct_abstention": null,
       "unsupported_answer": null,
-      "evaluation_status": "failed",
-      "execution_error": "RAGError",
-      "execution_error_detail": "The Groq provider could not complete the request (APIConnectionError).",
-      "execution_error_chain": [
-        "RAGError",
-        "LLMProviderError"
-      ]
+      "evaluation_status": "completed",
+      "execution_error": null,
+      "execution_error_detail": null,
+      "execution_error_chain": []
     },
     {
       "id": "Q4",
@@ -306,23 +346,51 @@
         }
       ],
       "retrieval_hit": true,
-      "answer": null,
-      "citations": [],
-      "confidence": null,
-      "answer_correctness": null,
-      "answer_correctness_proxy": null,
-      "citation_correctness": null,
-      "supported_by_retrieved_context": null,
-      "grounded_answer": null,
+      "answer": "115 days after transplanting [Source: Varieties Developed]",
+      "citations": [
+        {
+          "title": "Varieties Developed",
+          "source": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
+          "page": null,
+          "chunk_id": "b35873edfc253b085e90a0ead69c288ffd280538ce45f5ac8d2f45d5341b7ce5"
+        },
+        {
+          "title": "Varieties Developed",
+          "source": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
+          "page": null,
+          "chunk_id": "50dc14caaecc4f9331742bf2ead189227e953561f1086c1a99dda246c3865515"
+        },
+        {
+          "title": "Varieties Developed",
+          "source": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
+          "page": null,
+          "chunk_id": "81edc26fb616a8b787d41a64ec693f3374624f2761238ebb7cddc89f78cebc54"
+        },
+        {
+          "title": "Varieties Developed",
+          "source": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
+          "page": null,
+          "chunk_id": "9208c452426047f56e5da3540942847a7a18cd2fc12ddf1aed8733a1ceda074f"
+        },
+        {
+          "title": "Varieties Developed",
+          "source": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
+          "page": null,
+          "chunk_id": "6206dd161c06773cd9ec75bacbdc354e5592c951b980ea01d034cbb9446f3a51"
+        }
+      ],
+      "confidence": "high",
+      "answer_correctness": false,
+      "answer_correctness_proxy": false,
+      "citation_correctness": true,
+      "supported_by_retrieved_context": true,
+      "grounded_answer": false,
       "correct_abstention": null,
       "unsupported_answer": null,
-      "evaluation_status": "failed",
-      "execution_error": "RAGError",
-      "execution_error_detail": "The Groq provider could not complete the request (APIConnectionError).",
-      "execution_error_chain": [
-        "RAGError",
-        "LLMProviderError"
-      ]
+      "evaluation_status": "completed",
+      "execution_error": null,
+      "execution_error_detail": null,
+      "execution_error_chain": []
     },
     {
       "id": "Q5",
@@ -372,23 +440,51 @@
         }
       ],
       "retrieval_hit": true,
-      "answer": null,
-      "citations": [],
-      "confidence": null,
-      "answer_correctness": null,
-      "answer_correctness_proxy": null,
-      "citation_correctness": null,
-      "supported_by_retrieved_context": null,
-      "grounded_answer": null,
+      "answer": "385 q/ha [Source: Varieties Developed] [Source: Good Agricultural Practices in Onion and Garlic Production, Page 168] [Source: Good Agricultural Practices in Onion and Garlic Production, Page 167] [Source: Good Agricultural Practices in Onion and Garlic Production, Page 169] [Source: Good Agricultural Practices in Onion and Garlic Production, Page 161]",
+      "citations": [
+        {
+          "title": "Varieties Developed",
+          "source": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
+          "page": null,
+          "chunk_id": "b35873edfc253b085e90a0ead69c288ffd280538ce45f5ac8d2f45d5341b7ce5"
+        },
+        {
+          "title": "Good Agricultural Practices in Onion and Garlic Production",
+          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
+          "page": 168,
+          "chunk_id": "41ad1a3a3273cc8fddc9261742a5afb7e46127a257d3bb54ac6670ff608d789d"
+        },
+        {
+          "title": "Good Agricultural Practices in Onion and Garlic Production",
+          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
+          "page": 167,
+          "chunk_id": "ecd45a5bbf4c0faf8e954d679558e04298235cde0399a24195983cb6588ef315"
+        },
+        {
+          "title": "Good Agricultural Practices in Onion and Garlic Production",
+          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
+          "page": 169,
+          "chunk_id": "ea3134a101b5e5583dfa4d759eb81230f719106b2d8ee702666a53dcfa859cbd"
+        },
+        {
+          "title": "Good Agricultural Practices in Onion and Garlic Production",
+          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
+          "page": 161,
+          "chunk_id": "2b4d90bf41a483b084e91f80dd0711555fe8c760e0540803ed55e349f8343649"
+        }
+      ],
+      "confidence": "high",
+      "answer_correctness": false,
+      "answer_correctness_proxy": false,
+      "citation_correctness": false,
+      "supported_by_retrieved_context": false,
+      "grounded_answer": false,
       "correct_abstention": null,
       "unsupported_answer": null,
-      "evaluation_status": "failed",
-      "execution_error": "RAGError",
-      "execution_error_detail": "The Groq provider could not complete the request (APIConnectionError).",
-      "execution_error_chain": [
-        "RAGError",
-        "LLMProviderError"
-      ]
+      "evaluation_status": "completed",
+      "execution_error": null,
+      "execution_error_detail": null,
+      "execution_error_chain": []
     },
     {
       "id": "Q6",
@@ -501,23 +597,51 @@
         }
       ],
       "retrieval_hit": true,
-      "answer": null,
-      "citations": [],
-      "confidence": null,
-      "answer_correctness": null,
-      "answer_correctness_proxy": null,
-      "citation_correctness": null,
-      "supported_by_retrieved_context": null,
-      "grounded_answer": null,
+      "answer": "Suitable for storage up to 5-6 months [Source: Varieties Developed] [Source: Good Agricultural Practices in Onion and Garlic Production, Page 169] [Source: Good Agricultural Practices in Onion and Garlic Production, Page 84]",
+      "citations": [
+        {
+          "title": "Varieties Developed",
+          "source": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
+          "page": null,
+          "chunk_id": "81edc26fb616a8b787d41a64ec693f3374624f2761238ebb7cddc89f78cebc54"
+        },
+        {
+          "title": "Good Agricultural Practices in Onion and Garlic Production",
+          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
+          "page": 169,
+          "chunk_id": "ea3134a101b5e5583dfa4d759eb81230f719106b2d8ee702666a53dcfa859cbd"
+        },
+        {
+          "title": "Varieties Developed",
+          "source": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
+          "page": null,
+          "chunk_id": "b35873edfc253b085e90a0ead69c288ffd280538ce45f5ac8d2f45d5341b7ce5"
+        },
+        {
+          "title": "Good Agricultural Practices in Onion and Garlic Production",
+          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
+          "page": 84,
+          "chunk_id": "0d3c101768d971ee396627f73710799d524ac192845e3dfb45f147f0224bb37d"
+        },
+        {
+          "title": "Varieties Developed",
+          "source": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
+          "page": null,
+          "chunk_id": "8c625f0ceb72ce48813d2eadde34517f6da8b656b606a918b3dc9d5435829e43"
+        }
+      ],
+      "confidence": "medium",
+      "answer_correctness": true,
+      "answer_correctness_proxy": true,
+      "citation_correctness": false,
+      "supported_by_retrieved_context": true,
+      "grounded_answer": false,
       "correct_abstention": null,
       "unsupported_answer": null,
-      "evaluation_status": "failed",
-      "execution_error": "RAGError",
-      "execution_error_detail": "The Groq provider could not complete the request (APIConnectionError).",
-      "execution_error_chain": [
-        "RAGError",
-        "LLMProviderError"
-      ]
+      "evaluation_status": "completed",
+      "execution_error": null,
+      "execution_error_detail": null,
+      "execution_error_chain": []
     },
     {
       "id": "Q8",
@@ -567,23 +691,51 @@
         }
       ],
       "retrieval_hit": true,
-      "answer": null,
-      "citations": [],
-      "confidence": null,
-      "answer_correctness": null,
-      "answer_correctness_proxy": null,
-      "citation_correctness": null,
-      "supported_by_retrieved_context": null,
-      "grounded_answer": null,
+      "answer": "Follow these key cultivation steps: 1. Prepare the field by ploughing, harrowing, roto‑tilling or leveling. 2. Build beds and, if using seedlings, raise a nursery. 3. Plant by seed sowing (broadcasting or drilling) or by transplanting bulbs directly into the beds. 4. Apply irrigation and fertilizers as needed. 5. Perform intercultural operations such as spraying and weeding. 6. Harvest when bulbs reach maturity and then cure, grade, store or process as desired. [Source: Good Agricultural Practices in Onion and Garlic Production, Page 2] [Source: Good Agricultural Practices in Onion and Garlic Production, Page 3] [Source: Good Agricultural Practices in Onion and Garlic Production, Page 114] [Source: Good Agricultural Practices in Onion and Garlic Production, Page 112] [Source: Good Agricultural Practices in Onion and Garlic Production, Page 92]",
+      "citations": [
+        {
+          "title": "Good Agricultural Practices in Onion and Garlic Production",
+          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
+          "page": 2,
+          "chunk_id": "285c0234ca45db37f59bcf7ddf89f6b0f219cc2627ceaea98f78db05b0ac66d4"
+        },
+        {
+          "title": "Good Agricultural Practices in Onion and Garlic Production",
+          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
+          "page": 3,
+          "chunk_id": "609f890104d7d76534c5b77a86f636f7333c9a322546777a665c41cfa199fd33"
+        },
+        {
+          "title": "Good Agricultural Practices in Onion and Garlic Production",
+          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
+          "page": 114,
+          "chunk_id": "b157776cfeed964df6001fa5db6e8a4ac6c858217b9f09320b2b1cfbf1f87265"
+        },
+        {
+          "title": "Good Agricultural Practices in Onion and Garlic Production",
+          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
+          "page": 112,
+          "chunk_id": "9fe8b7897dc585c457456f25b7011b4b8d4144c428187be79296fc8bbb8a9b54"
+        },
+        {
+          "title": "Good Agricultural Practices in Onion and Garlic Production",
+          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
+          "page": 92,
+          "chunk_id": "042ef5b4dd5f7185974e44650136258a4ae10cbab7411447c58a541938b085df"
+        }
+      ],
+      "confidence": "high",
+      "answer_correctness": true,
+      "answer_correctness_proxy": true,
+      "citation_correctness": true,
+      "supported_by_retrieved_context": true,
+      "grounded_answer": true,
       "correct_abstention": null,
       "unsupported_answer": null,
-      "evaluation_status": "failed",
-      "execution_error": "RAGError",
-      "execution_error_detail": "The Groq provider could not complete the request (APIConnectionError).",
-      "execution_error_chain": [
-        "RAGError",
-        "LLMProviderError"
-      ]
+      "evaluation_status": "completed",
+      "execution_error": null,
+      "execution_error_detail": null,
+      "execution_error_chain": []
     },
     {
       "id": "Q9",
@@ -759,23 +911,51 @@
         }
       ],
       "retrieval_hit": true,
-      "answer": null,
-      "citations": [],
-      "confidence": null,
-      "answer_correctness": null,
-      "answer_correctness_proxy": null,
-      "citation_correctness": null,
-      "supported_by_retrieved_context": null,
-      "grounded_answer": null,
+      "answer": "Select only big, healthy cloves (>1.5 g) from seed bulbs, separating them just before planting without breaking the basal plate. Remove outer skins, keep the stem intact for hard‑neck types, reject small, diseased or damaged cloves, and dip the selected cloves in a 0.1 % carbendazim solution right before planting. Plant the cloves vertically 2 cm below the soil surface, spacing plants 10 cm apart within a row and rows 15 cm apart, using a seed rate of 400–500 kg ha⁻¹. [Source: garlicagropedia] [Source: Good Agricultural Practices in Onion and Garlic Production, Page 14] [Source: Good Agricultural Practices in Onion and Garlic Production, Page 100] [Source: Good Agricultural Practices in Onion and Garlic Production, Page 123]",
+      "citations": [
+        {
+          "title": "garlicagropedia",
+          "source": "https://dogr.res.in/index.php/component/content/article/garlicagropedia?layout=edit",
+          "page": null,
+          "chunk_id": "a1876a09482e12e6f60856447e142274e785218d161afc63610031340a2b1301"
+        },
+        {
+          "title": "garlicagropedia",
+          "source": "https://dogr.res.in/index.php/component/content/article/garlicagropedia?layout=edit",
+          "page": null,
+          "chunk_id": "14f9b81716ee1d8e6631340d3dc35b72a5352191f6826a0a66c69cd90ef17ad2"
+        },
+        {
+          "title": "Good Agricultural Practices in Onion and Garlic Production",
+          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
+          "page": 14,
+          "chunk_id": "8fea126ef716e1b82af4eb1f494b209dd8ab34ef09c60d34616b7d5a4ca1b0f4"
+        },
+        {
+          "title": "Good Agricultural Practices in Onion and Garlic Production",
+          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
+          "page": 100,
+          "chunk_id": "7c16772f3dec4eeac56465084fa343e35a34e960183ca3d89e1badb0702cfd44"
+        },
+        {
+          "title": "Good Agricultural Practices in Onion and Garlic Production",
+          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
+          "page": 123,
+          "chunk_id": "52556da94f77181b6d37f847769ce960a2b19798d50c08f1dfb8e8dde278379c"
+        }
+      ],
+      "confidence": "low",
+      "answer_correctness": true,
+      "answer_correctness_proxy": true,
+      "citation_correctness": false,
+      "supported_by_retrieved_context": true,
+      "grounded_answer": false,
       "correct_abstention": null,
       "unsupported_answer": null,
-      "evaluation_status": "failed",
-      "execution_error": "RAGError",
-      "execution_error_detail": "The Groq provider could not complete the request (APIConnectionError).",
-      "execution_error_chain": [
-        "RAGError",
-        "LLMProviderError"
-      ]
+      "evaluation_status": "completed",
+      "execution_error": null,
+      "execution_error_detail": null,
+      "execution_error_chain": []
     },
     {
       "id": "Q12",
@@ -825,23 +1005,51 @@
         }
       ],
       "retrieval_hit": true,
-      "answer": null,
-      "citations": [],
-      "confidence": null,
-      "answer_correctness": null,
-      "answer_correctness_proxy": null,
-      "citation_correctness": null,
-      "supported_by_retrieved_context": null,
-      "grounded_answer": null,
+      "answer": "5-6 months [Source: garlicagropedia] [Source: Good Agricultural Practices in Onion and Garlic Production, Page 60] [Source: Good Agricultural Practices in Onion and Garlic Production, Page 93] [Source: Good Agricultural Practices in Onion and Garlic Production, Page 25]",
+      "citations": [
+        {
+          "title": "garlicagropedia",
+          "source": "https://dogr.res.in/index.php/component/content/article/garlicagropedia?layout=edit",
+          "page": null,
+          "chunk_id": "a1876a09482e12e6f60856447e142274e785218d161afc63610031340a2b1301"
+        },
+        {
+          "title": "garlicagropedia",
+          "source": "https://dogr.res.in/index.php/component/content/article/garlicagropedia?layout=edit",
+          "page": null,
+          "chunk_id": "5e677486ae6b7b267a00e301bbe95b2177297791f8a098dbadade1f9cea2ea38"
+        },
+        {
+          "title": "Good Agricultural Practices in Onion and Garlic Production",
+          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
+          "page": 60,
+          "chunk_id": "2cc0bb1a84177758ddcd5eb6e33c02f7ea7b2f23f77dec06ff40ceeb6a2a1c9a"
+        },
+        {
+          "title": "Good Agricultural Practices in Onion and Garlic Production",
+          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
+          "page": 93,
+          "chunk_id": "f76d0b0c822d675d8aef244987da627fb672f778f956b4e6a69d9f32c34f4696"
+        },
+        {
+          "title": "Good Agricultural Practices in Onion and Garlic Production",
+          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
+          "page": 25,
+          "chunk_id": "97b1cda6a65f8f951411ccad1c9446b3cf0589bec1ffe7c7a7f553382f1a1269"
+        }
+      ],
+      "confidence": "medium",
+      "answer_correctness": true,
+      "answer_correctness_proxy": true,
+      "citation_correctness": false,
+      "supported_by_retrieved_context": true,
+      "grounded_answer": false,
       "correct_abstention": null,
       "unsupported_answer": null,
-      "evaluation_status": "failed",
-      "execution_error": "RAGError",
-      "execution_error_detail": "The Groq provider could not complete the request (APIConnectionError).",
-      "execution_error_chain": [
-        "RAGError",
-        "LLMProviderError"
-      ]
+      "evaluation_status": "completed",
+      "execution_error": null,
+      "execution_error_detail": null,
+      "execution_error_chain": []
     },
     {
       "id": "Q13",
@@ -891,23 +1099,51 @@
         }
       ],
       "retrieval_hit": true,
-      "answer": null,
-      "citations": [],
-      "confidence": null,
-      "answer_correctness": null,
-      "answer_correctness_proxy": null,
-      "citation_correctness": null,
-      "supported_by_retrieved_context": null,
-      "grounded_answer": null,
+      "answer": "Kharif [Source: Varieties Developed] [Source: Good Agricultural Practices in Onion and Garlic Production, Page 84] [Source: Good Agricultural Practices in Onion and Garlic Production, Page 168]",
+      "citations": [
+        {
+          "title": "Varieties Developed",
+          "source": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
+          "page": null,
+          "chunk_id": "b35873edfc253b085e90a0ead69c288ffd280538ce45f5ac8d2f45d5341b7ce5"
+        },
+        {
+          "title": "Varieties Developed",
+          "source": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
+          "page": null,
+          "chunk_id": "50dc14caaecc4f9331742bf2ead189227e953561f1086c1a99dda246c3865515"
+        },
+        {
+          "title": "Good Agricultural Practices in Onion and Garlic Production",
+          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
+          "page": 84,
+          "chunk_id": "0d3c101768d971ee396627f73710799d524ac192845e3dfb45f147f0224bb37d"
+        },
+        {
+          "title": "Varieties Developed",
+          "source": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
+          "page": null,
+          "chunk_id": "7183d8e51af7fdad2a2d4f2f0c0d8de65c050bca032dc50615e8d3d633c804b1"
+        },
+        {
+          "title": "Good Agricultural Practices in Onion and Garlic Production",
+          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
+          "page": 168,
+          "chunk_id": "41ad1a3a3273cc8fddc9261742a5afb7e46127a257d3bb54ac6670ff608d789d"
+        }
+      ],
+      "confidence": "high",
+      "answer_correctness": false,
+      "answer_correctness_proxy": false,
+      "citation_correctness": false,
+      "supported_by_retrieved_context": true,
+      "grounded_answer": false,
       "correct_abstention": null,
       "unsupported_answer": null,
-      "evaluation_status": "failed",
-      "execution_error": "RAGError",
-      "execution_error_detail": "The Groq provider could not complete the request (APIConnectionError).",
-      "execution_error_chain": [
-        "RAGError",
-        "LLMProviderError"
-      ]
+      "evaluation_status": "completed",
+      "execution_error": null,
+      "execution_error_detail": null,
+      "execution_error_chain": []
     },
     {
       "id": "Q14",
@@ -957,23 +1193,51 @@
         }
       ],
       "retrieval_hit": true,
-      "answer": null,
-      "citations": [],
-      "confidence": null,
-      "answer_correctness": null,
-      "answer_correctness_proxy": null,
-      "citation_correctness": null,
-      "supported_by_retrieved_context": null,
-      "grounded_answer": null,
+      "answer": "According to the DOGR source, garlic is harvested in October–November in most plains states (Chhattisgarh, Gujarat, Madhya Pradesh, Maharashtra, Tamil Nadu, Karnataka, Andhra Pradesh, Bihar, Haryana, Punjab, Rajasthan, Uttar Pradesh, Uttarakhand, Odisha, West Bengal). In the hills (long‑day types) the harvest is in May. In a few states the Rabi harvest falls in March or March‑April (Tamil Nadu, Karnataka, Andhra Pradesh, Bihar, Haryana, Punjab, Rajasthan, Uttar Pradesh, Uttarakhand, Odisha, West Bengal). [Source: Good Agricultural Practices in Onion and Garlic Production, Page 14] [Source: garlicagropedia] [Source: Good Agricultural Practices in Onion and Garlic Production, Page 13] [Source: Good Agricultural Practices in Onion and Garlic Production, Page 3] [Source: Good Agricultural Practices in Onion and Garlic Production, Page 113]",
+      "citations": [
+        {
+          "title": "Good Agricultural Practices in Onion and Garlic Production",
+          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
+          "page": 14,
+          "chunk_id": "8fea126ef716e1b82af4eb1f494b209dd8ab34ef09c60d34616b7d5a4ca1b0f4"
+        },
+        {
+          "title": "garlicagropedia",
+          "source": "https://dogr.res.in/index.php/component/content/article/garlicagropedia?layout=edit",
+          "page": null,
+          "chunk_id": "a1876a09482e12e6f60856447e142274e785218d161afc63610031340a2b1301"
+        },
+        {
+          "title": "Good Agricultural Practices in Onion and Garlic Production",
+          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
+          "page": 13,
+          "chunk_id": "d2fd2d6c18d92459403211bbeddfac29ab54fe1a7e505a94e8b736565d8d5881"
+        },
+        {
+          "title": "Good Agricultural Practices in Onion and Garlic Production",
+          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
+          "page": 3,
+          "chunk_id": "609f890104d7d76534c5b77a86f636f7333c9a322546777a665c41cfa199fd33"
+        },
+        {
+          "title": "Good Agricultural Practices in Onion and Garlic Production",
+          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
+          "page": 113,
+          "chunk_id": "cf6339d1b93f3aa4fb6c19ae517083af30515d789194581e502bd8ac6bc6976f"
+        }
+      ],
+      "confidence": "low",
+      "answer_correctness": false,
+      "answer_correctness_proxy": false,
+      "citation_correctness": false,
+      "supported_by_retrieved_context": true,
+      "grounded_answer": false,
       "correct_abstention": null,
       "unsupported_answer": null,
-      "evaluation_status": "failed",
-      "execution_error": "RAGError",
-      "execution_error_detail": "The Groq provider could not complete the request (APIConnectionError).",
-      "execution_error_chain": [
-        "RAGError",
-        "LLMProviderError"
-      ]
+      "evaluation_status": "completed",
+      "execution_error": null,
+      "execution_error_detail": null,
+      "execution_error_chain": []
     },
     {
       "id": "Q15",
@@ -1023,23 +1287,51 @@
         }
       ],
       "retrieval_hit": true,
-      "answer": null,
-      "citations": [],
-      "confidence": null,
-      "answer_correctness": null,
-      "answer_correctness_proxy": null,
-      "citation_correctness": null,
-      "supported_by_retrieved_context": null,
-      "grounded_answer": null,
+      "answer": "Garlic bulbs should first be graded and then bundled in groups of 20‑25 plants, with the tops cut into three segments and tightly interwoven. The bundles are kept upright in shade for about 15 days to cure, after which they are hung or placed in a dry, well‑ventilated area (or forced‑air dried). Once cured, clean, firm bulbs can be stored for 5‑6 months in ventilated structures at ambient temperature with relative humidity below 70 %. For longer storage, garlic can be kept in a cold store at –1 °C to 0 °C with 60‑70 % relative humidity. [Source: garlicagropedia] [Source: Good Agricultural Practices in Onion and Garlic Production, Page 25] [Source: Good Agricultural Practices in Onion and Garlic Production, Page 41] [Source: Good Agricultural Practices in Onion and Garlic Production, Page 93]",
+      "citations": [
+        {
+          "title": "garlicagropedia",
+          "source": "https://dogr.res.in/index.php/component/content/article/garlicagropedia?layout=edit",
+          "page": null,
+          "chunk_id": "5e677486ae6b7b267a00e301bbe95b2177297791f8a098dbadade1f9cea2ea38"
+        },
+        {
+          "title": "garlicagropedia",
+          "source": "https://dogr.res.in/index.php/component/content/article/garlicagropedia?layout=edit",
+          "page": null,
+          "chunk_id": "a1876a09482e12e6f60856447e142274e785218d161afc63610031340a2b1301"
+        },
+        {
+          "title": "Good Agricultural Practices in Onion and Garlic Production",
+          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
+          "page": 25,
+          "chunk_id": "97b1cda6a65f8f951411ccad1c9446b3cf0589bec1ffe7c7a7f553382f1a1269"
+        },
+        {
+          "title": "Good Agricultural Practices in Onion and Garlic Production",
+          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
+          "page": 41,
+          "chunk_id": "b3f7b793e15725e897fd838acbcae5432969cd85076086e749138d7c8b46549c"
+        },
+        {
+          "title": "Good Agricultural Practices in Onion and Garlic Production",
+          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
+          "page": 93,
+          "chunk_id": "f76d0b0c822d675d8aef244987da627fb672f778f956b4e6a69d9f32c34f4696"
+        }
+      ],
+      "confidence": "medium",
+      "answer_correctness": true,
+      "answer_correctness_proxy": true,
+      "citation_correctness": false,
+      "supported_by_retrieved_context": true,
+      "grounded_answer": false,
       "correct_abstention": null,
       "unsupported_answer": null,
-      "evaluation_status": "failed",
-      "execution_error": "RAGError",
-      "execution_error_detail": "The Groq provider could not complete the request (APIConnectionError).",
-      "execution_error_chain": [
-        "RAGError",
-        "LLMProviderError"
-      ]
+      "evaluation_status": "completed",
+      "execution_error": null,
+      "execution_error_detail": null,
+      "execution_error_chain": []
     }
   ]
 }

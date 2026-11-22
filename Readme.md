@@ -12,9 +12,9 @@
 
 | Project tracker item | Verified status |
 |---|---|
-| PR #1 (`feature/ci-cd-deployment`) | GitHub status could not be queried in this check. The local `main` history contains merge commit `aa4b9a9`; this is not treated as independent GitHub confirmation. |
-| CI workflow | `.github/workflows/ci.yml` exists and defines Ruff, Pytest, and Docker build jobs. Latest GitHub run status could not be queried. |
-| Render deployment | Render Blueprint configuration exists in `render.yaml`; live deployment state could not be verified from the available information. |
+| PR #1 (`feature/ci-cd-deployment`) | **Merged** on 21 November 2026; merge commit `aa4b9a992a1ca61396c4c1be2c9e3cb52660a`. |
+| CI workflow | **Passed** on merge commit: Ruff, Pytest, and Docker build jobs completed successfully. |
+| Render deployment | Render Blueprint configuration exists in `render.yaml`; live deployment is not yet verified. |
 | API health URL | No verified public URL available; HTTP 200 has not been confirmed. |
 | Streamlit UI URL | No verified public URL available. |
 
@@ -28,11 +28,9 @@ the test suite are mocked, and embedding tests use deterministic fixtures so
 CI does not need paid LLM credentials or external model downloads.
 
 The badge links to the actual repository workflow at
-`.github/workflows/ci.yml`. The workflow file is present in this checkout.
-GitHub could not be queried during this documentation update, so neither the
-current badge result nor the latest run conclusion is recorded as verified.
-The local history contains a merge commit for PR #1, but its merged status has
-not been independently confirmed against GitHub here.
+`.github/workflows/ci.yml`. GitHub API verification found PR #1 closed and
+merged, with its merge commit workflow run concluding `success`. Later main
+branch runs also concluded `success`.
 
 ### Render deployment
 
@@ -218,32 +216,49 @@ python -m unittest discover -p "test_*.py"
 - Agricultural students
 - Agricultural extension officers
 
-## 3. Problem Statement
+## Problem statement
 
-Farmers often face difficulties finding accurate and timely agricultural
-information.
+Onion and garlic farmers need reliable answers about varieties, seasons,
+planting practices, maturity, yield, harvesting, and storage. Relevant
+information is dispersed across agricultural websites and technical PDFs,
+including region-specific details that can be difficult to compare. Farmers
+also need to distinguish source-supported guidance from live facts that are
+not present in the available documents.
 
-Major problems include:
+## Solution
 
-- Lack of information about suitable onion and garlic varieties.
-- Difficulty comparing crop maturity periods and yields.
-- Limited access to variety-specific storage information.
-- Agricultural information spread across multiple websites and documents.
-- Difficulty understanding technical agricultural publications.
+KandaGuide is a source-grounded agricultural assistant implemented with
+FastAPI, Streamlit, Chroma, a sentence-transformer embedding model, and a Groq
+LLM. The RAG workflow ingests the checked-in DOGR and MANAGE documents,
+chunks and embeds their text, retrieves semantically similar passages, grounds
+the model response in retrieved evidence, and returns citations to the
+underlying title, source, page, and chunk ID. The application also implements
+record search, season filtering, and an agent workflow that performs
+deterministic storage break-even calculations with explicit approval.
 
-## 4. Proposed Solution
+## Architecture diagram
 
-KandaGuide aims to provide:
+```mermaid
+flowchart LR
+    Farmer[Farmer] --> UI[Streamlit UI]
+    UI -->|Validated HTTP request| API[FastAPI]
+    API --> Validation[Request validation]
+    Validation --> RAG[RAG pipeline]
+    RAG --> Sources[Agricultural source documents]
+    Sources --> Embed[Embedding model]
+    Embed --> Chroma[Chroma vector database]
+    RAG --> Chroma
+    RAG --> Groq[Groq LLM]
+    Groq --> Citations[Citation generation]
+    RAG --> Citations
+    API --> Tools[Agent tools and storage break-even calculation]
+    Citations --> Response[Response returned to the user]
+    Tools --> Response
+    Response --> UI
+    UI --> Farmer
+```
 
-1. Onion and garlic variety information.
-2. Season-wise variety details.
-3. Crop maturity and yield information.
-4. Storage-life information.
-5. Searchable agricultural documents.
-6. AI-powered question answering with source citations.
-7. Agricultural decision-support tools.
-
-## 5. Data Sources
+## 5. Data sources and limitations
 
 The project uses information from official agricultural institutions.
 
@@ -264,6 +279,10 @@ https://icar.org.in/node/2087
 
 All variety-specific values are linked to their sources.
 Unknown values are stored as null rather than guessed.
+The available documents do not provide live mandi prices, current weather,
+current government-scheme status, or individual field and market conditions.
+Data should be treated as source-specific reference information, not
+personalized or real-time advice.
 
 ## 6. Technology Stack
 
@@ -475,28 +494,27 @@ searchable and source-backed agricultural information assistant.
 **Developed by Sumit Gorakshanath Shinde**  
 Sanjivani University – SJ-09 Agriculture
 
-## RAG Evaluation Results
+## Evaluation results
 
-Evaluation ran on 21 November 2026 (UTC timestamp: 2026-11-21T00:04:39Z) across all 15 questions using isolated Chroma indexes and the local embedding model. The persistent collection was not changed. `GROQ_API_KEY` was loaded from the root `.env` without displaying or recording its value, and Groq was selected for this run. Twelve of the 13 answerable calls in each configuration failed with `APIConnectionError`; the per-question results record the failures. Full-set answer quality scores remain Pending because neither run completed all 15 answer evaluations.
+The complete run used 15 evaluation questions with isolated temporary Chroma
+indexes and the existing sentence-transformer model. Groq answer generation
+completed for all 15 questions in both configurations.
 
-| Metric | Configuration A | Configuration B |
+| Metric | Config A (400/top-3) | Config B (600/top-5) |
 |---|---:|---:|
-| Chunk size | 400 | 600 |
-| Top-k | 3 | 5 |
 | Retrieval hit rate | 84.62% | 100.0% |
-| Answer correctness (all 15 questions) | Pending | Pending |
-| Citation correctness (all 15 questions) | Pending | Pending |
-| Grounded answer rate (all 13 answerable questions) | Pending | Pending |
-| Correct abstention rate | 100.0% (2/2) | 100.0% (2/2) |
-| Unsupported-answer rate | 0.0% (0/2) | 0.0% (0/2) |
-| Groq answer calls completed / failed | 1 / 12 | 1 / 12 |
-| All answer evaluations completed / failed / skipped | 3 / 12 / 0 | 3 / 12 / 0 |
-| Q6 refusal correctness | True | True |
-| Mean retrieval latency | 17.52 ms | 20.49 ms |
+| Answer correctness | 40.0% | 53.33% |
+| Citation correctness | 26.67% | 26.67% |
+| Grounded answers | 7.69% | 7.69% |
+| Correct abstentions | 100.0% (2/2) | 100.0% (2/2) |
+| Winner | - | **Configuration B selected** |
 
-**Winning configuration:** Pending. The selection rule compares answer correctness, citation correctness, grounding, correct abstention, and then retrieval performance; incomplete Groq evaluations prevent a full quality comparison. Config B had the higher retrieval hit rate (100.0% vs. 84.62%), but that alone is insufficient to select a winner.
-
-Each configuration completed three answer evaluations: deterministic abstentions Q6 and Q10, and Q9, which returned "I don't know." despite retrieving DOGR chunks. Q9 is an incorrect abstention for an answerable question. Of these three partial responses, 2 passed the answer proxy and 0 of 1 answerable responses was grounded. The other 12 answerable questions (Q1-Q5, Q7-Q8, Q11-Q15) failed with `APIConnectionError`. Partial observations are recorded in the per-question results but are not presented as complete aggregate answer or citation scores.
+**Selection:** Configuration B won because it had the higher primary quality
+score: 46.92%, compared with 43.59% for Configuration A. The primary score is
+the unweighted mean of answer correctness, citation correctness, grounded
+answer percentage, and correct-abstention percentage. Retrieval hit rate is
+used only as a tie-breaker. These figures are keyword/citation proxies, not
+semantic ground truth.
 
 Evaluation materials: [dataset](eval/eval_set.json), [runner](eval/run_eval.py), [Configuration A results](eval/results_config_a.json), [Configuration B results](eval/results_config_b.json), and [summary](eval/evaluation_summary.md). Answer correctness uses at least 60% expected-keyword coverage as a transparent proxy, not objective ground truth. Citation correctness checks cited chunk IDs, source matches, and expected sources. Groundedness also checks expected-keyword coverage in retrieved context. See the summary for full scoring and winner criteria.
 
@@ -575,6 +593,11 @@ are reported in chat.
 ### Checkpoint 2 demo screenshot
 
 The screenshot below is captured from the running Streamlit application:
+
+### Demo video
+
+**Demo video: placeholder for a future verified recording.** No genuine video
+URL is currently available in the repository.
 
 ![KandaGuide Checkpoint 2 Demo](docs/screenshots/checkpoint-2.png)
 
