@@ -1,18 +1,33 @@
 
 import json
+import logging
 import re
+import time
+import uuid
 from pathlib import Path
 from typing import Any, Literal
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel, ConfigDict, Field, ValidationError
+from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator
 
 from app.llm import LLMError, generate_response
+from app.observability import (
+    cache_hit,
+    reset_request_telemetry,
+    restore_request_telemetry,
+    token_usage,
+)
 from app.rag import RAGError, answer_question
 from app.records import load_records, get_by_id
+from app.settings import (
+    MAX_QUESTION_LENGTH,
+    RuntimeSettings,
+    SettingsError,
+    get_settings,
+)
 from app.smart_search import smart_search
-from app.vectorstore import VectorStoreError, semantic_search as search_chunks
+from app.vectorstore import MAX_TOP_K, VectorStoreError, semantic_search as search_chunks
 
 PROMPTS_DIR = Path(__file__).resolve().parent.parent / "prompts"
 PRICE_LIMITATION = (
@@ -55,22 +70,66 @@ app = FastAPI(
     description="Agricultural information API for onion and garlic farmers",
     version="1.0.0"
 )
+logger = logging.getLogger("kandaguide.requests")
+REQUEST_ID_PATTERN = re.compile(r"^[A-Za-z0-9._:-]{1,128}$")
+
+
+@app.middleware("http")
+async def request_observability(request: Request, call_next):
+    """Log safe request-level telemetry for the RAG and agent routes."""
+    if request.url.path not in {"/ask", "/agent"}:
+        return await call_next(request)
+
+    incoming_id = request.headers.get("x-request-id", "")
+    request_id = incoming_id if REQUEST_ID_PATTERN.fullmatch(incoming_id) else str(uuid.uuid4())
+    telemetry_tokens = reset_request_telemetry()
+    started = time.perf_counter()
+    status_code = 500
+    try:
+        response = await call_next(request)
+        status_code = response.status_code
+        response.headers["X-Request-ID"] = request_id
+        return response
+    finally:
+        logger.info(
+            json.dumps(
+                {
+                    "endpoint": request.url.path,
+                    "request_id": request_id,
+                    "latency_ms": round((time.perf_counter() - started) * 1000, 3),
+                    "status": status_code,
+                    "token_usage": token_usage(),
+                    "cache_hit": cache_hit(),
+                },
+                separators=(",", ":"),
+            )
+        )
+        restore_request_telemetry(telemetry_tokens)
 
 
 class Question(BaseModel):
+    model_config = ConfigDict(str_strip_whitespace=True)
+
     question: str = Field(
-        min_length=3,
-        max_length=1000,
+        min_length=1,
+        max_length=MAX_QUESTION_LENGTH,
         description="Ask an onion or garlic farming question"
     )
 
+    @field_validator("question")
+    @classmethod
+    def question_must_not_be_empty(cls, value: str) -> str:
+        if not value:
+            raise ValueError("Question must not be empty or whitespace-only.")
+        return value
+
 
 class ChatQuestion(Question):
-    model_config = ConfigDict(str_strip_whitespace=True)
+    pass
 
 
 class AskQuestion(Question):
-    model_config = ConfigDict(str_strip_whitespace=True)
+    pass
 
 
 class ChatResponse(BaseModel):
@@ -87,6 +146,31 @@ class AgentRequest(BaseModel):
     message: str = Field(min_length=1, max_length=1000)
     thread_id: str = Field(min_length=1, max_length=128, pattern=r"^[A-Za-z0-9][A-Za-z0-9._:-]*$")
     approval: Literal["approved", "rejected"] | None = None
+
+    @field_validator("message")
+    @classmethod
+    def message_must_not_be_empty(cls, value: str) -> str:
+        if not value:
+            raise ValueError("Message must not be empty or whitespace-only.")
+        return value
+
+
+def _validate_request_limits(
+    question: str, *, is_agent: bool = False
+) -> RuntimeSettings:
+    try:
+        settings = get_settings()
+    except SettingsError as error:
+        raise HTTPException(
+            status_code=500, detail="KandaGuide runtime configuration is invalid."
+        ) from error
+    if len(question) > settings.max_question_length:
+        field = "Message" if is_agent else "Question"
+        raise HTTPException(
+            status_code=422,
+            detail=f"{field} must be {settings.max_question_length} characters or fewer.",
+        )
+    return settings
 
 
 class PromptLoadError(RuntimeError):
@@ -250,10 +334,14 @@ def ask_question(data: Question):
 
 
 @app.post("/ask")
-def ask_rag(data: AskQuestion, top_k: int = Query(default=5, ge=1, le=20)):
+def ask_rag(data: AskQuestion, top_k: int = Query(default=5, ge=1, le=MAX_TOP_K)):
     """Answer using retrieved agricultural chunks and return their citations."""
-    if not data.question.strip():
-        raise HTTPException(status_code=422, detail="Question must not be empty.")
+    settings = _validate_request_limits(data.question)
+    if top_k > settings.max_top_k:
+        raise HTTPException(
+            status_code=422,
+            detail=f"top_k must be between 1 and {settings.max_top_k}.",
+        )
     try:
         result = answer_question(data.question, top_k=top_k)
     except RAGError:
@@ -267,6 +355,7 @@ def ask_rag(data: AskQuestion, top_k: int = Query(default=5, ge=1, le=20)):
 @app.post("/agent")
 def agent_endpoint(data: AgentRequest):
     """Run or resume a per-thread LangGraph agent conversation."""
+    _validate_request_limits(data.message, is_agent=True)
     try:
         from app.graph import graph, invoke
     except ImportError:

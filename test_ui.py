@@ -107,6 +107,27 @@ class BackendClientTests(unittest.TestCase):
                 timeout=app.REQUEST_TIMEOUT,
             )
 
+    def test_validation_errors_are_friendly_and_do_not_echo_submitted_input(self):
+        response = Mock()
+        response.status_code = 422
+        response.json.return_value = {
+            "detail": [
+                {
+                    "loc": ["body", "question"],
+                    "msg": "Question must not be empty.",
+                    "input": "private submitted text",
+                }
+            ]
+        }
+        error = app.requests.HTTPError(response=response)
+        response.raise_for_status.side_effect = error
+        with patch.object(app.requests, "post", return_value=response):
+            result = app._request_answer("private submitted text", "RAG", "thread-1")
+
+        self.assertEqual(result["error"], "validation")
+        self.assertIn("Question must not be empty", result["answer"])
+        self.assertNotIn("private submitted text", result["answer"])
+
     def test_backend_connection_errors_are_friendly(self):
         with patch.object(app.requests, "get", side_effect=app.requests.ConnectionError("offline")):
             healthy, agent, detail = app.check_backend()

@@ -5,6 +5,8 @@ from typing import Tuple
 
 from dotenv import load_dotenv
 
+from app.observability import record_token_usage
+
 load_dotenv()
 
 DEFAULT_MODELS = {
@@ -87,6 +89,12 @@ def _generate_with_groq(
         # body, which could contain request or account details.
         raise LLMProviderError(_groq_error_message(error)) from None
 
+    usage = getattr(response, "usage", None)
+    record_token_usage(
+        "groq",
+        _usage_count(usage, "prompt_tokens"),
+        _usage_count(usage, "completion_tokens"),
+    )
     if not response.choices:
         raise LLMProviderError("The Groq provider returned an empty response.")
 
@@ -94,6 +102,11 @@ def _generate_with_groq(
     if not content:
         raise LLMProviderError("The Groq provider returned an empty response.")
     return content
+
+
+def _usage_count(usage, field: str) -> int | None:
+    value = getattr(usage, field, None)
+    return value if isinstance(value, int) and not isinstance(value, bool) and value >= 0 else None
 
 
 def _generate_with_gemini(
@@ -135,6 +148,12 @@ def _generate_with_gemini(
             "The Gemini provider could not complete the request."
         ) from None
 
+    usage = getattr(response, "usage_metadata", None)
+    record_token_usage(
+        "gemini",
+        _usage_count(usage, "prompt_token_count"),
+        _usage_count(usage, "candidates_token_count"),
+    )
     if not response.text:
         raise LLMProviderError("The Gemini provider returned an empty response.")
     return response.text

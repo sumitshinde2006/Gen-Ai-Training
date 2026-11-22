@@ -228,10 +228,26 @@ def _request_answer(question: str, mode: str, thread_id: str) -> dict[str, Any]:
     except requests.HTTPError as error:
         detail = ""
         try:
-            detail = response.json().get("detail", "")  # type: ignore[possibly-undefined]
+            payload = response.json()
+            detail = payload.get("detail", "") if isinstance(payload, dict) else ""
         except (ValueError, AttributeError, UnboundLocalError):
             pass
-        message = f"The backend could not answer this question (HTTP {error.response.status_code if error.response else 'error'})."
+        status = error.response.status_code if error.response else "error"
+        if status == 422:
+            if isinstance(detail, list):
+                detail = next(
+                    (
+                        item.get("msg")
+                        for item in detail
+                        if isinstance(item, dict) and isinstance(item.get("msg"), str)
+                    ),
+                    "",
+                )
+            message = "Please check your question."
+            if isinstance(detail, str) and detail:
+                message += f" {detail}"
+            return {"answer": message, "citations": [], "error": "validation"}
+        message = f"The backend could not answer this question (HTTP {status})."
         if detail:
             message += f" {detail}"
         return {"answer": message, "citations": [], "error": "http"}

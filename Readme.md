@@ -8,18 +8,15 @@
 **Department:** CSE (Data Science)  
 **Project ID:** SJ-09 – Agriculture
 
-## S1/S2 CI and deployment status
+## CI and deployment status
 
-| Checkpoint | Status |
+| Project tracker item | Verified status |
 |---|---|
-| CI workflow | All three PR jobs passed on [run #3](https://github.com/sumitshinde2006/Gen-Ai-Training/actions/runs/44845132528); all three jobs passed on post-merge [`main` run #4](https://github.com/sumitshinde2006/Gen-Ai-Training/actions/runs/44846096770) |
-| Ruff | Passed on PR run #3 and locally with `ruff check .` |
-| Pytest | Passed on PR run #3: 79 tests and 26 subtests; local run also passed |
-| Docker image build | Docker Buildx passed on PR run #3; local Docker Desktop could not start |
-| Feature branch / pull request | `feature/ci-cd-deployment`; [#1 merged](https://github.com/sumitshinde2006/Gen-Ai-Training/pull/1) |
-| Render API / Streamlit services | Blueprint configured; deployment pending |
-| Public API health check | Pending deployment |
-| Public application URLs | Not available until a Render deployment is verified |
+| PR #1 (`feature/ci-cd-deployment`) | GitHub status could not be queried in this check. The local `main` history contains merge commit `aa4b9a9`; this is not treated as independent GitHub confirmation. |
+| CI workflow | `.github/workflows/ci.yml` exists and defines Ruff, Pytest, and Docker build jobs. Latest GitHub run status could not be queried. |
+| Render deployment | Render Blueprint configuration exists in `render.yaml`; live deployment state could not be verified from the available information. |
+| API health URL | No verified public URL available; HTTP 200 has not been confirmed. |
+| Streamlit UI URL | No verified public URL available. |
 
 ### GitHub Actions
 
@@ -30,11 +27,12 @@ root `Dockerfile`. Tests run with empty Groq and Gemini keys; provider calls in
 the test suite are mocked, and embedding tests use deterministic fixtures so
 CI does not need paid LLM credentials or external model downloads.
 
-The CI badge above reports the live workflow status. Pull request
-[#1](https://github.com/sumitshinde2006/Gen-Ai-Training/pull/1), titled
-**Add GitHub Actions CI and Render deployment configuration**, was merged only
-after all three PR checks passed; the post-merge `main` workflow is linked in
-the status table above.
+The badge links to the actual repository workflow at
+`.github/workflows/ci.yml`. The workflow file is present in this checkout.
+GitHub could not be queried during this documentation update, so neither the
+current badge result nor the latest run conclusion is recorded as verified.
+The local history contains a merge commit for PR #1, but its merged status has
+not been independently confirmed against GitHub here.
 
 ### Render deployment
 
@@ -45,16 +43,26 @@ API service's internal Render `hostport` reference, normalized to HTTP; it does
 not connect to `localhost`. The UI already displays backend health and uses the
 existing season picker, RAG chat, and citation rendering.
 
-No public Render URL has been verified yet. Add the actual service URLs here
-only after deployment and public checks:
+Render is the configured deployment platform. The service definitions match
+the checked-in application: the API command starts `app.main:app`, the UI
+command starts `ui/app.py`, both use the root Dockerfile and Render's `PORT`,
+and the API health check targets the application's `/health` route. The UI
+uses the API service's internal `hostport` reference. This confirms the
+Blueprint matches the repository configuration; it does not confirm what is
+currently deployed in Render.
+
+The available repository and environment did not provide Render service
+details, so the live URLs and public reachability could not be verified. No
+API HTTP 200 check was completed. Do not treat either service as verified live
+until its actual Render URL is recorded and checked.
 
 | Service | Verified URL / status |
 |---|---|
-| Streamlit application | Pending Render deployment |
-| FastAPI API | Pending Render deployment |
-| FastAPI `/health` | Pending HTTP 200 verification |
+| Streamlit application | Not verified; actual Render service URL unavailable |
+| FastAPI API | Not verified; actual Render service URL unavailable |
+| FastAPI `/health` | Not checked; no verified public API URL is available |
 
-To deploy after connecting this repository to Render:
+To configure the Render Blueprint:
 
 1. In the Render Dashboard, create a **Blueprint** from this repository and
    review `render.yaml`. The API uses the Standard plan and a 1 GB persistent
@@ -81,20 +89,22 @@ and use that port. The required runtime settings are:
 | Service | Variable | Configuration |
 |---|---|---|
 | API | `GROQ_API_KEY` | Required for model-backed chat; set as a Render secret |
+| API | `GEMINI_API_KEY` | Alternative secret when `LLM_PROVIDER=gemini` |
 | API | `LLM_PROVIDER` | `groq` (Blueprint default); use `gemini` only with its key |
 | API | `LLM_MODEL` | Optional provider-supported model override |
 | API | `KANDAGUIDE_CHROMA_PATH` | `/var/data/chroma` on the persistent API disk |
 | API | `HF_HOME` | `/var/data/huggingface` on the persistent API disk |
 | UI | `API_BASE_URL` | Render internal service reference supplied by the Blueprint |
 | UI | `FEEDBACK_DB_PATH` | `/tmp/feedback.sqlite` |
+| UI | `STREAMLIT_SERVER_HEADLESS` | `true` (Blueprint setting) |
 | Both | `PORT` | Supplied by Render; do not hard-code it in the dashboard |
 
 The API's persistent disk is required to retain the Chroma index and model
 cache across restarts. Other container filesystem locations are temporary:
 the UI feedback database at `/tmp/feedback.sqlite` can be lost on restart or
 redeploy. Do not use the Free plan for the API if durable Chroma storage is
-required. Public health and UI verification remain pending until the services
-are deployed and tested.
+required. Current public service status remains unverified because the Render
+service URLs and deployment state were not available for this check.
 
 #### Render troubleshooting
 
@@ -623,3 +633,73 @@ The second command rebuilds the image and starts both services again after code 
 - **API health check failing:** Inspect `docker compose logs api`. Check that the image built successfully and that port 8000 is available inside the container.
 - **UI cannot connect to backend:** Keep `API_BASE_URL=http://api:8000` for the UI service. `localhost` inside the UI container points back to the UI container itself.
 - **Docker image build errors:** Check Docker Desktop is running and that the build has network access to download Python packages and the embedding model. Retry with `docker compose build --no-cache` for a clean rebuild.
+
+## Production notes
+
+### Request limits, cache, and token reporting
+
+`/ask` and `/agent` emit one structured JSON log record per request with the
+endpoint, request ID, total latency in milliseconds, HTTP status, cache-hit
+flag, and token usage. The middleware does not log prompts, answers, API keys,
+or other request data. Groq prompt and completion counts are taken from the
+provider's `usage` metadata when present; missing counts are logged as
+unavailable (`null`), not estimated. Gemini usage metadata is also included
+when the provider returns it.
+
+The successful RAG response cache is process-local and bounded. Defaults are
+60 seconds and 128 entries. Set `KANDAGUIDE_CACHE_TTL_SECONDS`,
+`KANDAGUIDE_CACHE_MAX_ENTRIES`, or `KANDAGUIDE_CACHE_ENABLED=false` to adjust
+or disable it. `app.rag.clear_response_cache()` clears the current process's
+cache. It is not a distributed cache: each worker has its own entries, and all
+entries are lost when that process restarts. Failed retrieval/generation
+responses are not cached.
+
+`KANDAGUIDE_MAX_QUESTION_LENGTH` defaults to 1000 characters and cannot exceed
+1000; `KANDAGUIDE_MAX_TOP_K` defaults to 20 and cannot exceed 20. Empty
+questions and invalid limits return validation errors. The values in
+`.env.example` show the defaults.
+
+### Local mocked benchmark
+
+The following measurement used the repeatable benchmark script, with 100
+sequential `POST /ask` calls through FastAPI's in-process `TestClient`:
+
+| Metric | Measured result |
+|---|---:|
+| Average request latency | 3.267 ms |
+| Median request latency (p50) | 3.244 ms |
+| p95 request latency | 3.889 ms |
+| Average prompt tokens per request | Not measured |
+| Average completion tokens per request | Not measured |
+| Cache hit rate | 99% (99/100 requests) |
+| Cache TTL / maximum entries | 60 seconds / 128 |
+| Maximum accepted question / top-k | 1000 characters / 20 |
+
+Test conditions: Python 3.11.7 on Windows
+(`Windows-10-10.0.26300-SP0` as reported by Python), AMD64
+(`AMD64 Family 25 Model 68 Stepping 1, AuthenticAMD`), 12 logical CPUs.
+Retrieval and LLM output were mocked; the first request missed the cache and
+the other 99 requests repeated the same question. The latency includes local
+FastAPI/TestClient processing, but excludes network, embedding, vector-store,
+and provider latency. No real API requests were made. Token averages are
+unavailable because the mock has no provider usage metadata; no token
+estimates are presented. These results are a small local benchmark, not a
+production load test and can vary by machine and run.
+
+Repeat the measurement from the repository root with:
+
+```powershell
+.\myenv\Scripts\python.exe -m scripts.benchmark_api --requests 100
+```
+
+### Security and test coverage
+
+The automated prompt-injection test uses mocked retrieval and a mocked LLM
+response. It passes a malicious request and retrieved text through the RAG
+prompt construction, checks that retrieved text is explicitly treated as
+untrusted evidence, and verifies the mocked assistant abstains without
+citations or disclosure. This is a focused regression test, not a guarantee
+against all prompt-injection techniques or a test of live model behavior.
+Provider credentials are not included in logs. The API does not add
+authentication or authorization; deployments exposed to untrusted clients
+should be protected at the service or gateway layer.
