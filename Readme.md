@@ -14,9 +14,10 @@
 |---|---|
 | PR #1 (`feature/ci-cd-deployment`) | **Merged** on 21 November 2026; merge commit `aa4b9a992a1ca61396c4c1be2c9e3cb52660a`. |
 | CI workflow | **Passed** on merge commit: Ruff, Pytest, and Docker build jobs completed successfully. |
-| Render deployment | Render Blueprint configuration exists in `render.yaml`; live deployment is not yet verified. |
-| API health URL | No verified public URL available; HTTP 200 has not been confirmed. |
-| Streamlit UI URL | No verified public URL available. |
+| Render deployment | API deployed and publicly reachable; UI service URL is not yet verified. |
+| API URL | https://kanda-guide.onrender.com/ |
+| API health URL | https://kanda-guide.onrender.com/health — verified HTTP 200 |
+| Streamlit UI URL | Not verified; actual public UI service URL is not available. |
 
 ### GitHub Actions
 
@@ -46,19 +47,19 @@ the checked-in application: the API command starts `app.main:app`, the UI
 command starts `ui/app.py`, both use the root Dockerfile and Render's `PORT`,
 and the API health check targets the application's `/health` route. The UI
 uses the API service's internal `hostport` reference. This confirms the
-Blueprint matches the repository configuration; it does not confirm what is
-currently deployed in Render.
+Blueprint matches the repository configuration.
 
-The available repository and environment did not provide Render service
-details, so the live URLs and public reachability could not be verified. No
-API HTTP 200 check was completed. Do not treat either service as verified live
-until its actual Render URL is recorded and checked.
+The public API deployment was verified on 22 November 2026:
+https://kanda-guide.onrender.com/health returned HTTP 200 with
+`{"status":"OK","message":"KandaGuide API is running"}`. The API root and
+OpenAPI document also returned HTTP 200. The public Streamlit UI URL remains
+unverified because no UI service URL was supplied.
 
 | Service | Verified URL / status |
 |---|---|
 | Streamlit application | Not verified; actual Render service URL unavailable |
-| FastAPI API | Not verified; actual Render service URL unavailable |
-| FastAPI `/health` | Not checked; no verified public API URL is available |
+| FastAPI API | https://kanda-guide.onrender.com/ — verified HTTP 200 |
+| FastAPI `/health` | https://kanda-guide.onrender.com/health — verified HTTP 200 |
 
 To configure the Render Blueprint:
 
@@ -101,8 +102,8 @@ The API's persistent disk is required to retain the Chroma index and model
 cache across restarts. Other container filesystem locations are temporary:
 the UI feedback database at `/tmp/feedback.sqlite` can be lost on restart or
 redeploy. Do not use the Free plan for the API if durable Chroma storage is
-required. Current public service status remains unverified because the Render
-service URLs and deployment state were not available for this check.
+required. The API is publicly verified; the public UI remains unverified until
+its actual Render URL is provided and checked.
 
 #### Render troubleshooting
 
