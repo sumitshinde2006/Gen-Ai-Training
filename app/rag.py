@@ -13,6 +13,7 @@ from typing import Any
 from app.llm import LLMError, generate_response
 from app.embed import get_model_name
 from app.observability import record_cache_hit
+from app.smart_search import smart_search
 from app.settings import SettingsError, get_settings
 from app.vectorstore import (
     COLLECTION_NAME,
@@ -144,6 +145,63 @@ def _known_unanswerable(question: str) -> bool:
     )
 
 
+def _structured_storage_answer(question: str) -> dict[str, Any] | None:
+    if not re.search(r"\bvariet(?:y|ies)\b", question, re.IGNORECASE):
+        return None
+    if not re.search(r"\b(?:stor(?:age|ability)|keep(?:ing)? quality)\b", question, re.IGNORECASE):
+        return None
+    if not re.search(r"\b(?:good|excellent|best|long(?:er|est)?|suitable)\b", question, re.IGNORECASE):
+        return None
+
+    requested_crops = {
+        crop
+        for crop in ("onion", "garlic")
+        if re.search(rf"\b{crop}\b", question, re.IGNORECASE)
+    }
+    records = smart_search(question, top_k=20)
+    matches = []
+    for record in records:
+        category = str(record.get("category") or "").casefold()
+        storage = record.get("storage_life")
+        source = record.get("source_url")
+        if requested_crops and category not in requested_crops:
+            continue
+        if not isinstance(storage, str) or not re.search(
+            r"\b(?:good|excellent|suitable for storage)\b", storage, re.IGNORECASE
+        ):
+            continue
+        if not isinstance(source, str) or not source.startswith(("https://", "http://")):
+            continue
+        matches.append((record, storage, source))
+
+    if not matches:
+        return None
+
+    lines = ["The variety records report these positive storage qualities:"]
+    citations = []
+    for record, storage, source in matches:
+        name = str(record.get("variety_name") or "Unnamed variety")
+        season = record.get("season")
+        label = f"{name} ({season})" if isinstance(season, str) and season else name
+        lines.append(f"- {label}: {storage}.")
+        citations.append(
+            {
+                "title": name,
+                "source": source,
+                "source_url": source,
+                "page": None,
+            }
+        )
+
+    return {
+        "question": question,
+        "answer": "\n".join(lines),
+        "citations": citations,
+        "confidence": "high",
+        "retrieved_chunks": [],
+    }
+
+
 def _usable_evidence(question: str, chunks: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """Reject empty, distant, or lexically unrelated matches; distance alone is insufficient."""
     question_tokens = _tokens(question)
@@ -233,6 +291,14 @@ def answer_question(
             settings.cache_enabled, settings.cache_max_entries,
         )
         return result
+
+    structured_result = _structured_storage_answer(question)
+    if structured_result is not None:
+        _cache_put(
+            cache_key, structured_result, settings.cache_ttl_seconds,
+            settings.cache_enabled, settings.cache_max_entries,
+        )
+        return structured_result
 
     try:
         retrieved = semantic_search(question, top_k=top_k, persist_directory=persist_directory)

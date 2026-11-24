@@ -6,7 +6,7 @@ from unittest.mock import patch
 from fastapi.testclient import TestClient
 
 from app.chunking import chunk_document
-from app.embed import embed_query, embed_texts
+from app.embed import EmbeddingError, embed_query, embed_texts
 from app.main import app
 from app.vectorstore import (
     COLLECTION_NAME,
@@ -181,6 +181,25 @@ class PersistentVectorStoreTests(unittest.TestCase):
                     return_value="sentence-transformers/all-MiniLM-L6-v2",
                 ), self.assertRaises(VectorStoreError):
                     get_collection(directory)
+            finally:
+                self.close_database(directory)
+
+    def test_rebuild_embedding_failure_preserves_existing_index(self):
+        source_chunks = chunk_document(
+            VARIETIES_HTML, chunk_size=200, overlap=30
+        )[:1]
+        with tempfile.TemporaryDirectory() as directory:
+            with patch("app.vectorstore.embed_texts", return_value=[[1.0, 0.0]]):
+                index_chunks(source_chunks, directory)
+
+            try:
+                with patch(
+                    "app.vectorstore.embed_texts",
+                    side_effect=EmbeddingError("model unavailable"),
+                ), self.assertRaises(VectorStoreError):
+                    rebuild_index(source_chunks, persist_directory=directory)
+
+                self.assertEqual(get_collection(directory).count(), 1)
             finally:
                 self.close_database(directory)
 

@@ -99,25 +99,21 @@ def _metadata(chunk: DocumentChunk) -> dict[str, str | int]:
     }
 
 
-def index_chunks(
-    chunks: Sequence[DocumentChunk],
-    persist_directory: Path | str | None = None,
-) -> int:
-    """Upsert chunks and remove stale chunks for each supplied source."""
-    if not chunks:
-        return 0
+def _validate_chunk_ids(chunks: Sequence[DocumentChunk]) -> None:
     ids = [chunk["chunk_id"] for chunk in chunks]
     if len(set(ids)) != len(ids):
         raise ValueError("Chunk IDs must be unique.")
 
-    collection = get_collection(persist_directory)
+
+def _upsert_chunks(
+    collection, chunks: Sequence[DocumentChunk], embeddings: Sequence[Sequence[float]]
+) -> None:
     try:
         import chromadb
 
-        embeddings = embed_texts([chunk["text"] for chunk in chunks])
         sources = {chunk["source"] for chunk in chunks}
         collection.upsert(
-            ids=ids,
+            ids=[chunk["chunk_id"] for chunk in chunks],
             documents=[chunk["text"] for chunk in chunks],
             metadatas=[_metadata(chunk) for chunk in chunks],
             embeddings=embeddings,
@@ -138,12 +134,27 @@ def index_chunks(
             ]
             if stale_ids:
                 collection.delete(ids=stale_ids)
-    except EmbeddingError as error:
-        raise VectorStoreError("KandaGuide could not generate embeddings.") from error
     except chromadb.errors.ChromaError as error:
         raise VectorStoreError("KandaGuide could not update the vector database.") from error
     except (OSError, ValueError, RuntimeError) as error:
         raise VectorStoreError("KandaGuide could not index the document chunks.") from error
+
+
+def index_chunks(
+    chunks: Sequence[DocumentChunk],
+    persist_directory: Path | str | None = None,
+) -> int:
+    """Upsert chunks and remove stale chunks for each supplied source."""
+    if not chunks:
+        return 0
+    _validate_chunk_ids(chunks)
+
+    collection = get_collection(persist_directory)
+    try:
+        embeddings = embed_texts([chunk["text"] for chunk in chunks])
+        _upsert_chunks(collection, chunks, embeddings)
+    except EmbeddingError as error:
+        raise VectorStoreError("KandaGuide could not generate embeddings.") from error
     else:
         return len(chunks)
 
@@ -223,6 +234,12 @@ def rebuild_index(
             "chromadb is not installed. Install project requirements."
         ) from error
 
+    _validate_chunk_ids(chunks)
+    try:
+        embeddings = embed_texts([chunk["text"] for chunk in chunks]) if chunks else []
+    except EmbeddingError as error:
+        raise VectorStoreError("KandaGuide could not generate embeddings.") from error
+
     client = _client(str(_persist_path(persist_directory)))
     try:
         client.delete_collection(COLLECTION_NAME)
@@ -231,8 +248,11 @@ def rebuild_index(
     except chromadb.errors.ChromaError as error:
         raise VectorStoreError("The KandaGuide collection could not be rebuilt.") from error
 
-    get_collection(persist_directory)
-    return index_chunks(chunks, persist_directory=persist_directory)
+    collection = get_collection(persist_directory)
+    if not chunks:
+        return 0
+    _upsert_chunks(collection, chunks, embeddings)
+    return len(chunks)
 
 
 def _index_all_documents() -> int:

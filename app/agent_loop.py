@@ -9,34 +9,172 @@ from app.records import load_records
 from app.tools import ToolInputError, storage_break_even
 
 MAX_AGENT_STEPS = 3
-NUMBER = r"(-?\d+(?:\.\d+)?)"
+NUMBER = r"(-?\d{1,3}(?:,\d{3})*(?:\.\d+)?|-?\d+(?:\.\d+)?)"
+
+
+def _clean(value: str | tuple | None) -> str | None:
+    """Strip thousands-separator commas; handle tuple results from findall."""
+    if value is None:
+        return None
+    # re.findall returns tuples when pattern has >1 capture group; take first non-empty
+    if isinstance(value, tuple):
+        value = next((v for v in value if v), None)
+    if not value:
+        return None
+    return value.replace(",", "")
 
 
 def _latest(pattern: str, text: str) -> str | None:
     hits = re.findall(pattern, text, flags=re.IGNORECASE)
-    return hits[-1] if hits else None
+    return _clean(hits[-1]) if hits else None
+
+
+def _first(pattern: str, text: str) -> str | None:
+    hits = re.findall(pattern, text, flags=re.IGNORECASE)
+    return _clean(hits[0]) if hits else None
 
 
 def extract_inputs(message: str) -> dict[str, Any]:
+    """Extract all numeric inputs from a farmer's storage calculation message.
+
+    Handles:
+    - Quantity in kg (auto-converted to quintals) or quintals directly.
+    - Price per kg (multiplied ×100) or per quintal. Uses FIRST match so the
+      purchase price is not confused with a later selling price.
+    - Additional costs: storage, transport, labour, etc.  Each keyword is
+      matched with what follows (not precedes) so costs don't bleed into each
+      other.
+    - Storage duration in months.
+    - Loss percent.
+    - Expected selling price per kg or per quintal.
+    """
+    # ── Quantity ──────────────────────────────────────────────────────────────
+    qty_qtl = _first(rf"{NUMBER}\s*(?:quintals?|qtl)\b", message)
+    qty_kg  = _first(rf"{NUMBER}\s*kg\b", message)
+    if qty_qtl is not None:
+        quantity_quintals = qty_qtl
+    elif qty_kg is not None:
+        quantity_quintals = str(float(qty_kg) / 100)
+    else:
+        quantity_quintals = None
+
+    # ── Purchase price ────────────────────────────────────────────────────────
+    # Always use FIRST price match so the sell price (which appears later)
+    # is not mistaken for the purchase price.
+    # Try per-quintal patterns first, then per-kg (×100).
+    price_per_qtl = (
+        _first(rf"(?:today(?:'s)?\s+price|price)\s*(?:is|of|:|=)?\s*(?:₹|rs\.?\s*)?{NUMBER}\s*(?:per\s+quintal|/\s*quintal|/\s*qtl|per\s*qtl)\b", message)
+        or _first(rf"(?:₹|rs\.?\s*)?{NUMBER}\s*/?\s*(?:quintal|qtl)\b", message)
+    )
+    price_per_kg = (
+        _first(rf"(?:purchased?|bought|price)\s*(?:at|is|of|:|=)?\s*(?:₹|rs\.?\s*)?{NUMBER}\s*(?:per\s+kg|/\s*kg|per\s*kg)\b", message)
+        or _first(rf"(?:at|@)\s*(?:₹|rs\.?\s*)?{NUMBER}\s*per\s+kg\b", message)
+        or _first(rf"(?:₹|rs\.?\s*)?{NUMBER}\s*per\s+kg\b", message)
+    )
+    if price_per_qtl is not None:
+        todays_price_per_quintal = price_per_qtl
+    elif price_per_kg is not None:
+        todays_price_per_quintal = str(float(price_per_kg) * 100)
+    else:
+        todays_price_per_quintal = (
+            _first(rf"(?:₹|rs\.?\s*){NUMBER}\b", message)
+            or _first(rf"price\s*(?:is|of|:|=)?\s*(?:₹|rs\.?\s*)?{NUMBER}\b", message)
+        )
+
+    # ── Additional costs ──────────────────────────────────────────────────────
+    # Anchor each cost keyword to what FOLLOWS it (not what precedes it).
+    storage_cost = _first(
+        rf"(?:₹|rs\.?\s*)?{NUMBER}\s*on\s+storage"
+        rf"|spending\s+(?:₹|rs\.?\s*)?{NUMBER}\s*on\s+storage"
+        rf"|storage\s+(?:cost|charges?|expense)?\s*(?:of|is|:|=)?\s*(?:₹|rs\.?\s*)?{NUMBER}",
+        message,
+    )
+    transport_cost = _first(
+        rf"(?:₹|rs\.?\s*)?{NUMBER}\s*on\s+transport(?:ation)?"
+        rf"|transport(?:ation)?\s+(?:cost|charges?|expense)?\s*(?:of|is|:|=)?\s*(?:₹|rs\.?\s*)?{NUMBER}",
+        message,
+    )
+    labour_cost = _first(
+        rf"labour\s+(?:cost|charges?|expense)?\s*(?:of|is|:|=)?\s*(?:₹|rs\.?\s*)?{NUMBER}"
+        rf"|(?:₹|rs\.?\s*)?{NUMBER}\s*on\s+labour",
+        message,
+    )
+
+    additional_costs: dict[str, str] = {}
+    if storage_cost:
+        additional_costs["storage"] = storage_cost
+    if transport_cost:
+        additional_costs["transport"] = transport_cost
+    if labour_cost:
+        additional_costs["labour"] = labour_cost
+
+    # ── Selling price ─────────────────────────────────────────────────────────
+    sell_per_kg = _first(
+        rf"sell\s+(?:the\s+)?(?:remaining\s+)?(?:onions?|garlic|produce|stock|them|it)?\s*at\s*(?:₹|rs\.?\s*)?{NUMBER}\s*per\s+kg\b"
+        rf"|sell(?:ing)?\s*(?:at|@)\s*(?:₹|rs\.?\s*)?{NUMBER}\s*per\s+kg\b",
+        message,
+    )
+    sell_per_qtl = _first(
+        rf"sell\s+(?:the\s+)?(?:remaining\s+)?(?:onions?|garlic|produce|stock|them|it)?\s*at\s*(?:₹|rs\.?\s*)?{NUMBER}\s*per\s+quintal\b"
+        rf"|sell(?:ing)?\s*(?:at|@)\s*(?:₹|rs\.?\s*)?{NUMBER}\s*per\s+quintal\b",
+        message,
+    )
+    if sell_per_qtl:
+        expected_selling_price_per_quintal = sell_per_qtl
+    elif sell_per_kg:
+        expected_selling_price_per_quintal = str(float(sell_per_kg) * 100)
+    else:
+        expected_selling_price_per_quintal = None
+
     return {
-        "quantity_quintals": _latest(rf"{NUMBER}\s*(?:quintals?|qtl)\b", message),
-        "todays_price_per_quintal": _latest(
-            rf"(?:today(?:'s)?\s+price|price)\s*(?:is|of|:|=)?\s*(?:₹|rs\.?\s*)?{NUMBER}\s*(?:per\s+quintal|/\s*q(?:tl)?|per\s*q(?:tl)?)?", message
-        ),
+        "quantity_quintals": quantity_quintals,
+        "todays_price_per_quintal": todays_price_per_quintal,
         "months_of_storage": _latest(rf"{NUMBER}\s*months?\b", message),
-        "expected_storage_loss_percent": _latest(rf"{NUMBER}\s*%\s*(?:storage\s+)?loss", message)
-        or _latest(rf"{NUMBER}\s*%", message),
+        "expected_storage_loss_percent": (
+            _latest(rf"{NUMBER}\s*%\s*(?:weight\s+)?(?:storage\s+)?loss", message)
+            or _latest(rf"{NUMBER}\s*%", message)
+        ),
+        "additional_costs": additional_costs if additional_costs else None,
+        "expected_selling_price_per_quintal": expected_selling_price_per_quintal,
     }
 
 
 def _is_calculation(message: str) -> bool:
-    return bool(re.search(r"\b(calculate|break.?even|storage loss|storage calculation|sell after storage)\b", message, re.I))
+    """Return True when the message requests a storage break-even calculation.
+
+    Matches both explicit calculator keywords and natural-language phrasing a
+    farmer would use: "should I store?", "if I store for 3 months", "worth
+    storing", etc.  A numeric quantity or duration in the same message makes
+    the intent unambiguous and avoids false positives on pure RAG questions.
+    """
+    # Explicit calculator vocabulary — always a calculation request.
+    if re.search(
+        r"\b(calculate|break.?even|storage loss|storage calculation|sell after storage)\b",
+        message,
+        re.I,
+    ):
+        return True
+
+    # Natural-language storage-decision phrasing: needs at least one number so
+    # "how to store onions?" (pure RAG question) is not misclassified.
+    has_number = bool(re.search(r"\b\d+\b", message))
+    has_storage_intent = bool(re.search(
+        r"\b(should\s+i\s+store|worth\s+storing|store\s+(?:it|them|my)|"
+        r"(?:store|storing)\s+for\s+\d|if\s+i\s+store|"
+        r"sell\s+(?:now|after|later)|profit\s+(?:from|after)\s+stor)"
+        r"\b",
+        message,
+        re.I,
+    ))
+    return has_number and has_storage_intent
 
 
 def _needs_rag(message: str) -> bool:
     if not message.strip():
         return False
     if _is_calculation(message):
+        # For calculation requests, only add RAG when the message also asks
+        # about documented agricultural facts (variety traits, disease, etc.).
         return bool(re.search(
             r"\b(variet(?:y|ies)|disease|fusarium|DOGR|MANAGE|documented|"
             r"agricultural facts?|storage method|how to store|cultivation|season)\b",
@@ -105,7 +243,11 @@ def run_agent(
         if missing:
             follow_up = {
                 "missing_inputs": missing,
-                "question": "Please provide " + ", ".join(missing).replace("_", " ") + ". You may give an explicit storage-loss percentage; otherwise the available 30–40% range is unverified as a general DOGR figure.",
+                "question": (
+                    "Please provide: "
+                    + ", ".join(m.replace("_", " ") for m in missing)
+                    + ". An explicit loss percentage is preferred; otherwise the available 30–40% range is unverified as a general DOGR figure."
+                ),
             }
             sections.append(follow_up["question"])
         else:
@@ -114,9 +256,24 @@ def run_agent(
                 if values["expected_storage_loss_percent"] is None:
                     variety_loss, variety_citation = _variety_loss(combined, values["months_of_storage"])
                     values["expected_storage_loss_percent"] = variety_loss
-                calculation_result = storage_break_even(**values, loss_source_citation=variety_citation)
+                calculation_result = storage_break_even(
+                    quantity_quintals=values["quantity_quintals"],
+                    todays_price_per_quintal=values["todays_price_per_quintal"],
+                    months_of_storage=values["months_of_storage"],
+                    expected_storage_loss_percent=values["expected_storage_loss_percent"],
+                    additional_costs=values.get("additional_costs"),
+                    expected_selling_price_per_quintal=values.get("expected_selling_price_per_quintal"),
+                    loss_source_citation=variety_citation,
+                )
                 citations.extend(calculation_result.get("loss_source_citations", []))
-                sections.append("Calculated gross-revenue break-even result: " + str(calculation_result["break_even_selling_price_per_quintal"]) + " per quintal. This is calculated, not a source-derived agricultural fact.")
+                if calculation_result.get("step_by_step"):
+                    sections.append(calculation_result["step_by_step"])
+                else:
+                    sections.append(
+                        "Break-even: ₹"
+                        + str(calculation_result["break_even_selling_price_per_quintal"])
+                        + "/quintal. This is a deterministic calculation, not a source-derived fact."
+                    )
             except ToolInputError as error:
                 return _error(str(error), tools_used=tools_used)
 

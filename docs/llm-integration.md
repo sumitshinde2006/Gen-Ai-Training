@@ -14,8 +14,15 @@ The provider wrapper is separate from the FastAPI route. Provider and
 configuration errors are returned without SDK exception text or secrets.
 Unavailable information is stated rather than generated when search has
 no results; the dataset is also known not to contain live mandi prices,
-weather, or government schemes. Retrieval only searches the variety
-records—it does not index the MANAGE reference document.
+weather, or government schemes. The variety-search endpoint searches the
+source-linked structured records. Semantic RAG indexes supported HTML and
+PDF documents under `data/raw`, including the MANAGE reference and DOGR
+variety pages.
+
+For questions asking which varieties have good storage qualities, `/ask`
+uses the source-linked structured variety records directly. This preserves
+short storage attributes that can be missed when semantic retrieval ranks
+longer document chunks more highly.
 
 Prompt loading is provided by `load_chat_prompts(task_version=...)` in
 `app/main.py`. It loads the shared `prompts/system.txt` and either

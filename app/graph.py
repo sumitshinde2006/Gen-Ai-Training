@@ -48,13 +48,29 @@ def build_graph(*, rag_fn=answer_question, checkpointer=None):
     def understand_request(state: AgentState) -> dict[str, Any]:
         msg = state.get("message", "")
         messages = state.get("messages", [])
+        # Build history from all messages except the current one so routing
+        # can see prior context (e.g. a previous follow-up calculation request).
+        prior = messages[:-1] if messages else []
+        history_text = " ".join(prior)
+        combined = (history_text + " " + msg).strip()
+
+        # If the current message alone looks like a calculation, use it.
+        # Otherwise check whether the full history+message together look like
+        # a calculation continuation (e.g. user replied "3 months" after the
+        # agent asked for missing storage duration).
+        is_calc = _is_calculation(msg) or _is_calculation(combined)
+        needs_rag = _needs_rag(msg) if not is_calc else bool(re.search(
+            r"\b(variet(?:y|ies)|disease|fusarium|DOGR|MANAGE|documented|"
+            r"agricultural facts?|storage method|how to store|cultivation|season)\b",
+            msg, re.I,
+        ))
         return {
-            "wants_rag": _needs_rag(msg),
-            "wants_calculation": _is_calculation(msg),
-            "needs_approval": bool(re.search(r"\b(should|recommend|decide|store)\b", msg, re.I)),
+            "wants_rag": needs_rag,
+            "wants_calculation": is_calc,
+            "needs_approval": bool(re.search(r"\b(should|recommend|decide|store)\b", combined, re.I)),
             "tools_used": [], "citations": [], "calculation_result": None,
             "follow_up": None, "error": None, "status": "running",
-            "history_text": " ".join(messages),
+            "history_text": history_text,
         }
 
     def retrieve_agricultural_context(state: AgentState) -> dict[str, Any]:
@@ -75,33 +91,61 @@ def build_graph(*, rag_fn=answer_question, checkpointer=None):
         return "calculate_storage_break_even" if state.get("wants_calculation") else "generate_response"
 
     def calculate_storage_break_even(state: AgentState) -> dict[str, Any]:
-        values = extract_inputs(state.get("history_text", "") + " " + state.get("message", ""))
-        missing = [key for key in ("quantity_quintals", "todays_price_per_quintal", "months_of_storage") if values[key] is None]
+        full_text = state.get("history_text", "") + " " + state.get("message", "")
+        values = extract_inputs(full_text)
+        missing = [
+            key for key in ("quantity_quintals", "todays_price_per_quintal", "months_of_storage")
+            if values[key] is None
+        ]
         if missing:
             return {
-                "follow_up": {"missing_inputs": missing, "question": "Please provide " + ", ".join(missing).replace("_", " ") + ". An explicit loss percentage is preferred because the available generic range is unverified."},
+                "follow_up": {
+                    "missing_inputs": missing,
+                    "question": (
+                        "Please provide: "
+                        + ", ".join(m.replace("_", " ") for m in missing)
+                        + ". An explicit loss percentage is preferred because the available generic range is unverified."
+                    ),
+                },
                 "tools_used": state.get("tools_used", []) + ["storage_break_even"],
             }
         try:
             variety_citation = None
             if values["expected_storage_loss_percent"] is None:
-                variety_loss, variety_citation = _variety_loss(
-                    state.get("history_text", "") + " " + state.get("message", ""),
-                    values["months_of_storage"],
-                )
+                variety_loss, variety_citation = _variety_loss(full_text, values["months_of_storage"])
                 values["expected_storage_loss_percent"] = variety_loss
-            result = storage_break_even(**values, loss_source_citation=variety_citation)
+            result = storage_break_even(
+                quantity_quintals=values["quantity_quintals"],
+                todays_price_per_quintal=values["todays_price_per_quintal"],
+                months_of_storage=values["months_of_storage"],
+                expected_storage_loss_percent=values["expected_storage_loss_percent"],
+                additional_costs=values.get("additional_costs"),
+                expected_selling_price_per_quintal=values.get("expected_selling_price_per_quintal"),
+                loss_source_citation=variety_citation,
+            )
         except ToolInputError as error:
             return {"error": str(error), "tools_used": state.get("tools_used", []) + ["storage_break_even"]}
-        return {"calculation_result": result, "citations": state.get("citations", []) + result.get("loss_source_citations", []), "tools_used": state.get("tools_used", []) + ["storage_break_even"]}
+        return {
+            "calculation_result": result,
+            "citations": state.get("citations", []) + result.get("loss_source_citations", []),
+            "tools_used": state.get("tools_used", []) + ["storage_break_even"],
+        }
 
     def generate_response(state: AgentState) -> dict[str, Any]:
         sections = []
         if state.get("rag_answer"):
-            sections.append("Source-derived agricultural information: " + state["rag_answer"])
+            sections.append("Source-derived agricultural information:\n" + state["rag_answer"])
         result = state.get("calculation_result")
         if result:
-            sections.append("Calculated gross-revenue break-even price per quintal: " + str(result["break_even_selling_price_per_quintal"]) + ". This is a deterministic calculation, not a source-derived fact.")
+            # Use the full step-by-step narrative if available, else fallback summary
+            if result.get("step_by_step"):
+                sections.append(result["step_by_step"])
+            else:
+                be = result.get("break_even_selling_price_per_quintal", "N/A")
+                sections.append(
+                    f"Break-even selling price: ₹{be}/quintal. "
+                    "This is a deterministic calculation, not a source-derived fact."
+                )
         follow_up = state.get("follow_up")
         if follow_up:
             sections.append(follow_up["question"])
@@ -162,5 +206,8 @@ def invoke(message: str, thread_id: str, *, approval_response: str | None = None
     if approval_response is not None:
         result = graph.invoke(Command(resume=approval_response), config=config)
     else:
+        # Pass only the new message; the Annotated[list, operator.add] reducer
+        # appends it to the existing messages list in the checkpoint so the
+        # full conversation history is available for follow-up routing.
         result = graph.invoke({"message": message, "messages": [message]}, config=config)
     return result

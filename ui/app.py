@@ -16,6 +16,20 @@ import requests
 import streamlit as st
 from dotenv import load_dotenv
 
+_CALC_HINT_RE = re.compile(
+    r"\b(\d+)\b.*?"
+    r"(\b(quintals?|qtl|price|rs\.?|₹|months?|loss|store|storing|should)\b)",
+    re.IGNORECASE | re.DOTALL,
+)
+
+
+def _looks_like_calculation(text: str) -> bool:
+    """Return True when the message contains numbers + storage/price keywords."""
+    return bool(re.search(r"\b\d+\b", text)) and bool(re.search(
+        r"\b(quintals?|qtl|price|rs\.?|₹|months?|storage|store|storing|should\s+i\s+store|sell)\b",
+        text, re.IGNORECASE,
+    ))
+
 ROOT = Path(__file__).resolve().parents[1]
 load_dotenv(ROOT / ".env")
 DATA_FILE = ROOT / "data" / "records.json"
@@ -222,9 +236,13 @@ def _request_answer(question: str, mode: str, thread_id: str) -> dict[str, Any]:
         citations = payload.get("citations", [])
         if not isinstance(citations, list):
             citations = []
-        return {"answer": payload["answer"], "citations": citations, "error": None}
+        return {"answer": payload["answer"], "citations": citations, "error": None,
+                "is_unknown": payload["answer"].strip() == "I don't know.",
+                "follow_up": payload.get("follow_up"),
+                "requires_approval": payload.get("requires_approval", False),
+                "status": payload.get("status", "completed")}
     except requests.Timeout:
-        return {"answer": "The backend took too long to respond. Please try again.", "citations": [], "error": "timeout"}
+        return {"answer": "The backend took too long to respond. Please try again.", "citations": [], "error": "timeout", "is_unknown": False, "follow_up": None, "requires_approval": False, "status": "error"}
     except requests.HTTPError as error:
         detail = ""
         try:
@@ -246,13 +264,13 @@ def _request_answer(question: str, mode: str, thread_id: str) -> dict[str, Any]:
             message = "Please check your question."
             if isinstance(detail, str) and detail:
                 message += f" {detail}"
-            return {"answer": message, "citations": [], "error": "validation"}
+            return {"answer": message, "citations": [], "error": "validation", "is_unknown": False, "follow_up": None, "requires_approval": False, "status": "error"}
         message = f"The backend could not answer this question (HTTP {status})."
         if detail:
             message += f" {detail}"
-        return {"answer": message, "citations": [], "error": "http"}
+        return {"answer": message, "citations": [], "error": "http", "is_unknown": False, "follow_up": None, "requires_approval": False, "status": "error"}
     except (requests.RequestException, ValueError) as error:
-        return {"answer": f"Could not reach the backend or read its response: {error}", "citations": [], "error": "connection"}
+        return {"answer": f"Could not reach the backend or read its response: {error}", "citations": [], "error": "connection", "is_unknown": False, "follow_up": None, "requires_approval": False, "status": "error"}
 
 
 def _citation_url(citation: dict[str, Any]) -> str | None:
@@ -346,7 +364,7 @@ def variety_picker() -> None:
 
 def chat_page(agent_available: bool) -> None:
     st.header("Ask KandaGuide")
-    st.write("Ask a question about onion and garlic farming. Answers and citations come from the connected KandaGuide backend.")
+    st.write("Ask a question about onion and garlic farming. Use **RAG** for variety and cultivation questions, **Agent** for storage break-even calculations.")
     modes = ["RAG", "Agent"] if agent_available else ["RAG"]
     mode = st.radio("Answer mode", modes, horizontal=True, key="answer-mode")
     if "messages" not in st.session_state:
@@ -357,8 +375,20 @@ def chat_page(agent_available: bool) -> None:
             if item["role"] == "assistant":
                 if item.get("citations"):
                     render_citations(item["citations"])
+                elif item.get("requires_approval"):
+                    st.info("⏳ Review the calculation above and type **approved** or **rejected** to continue.")
+                elif item.get("follow_up"):
+                    missing = item["follow_up"].get("missing_inputs", [])
+                    hint = "Please provide: **" + "**, **".join(m.replace("_", " ") for m in missing) + "**"
+                    st.info(f"💬 {hint}")
+                elif item.get("is_unknown") and item.get("mode") == "RAG" and _looks_like_calculation(item.get("question", "")) and agent_available:
+                    st.info(
+                        "💡 This looks like a storage calculation question. "
+                        "Switch to **Agent mode** above and ask again — the agent can calculate "
+                        "your break-even price from quantity, price per quintal, storage months, and loss %."
+                    )
                 elif not item.get("error"):
-                    st.warning("This answer has no supporting evidence citations.")
+                    st.caption("No supporting citations for this answer.")
                 render_feedback(item)
     prompt = st.chat_input("Ask about a variety, season, maturity, or storage…")
     if prompt:
@@ -372,13 +402,28 @@ def chat_page(agent_available: bool) -> None:
             st.markdown(result["answer"])
             if result["citations"]:
                 render_citations(result["citations"])
+            elif result.get("requires_approval"):
+                st.info("⏳ Review the calculation above and type **approved** or **rejected** to continue.")
+            elif result.get("follow_up"):
+                missing = result["follow_up"].get("missing_inputs", [])
+                hint = "Please provide: **" + "**, **".join(m.replace("_", " ") for m in missing) + "**"
+                st.info(f"💬 {hint}")
+            elif result.get("is_unknown") and mode == "RAG" and _looks_like_calculation(prompt) and agent_available:
+                st.info(
+                    "💡 This looks like a storage calculation question. "
+                    "Switch to **Agent mode** above and ask again — the agent can calculate "
+                    "your break-even price from quantity, price per quintal, storage months, and loss %."
+                )
             elif not result["error"]:
-                st.warning("This answer has no supporting evidence citations.")
+                st.caption("No supporting citations for this answer.")
             assistant_message = {
                 "role": "assistant", "content": result["answer"],
                 "citations": result["citations"], "question": prompt,
                 "response_id": hashlib.sha256(f"{uuid.uuid4()}:{prompt}".encode()).hexdigest(),
                 "mode": mode, "error": result["error"],
+                "is_unknown": result.get("is_unknown", False),
+                "follow_up": result.get("follow_up"),
+                "requires_approval": result.get("requires_approval", False),
             }
             st.session_state.messages.append(assistant_message)
             render_feedback(assistant_message)
