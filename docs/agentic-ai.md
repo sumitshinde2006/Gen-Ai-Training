@@ -5,6 +5,9 @@
 An AI agent chooses an available capability to move a request forward. RAG retrieves relevant agricultural document passages and asks the existing LLM wrapper to answer only from those passages. An agent decides whether a request needs that evidence search, a deterministic calculation, or both. KandaGuide needs a calculation tool because arithmetic should be reproducible and should not depend on an LLM's generated numbers.
 
 The existing evidence path is `app.rag.answer_question()`, which uses the persistent Chroma index, existing provider wrapper, and citations from retrieved chunks. Neither agent reimplements that RAG pipeline.
+Structured variety questions can also be answered directly from source-linked
+records. For example, season queries can group varieties by the seasons listed
+in the dataset and return citations without relying on a generated answer.
 
 ## `storage_break_even`
 

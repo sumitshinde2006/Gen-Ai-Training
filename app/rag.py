@@ -241,10 +241,21 @@ def _record_season_answer(question: str) -> dict[str, Any] | None:
     lowered = question.casefold()
     if not re.search(r"\bvariet(?:y|ies)\b", lowered):
         return None
-    season_match = re.search(r"\b(late[\s-]+kharif|kharif|rabi)\b", lowered)
-    if not season_match:
+    requested_seasons = list(dict.fromkeys(
+        re.sub(r"\s+", " ", match).replace("-", " ").casefold()
+        for match in re.findall(r"\b(late[\s-]+kharif|kharif|rabi)\b", lowered)
+    ))
+    collective_season_question = bool(
+        re.search(
+            r"\b(?:different|each|all|various|multiple|across|by)\b.{0,40}"
+            r"\b(?:growing\s+)?seasons?\b"
+            r"|\bseason[\s-]?wise\b"
+            r"|\b(?:growing\s+)?seasons?\b.{0,40}\bvariet(?:y|ies)\b",
+            lowered,
+        )
+    )
+    if not requested_seasons and not collective_season_question:
         return None
-    season = re.sub(r"\s+", " ", season_match.group(1)).replace("-", " ").casefold()
 
     requested_category = None
     if re.search(r"\bonion\b", lowered):
@@ -252,23 +263,70 @@ def _record_season_answer(question: str) -> dict[str, Any] | None:
     elif re.search(r"\bgarlic\b", lowered):
         requested_category = "garlic"
 
-    matches = []
-    for record in load_records():
-        if requested_category and str(record.get("category") or "").casefold() != requested_category:
-            continue
-        record_season = str(record.get("season") or "").casefold()
-        record_season = re.sub(r"\s+", " ", record_season).replace("-", " ")
-        if re.search(rf"\b{re.escape(season)}\b", record_season):
-            matches.append(record)
+    records = [
+        record
+        for record in load_records()
+        if not requested_category
+        or str(record.get("category") or "").casefold() == requested_category
+    ]
 
-    if not matches:
+    def has_season(record: dict[str, Any], season: str) -> bool:
+        record_season = re.sub(
+            r"\s+", " ", str(record.get("season") or "").casefold()
+        ).replace("-", " ")
+        if season == "kharif":
+            return bool(re.search(r"(?<!late )\bkharif\b", record_season))
+        return bool(re.search(rf"\b{re.escape(season)}\b", record_season))
+
+    season_order = ("kharif", "late kharif", "rabi")
+    seasons = (
+        [
+            season
+            for season in season_order
+            if any(has_season(record, season) for record in records)
+        ]
+        if collective_season_question
+        else requested_seasons
+    )
+    matches_by_season = {
+        season: [record for record in records if has_season(record, season)]
+        for season in seasons
+    }
+    matches_by_season = {
+        season: matches
+        for season, matches in matches_by_season.items()
+        if matches
+    }
+    if not matches_by_season:
         return None
     crop_label = requested_category.title() if requested_category else "Crop"
-    names = [str(record.get("variety_name") or "Unnamed variety") for record in matches]
-    season_label = season.title()
-    answer = f"{crop_label} varieties listed for {season_label}: " + ", ".join(names) + "."
+    if len(matches_by_season) == 1 and not collective_season_question:
+        season, matches = next(iter(matches_by_season.items()))
+        names = [str(record.get("variety_name") or "Unnamed variety") for record in matches]
+        answer = (
+            f"{crop_label} varieties listed for {season.title()}: "
+            + ", ".join(names)
+            + "."
+        )
+    else:
+        lines = [f"{crop_label} varieties listed by recorded growing season:"]
+        for season, matches in matches_by_season.items():
+            names = [
+                str(record.get("variety_name") or "Unnamed variety")
+                for record in matches
+            ]
+            lines.append(f"- {season.title()}: " + ", ".join(names) + ".")
+        answer = "\n".join(lines)
+    matched_records = []
+    seen_records = set()
+    for matches in matches_by_season.values():
+        for record in matches:
+            identity = str(record.get("variety_name") or id(record))
+            if identity not in seen_records:
+                seen_records.add(identity)
+                matched_records.append(record)
     chunks, citations = _record_chunks(
-        matches,
+        matched_records,
         lambda record: (
             f"{record.get('variety_name')}: category={record.get('category')}; "
             f"season={record.get('season')}"

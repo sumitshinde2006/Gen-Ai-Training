@@ -132,6 +132,58 @@ def test_ask_answers_rabi_and_kharif_onion_season_questions_from_records():
         generate.assert_not_called()
 
 
+def test_ask_groups_onion_varieties_for_different_growing_seasons():
+    records = [
+        {
+            "variety_name": "Kharif Onion",
+            "category": "onion",
+            "season": "Kharif",
+            "source_url": "https://example.org/onions",
+        },
+        {
+            "variety_name": "Multi-season Onion",
+            "category": "onion",
+            "season": "Kharif, Late Kharif, Rabi",
+            "source_url": "https://example.org/onions",
+        },
+        {
+            "variety_name": "Rabi Onion",
+            "category": "onion",
+            "season": "Rabi",
+            "source_url": "https://example.org/onions",
+        },
+        {
+            "variety_name": "Garlic Example",
+            "category": "garlic",
+            "season": "Rabi",
+            "source_url": "https://example.org/garlic",
+        },
+    ]
+    with (
+        patch("app.rag.load_records", return_value=records),
+        patch("app.rag.semantic_search") as semantic_search,
+        patch("app.rag.generate_response") as generate,
+    ):
+        response = client.post(
+            "/ask",
+            json={
+                "question": "Which onion varieties are suitable for different growing seasons?"
+            },
+        )
+
+    assert response.status_code == 200
+    body = response.json()
+    answer = body["answer"]
+    assert "Kharif: Kharif Onion, Multi-season Onion" in answer
+    assert "Late Kharif: Multi-season Onion" in answer
+    assert "Rabi: Multi-season Onion, Rabi Onion" in answer
+    assert "Garlic Example" not in answer
+    assert body["citations"]
+    assert all(item["source"] == "https://example.org/onions" for item in body["citations"])
+    semantic_search.assert_not_called()
+    generate.assert_not_called()
+
+
 def test_ask_answers_structured_garlic_and_variety_field_questions():
     cases = (
         (
