@@ -40,13 +40,18 @@ class LangGraphWorkflowTests(unittest.TestCase):
         self.assertEqual(result["calculation_result"]["break_even_selling_price_per_quintal"], "2857.14")
 
     def test_calculation_path_and_memory_same_thread(self):
-        self.call("calc", "I have 100 quintals")
-        self.call("calc", "Today's purchase price is 2000 per quintal")
-        result = self.call(
-            "calc",
-            "Calculate break-even for 3 months with 30% loss using the same quantity "
-            "and purchase price as before.",
-        )
+        from unittest.mock import patch
+
+        with patch("app.agent_planner.generate_response") as planner:
+            self.call("calc", "I have 100 quintals")
+            self.call("calc", "Today's purchase price is 2000 per quintal")
+            result = self.call(
+                "calc",
+                "Calculate break-even for 3 months with 30% loss using the same quantity "
+                "and purchase price as before.",
+            )
+
+        planner.assert_not_called()
         self.assertEqual(result["calculation_result"]["break_even_selling_price_per_quintal"], "2857.14")
 
     def test_new_calculation_does_not_reuse_prior_thread_values(self):

@@ -194,6 +194,16 @@ def plan_agent_request(message: str) -> dict[str, Any]:
         for hint in MATH_FALLBACK_HINT
     )
     has_number = any(character.isdigit() for character in message)
+    if has_number and "?" not in message and not has_math_hint:
+        return {
+            "intent": "clarification",
+            "operation": None,
+            "arguments": {},
+            "knowledge_question": None,
+            "clarification": (
+                "What would you like to calculate or find out about those values?"
+            ),
+        }
     has_math_notation = bool(
         re.search(r"[₹$%]|\bper\s+|/(?:kg|qtl|quintal|ton)", message, re.I)
     )
