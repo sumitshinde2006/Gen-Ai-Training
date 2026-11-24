@@ -111,6 +111,62 @@ class HandWrittenAgentTests(unittest.TestCase):
         result = run_agent("Calculate break-even for 3 months with 30% loss", history=["I have 100 quintals", "Today's price is 2000 per quintal"])
         self.assertIsNotNone(result["calculation_result"])
 
+    def test_multi_price_profit_calculation_needs_no_storage_inputs(self):
+        result = run_agent(
+            "Calculate net profit for 6,500 kg onions, with 70% sold at ₹25/kg "
+            "and 30% at ₹18/kg, and expenses of ₹20,000."
+        )
+        self.assertIsNone(result["follow_up"])
+        self.assertEqual(result["tools_used"], ["profit_calculation"])
+        self.assertEqual(result["calculation_result"]["total_revenue"], "148850.00")
+        self.assertEqual(result["calculation_result"]["net_profit"], "128850.00")
+        self.assertIn("Net profit: ₹1,28,850.00", result["answer"])
+
+    def test_simple_profit_calculations_need_no_storage_inputs(self):
+        for quantity, price, expenses, expected in (
+            ("5,000", "20", "10,000", "90000.00"),
+            ("2,000", "30", "5,000", "55000.00"),
+        ):
+            with self.subTest(quantity=quantity):
+                result = run_agent(
+                    f"Calculate profit for {quantity} kg at ₹{price}/kg, "
+                    f"expenses ₹{expenses}."
+                )
+                self.assertIsNone(result["follow_up"])
+                self.assertEqual(result["calculation_result"]["net_profit"], expected)
+                self.assertNotIn("storage", result["answer"].casefold())
+
+    def test_profit_calculation_converts_quintals_and_decimal_prices(self):
+        result = run_agent(
+            "Calculate profit for 50 quintals at ₹2,000 per quintal, "
+            "with expenses of ₹10,000."
+        )
+        self.assertEqual(result["calculation_result"]["net_profit"], "90000.00")
+
+        decimal_result = run_agent(
+            "Calculate profit for 1,250.5 kg at ₹20.50/kg, expenses ₹1,000."
+        )
+        self.assertEqual(decimal_result["calculation_result"]["net_profit"], "24635.25")
+
+    def test_storage_loss_uses_loss_tool_without_break_even_inputs(self):
+        result = run_agent("Calculate storage loss for 10,000 kg with 10% loss.")
+        self.assertEqual(result["tools_used"], ["storage_loss"])
+        self.assertIsNone(result["follow_up"])
+        self.assertEqual(result["calculation_result"]["remaining_quantity"], "9000.00")
+
+    def test_profit_follow_up_requests_only_required_missing_inputs(self):
+        result = run_agent("Calculate profit for 5,000 kg onions.")
+        self.assertIsNone(result["calculation_result"])
+        self.assertEqual(result["follow_up"]["missing_inputs"], ["selling price", "expenses"])
+        self.assertNotIn("storage", result["follow_up"]["question"].casefold())
+
+    def test_profit_rejects_selling_percentages_that_do_not_total_100(self):
+        result = run_agent(
+            "Calculate profit for 1,000 kg, 70% sold at ₹25/kg and "
+            "20% sold at ₹18/kg, expenses ₹2,000."
+        )
+        self.assertIn("not 100%", result["answer"])
+
     def test_maximum_steps_enforced(self):
         result = run_agent("hello", max_steps=MAX_STEPS + 1)
         self.assertIn("max_steps", result["answer"])

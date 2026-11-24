@@ -111,3 +111,62 @@ def test_ask_answers_variety_storage_from_source_linked_records():
     semantic_search.assert_not_called()
     generate.assert_not_called()
 
+
+def test_ask_answers_rabi_and_kharif_onion_season_questions_from_records():
+    for question, season in (
+        ("Which onion varieties in the dataset are listed for the Rabi season?", "Rabi"),
+        ("Which onion varieties are listed for the Kharif season?", "Kharif"),
+    ):
+        with (
+            patch("app.rag.semantic_search") as semantic_search,
+            patch("app.rag.generate_response") as generate,
+        ):
+            response = client.post("/ask", json={"question": question})
+
+        assert response.status_code == 200
+        body = response.json()
+        assert season.casefold() in body["answer"].casefold()
+        assert "Bhima" in body["answer"]
+        assert body["citations"]
+        semantic_search.assert_not_called()
+        generate.assert_not_called()
+
+
+def test_ask_answers_structured_garlic_and_variety_field_questions():
+    cases = (
+        (
+            "Which garlic varieties are listed, and what yield and storage-life values does the dataset record for each?",
+            ("Bhima Omkar", "Bhima Purple", "yield", "storage"),
+        ),
+        (
+            "What maturity period is recorded for Bhima Light Red onion?",
+            ("Bhima Light Red", "115"),
+        ),
+        (
+            "What yield value is recorded for Bhima Light Red onion?",
+            ("Bhima Light Red", "38.5"),
+        ),
+        (
+            "What storage-life information is recorded for Bhima Kiran onion?",
+            ("Bhima Kiran", "5-6 months"),
+        ),
+        (
+            "Which season is listed for Bhima Dark Red onion?",
+            ("Bhima Dark Red", "Kharif"),
+        ),
+    )
+    for question, expected_parts in cases:
+        with (
+            patch("app.rag.semantic_search") as semantic_search,
+            patch("app.rag.generate_response") as generate,
+        ):
+            response = client.post("/ask", json={"question": question})
+
+        assert response.status_code == 200
+        body = response.json()
+        lowered_answer = body["answer"].casefold()
+        assert all(part.casefold() in lowered_answer for part in expected_parts)
+        assert body["citations"]
+        semantic_search.assert_not_called()
+        generate.assert_not_called()
+

@@ -357,6 +357,7 @@ def agent_endpoint(data: AgentRequest):
     """Run or resume a per-thread LangGraph agent conversation."""
     _validate_request_limits(data.message, is_agent=True)
     try:
+        from app.agent_planner import AgentPlanningError
         from app.graph import graph, invoke
     except ImportError:
         raise HTTPException(status_code=503, detail="Agent workflow dependencies are unavailable.") from None
@@ -371,7 +372,13 @@ def agent_endpoint(data: AgentRequest):
         snapshot = graph.get_state(config)
         if snapshot and snapshot.next:
             raise HTTPException(status_code=409, detail="This thread has a pending workflow; resume it with an approval response.")
-        result = invoke(data.message, data.thread_id)
+        try:
+            result = invoke(data.message, data.thread_id)
+        except AgentPlanningError:
+            raise HTTPException(
+                status_code=503,
+                detail="KandaGuide could not plan this request right now.",
+            ) from None
 
     interrupts = result.get("__interrupt__", ())
     if interrupts:

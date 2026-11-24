@@ -13,6 +13,7 @@ from typing import Any
 from app.llm import LLMError, generate_response
 from app.embed import get_model_name
 from app.observability import record_cache_hit
+from app.records import load_records
 from app.smart_search import smart_search
 from app.settings import SettingsError, get_settings
 from app.vectorstore import (
@@ -202,6 +203,202 @@ def _structured_storage_answer(question: str) -> dict[str, Any] | None:
     }
 
 
+def _record_chunks(records: list[dict[str, Any]], text_factory) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    """Convert source-linked records into evidence and citation-shaped results."""
+    chunks = []
+    citations = []
+    seen_sources = set()
+    for record in records:
+        source = record.get("source_url")
+        if not isinstance(source, str) or not source.startswith(("https://", "http://")):
+            continue
+        name = str(record.get("variety_name") or "Unnamed variety")
+        chunk_id = "record:" + hashlib.sha256(
+            json.dumps(record, sort_keys=True, ensure_ascii=False).encode("utf-8")
+        ).hexdigest()
+        text = text_factory(record)
+        chunks.append({
+            "chunk_id": chunk_id,
+            "title": name,
+            "source": source,
+            "page": None,
+            "text": text,
+            "distance": 0.0,
+        })
+        if source not in seen_sources:
+            seen_sources.add(source)
+            citations.append({
+                "title": name,
+                "source": source,
+                "source_url": source,
+                "page": None,
+                "chunk_id": chunk_id,
+            })
+    return chunks, citations
+
+
+def _record_season_answer(question: str) -> dict[str, Any] | None:
+    lowered = question.casefold()
+    if not re.search(r"\bvariet(?:y|ies)\b", lowered):
+        return None
+    season_match = re.search(r"\b(late[\s-]+kharif|kharif|rabi)\b", lowered)
+    if not season_match:
+        return None
+    season = re.sub(r"\s+", " ", season_match.group(1)).replace("-", " ").casefold()
+
+    requested_category = None
+    if re.search(r"\bonion\b", lowered):
+        requested_category = "onion"
+    elif re.search(r"\bgarlic\b", lowered):
+        requested_category = "garlic"
+
+    matches = []
+    for record in load_records():
+        if requested_category and str(record.get("category") or "").casefold() != requested_category:
+            continue
+        record_season = str(record.get("season") or "").casefold()
+        record_season = re.sub(r"\s+", " ", record_season).replace("-", " ")
+        if re.search(rf"\b{re.escape(season)}\b", record_season):
+            matches.append(record)
+
+    if not matches:
+        return None
+    crop_label = requested_category.title() if requested_category else "Crop"
+    names = [str(record.get("variety_name") or "Unnamed variety") for record in matches]
+    season_label = season.title()
+    answer = f"{crop_label} varieties listed for {season_label}: " + ", ".join(names) + "."
+    chunks, citations = _record_chunks(
+        matches,
+        lambda record: (
+            f"{record.get('variety_name')}: category={record.get('category')}; "
+            f"season={record.get('season')}"
+        ),
+    )
+    return {
+        "question": question,
+        "answer": answer,
+        "citations": citations,
+        "confidence": "high",
+        "retrieved_chunks": chunks,
+    }
+
+
+def _record_field_answer(question: str) -> dict[str, Any] | None:
+    lowered = question.casefold()
+    records = load_records()
+    record = None
+    for candidate in records:
+        name = str(candidate.get("variety_name") or "")
+        if name and re.search(rf"\b{re.escape(name.casefold())}\b", lowered):
+            record = candidate
+            break
+    if record is None:
+        return None
+
+    name = str(record.get("variety_name") or "Unnamed variety")
+    if re.search(r"\b(?:maturity|mature|days)\b", lowered):
+        value = record.get("maturity_days_after_transplanting") or record.get("maturity_note")
+        if isinstance(value, str) and value.strip():
+            answer = f"For {name}, the recorded maturity period is {value.strip()}."
+        else:
+            return None
+    elif re.search(r"\byield\b", lowered):
+        value = record.get("yield_t_ha")
+        if isinstance(value, str) and value.strip():
+            answer = f"For {name}, the recorded yield is {value.strip()}."
+        else:
+            return None
+    elif re.search(r"\bstor(?:age|ability)|keep(?:ing)?\s+quality\b", lowered):
+        value = record.get("storage_life")
+        if isinstance(value, str) and value.strip():
+            answer = f"For {name}, the recorded storage-life information is: {value.strip()}."
+        else:
+            return None
+    elif re.search(r"\b(?:region|season|recommended)\b", lowered):
+        season = record.get("season")
+        storage = record.get("storage_life")
+        development_location = record.get("development_location")
+        region_match = re.search(
+            r"(?:Recommended Season and Region:\s*)([^.]+)",
+            str(storage or ""),
+            re.IGNORECASE,
+        )
+        parts = []
+        if isinstance(season, str) and season:
+            parts.append(f"season: {season}")
+        if isinstance(development_location, str) and development_location:
+            parts.append(f"development location: {development_location}")
+        if region_match:
+            parts.append(f"region: {region_match.group(1).strip()}")
+        if not parts:
+            return None
+        answer = f"For {name}, the recorded " + " and ".join(parts) + "."
+    elif re.search(r"\bseason\b", lowered):
+        season = record.get("season")
+        if isinstance(season, str) and season:
+            answer = f"The season listed for {name} is {season}."
+        else:
+            return None
+    else:
+        return None
+
+    chunks, citations = _record_chunks(
+        [record],
+        lambda candidate: (
+            f"{candidate.get('variety_name')}: category={candidate.get('category')}; "
+            f"season={candidate.get('season')}; maturity={candidate.get('maturity_days_after_transplanting')}; "
+            f"yield={candidate.get('yield_t_ha')}; storage_life={candidate.get('storage_life')}; "
+            f"development_location={candidate.get('development_location')}"
+        ),
+    )
+    return {
+        "question": question,
+        "answer": answer,
+        "citations": citations,
+        "confidence": "high",
+        "retrieved_chunks": chunks,
+    }
+
+
+def _structured_garlic_answer(question: str) -> dict[str, Any] | None:
+    lowered = question.casefold()
+    if not re.search(r"\bgarlic\b", lowered):
+        return None
+    if not re.search(r"\b(?:variet(?:y|ies)|yield|storage)\b", lowered):
+        return None
+    records = [
+        record for record in load_records()
+        if str(record.get("category") or "").casefold() == "garlic"
+    ]
+    if not records:
+        return None
+    lines = ["Garlic varieties and the values recorded in the dataset:"]
+    for record in records:
+        name = str(record.get("variety_name") or "Unnamed variety")
+        yield_value = record.get("yield_t_ha")
+        storage = record.get("storage_life")
+        details = []
+        if isinstance(yield_value, str) and yield_value.strip():
+            details.append(f"yield {yield_value.strip()}")
+        if isinstance(storage, str) and storage.strip():
+            details.append(f"storage life {storage.strip()}")
+        lines.append(f"- {name}: " + ("; ".join(details) + "." if details else "no yield or storage value recorded."))
+    chunks, citations = _record_chunks(
+        records,
+        lambda record: (
+            f"{record.get('variety_name')}: category=garlic; "
+            f"yield={record.get('yield_t_ha')}; storage_life={record.get('storage_life')}"
+        ),
+    )
+    return {
+        "question": question,
+        "answer": "\n".join(lines),
+        "citations": citations,
+        "confidence": "high",
+        "retrieved_chunks": chunks,
+    }
+
+
 def _usable_evidence(question: str, chunks: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """Reject empty, distant, or lexically unrelated matches; distance alone is insufficient."""
     question_tokens = _tokens(question)
@@ -291,6 +488,18 @@ def answer_question(
             settings.cache_enabled, settings.cache_max_entries,
         )
         return result
+
+    structured_result = (
+        _record_season_answer(question)
+        or _structured_garlic_answer(question)
+        or _record_field_answer(question)
+    )
+    if structured_result is not None:
+        _cache_put(
+            cache_key, structured_result, settings.cache_ttl_seconds,
+            settings.cache_enabled, settings.cache_max_entries,
+        )
+        return structured_result
 
     structured_result = _structured_storage_answer(question)
     if structured_result is not None:

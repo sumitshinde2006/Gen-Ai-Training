@@ -113,6 +113,7 @@ records = [
         "variety_name": "Bhima Prasanskaran",
         "category": "onion",
         "season": "Rabi",
+        "development_location": "Rajgurunagar, Pune, Maharashtra",
         "maturity_days_after_transplanting": None,
         "yield_t_ha": 27.359,
         "storage_life": "31.11% storage losses after 4 months",

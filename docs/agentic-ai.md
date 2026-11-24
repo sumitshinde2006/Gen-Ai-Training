@@ -21,13 +21,36 @@ An explicitly supplied percentage is used as-is. The hand-written agent can also
 
 For 100 quintals at ₹2,000 per quintal, gross revenue today is ₹200,000. At 30% loss, 70 quintals remain and the break-even price is ₹2,857.14/quintal. At 40% loss, 60 quintals remain and the price is ₹3,333.33/quintal. These are gross-revenue comparisons; storage, transport, interest, inflation, quality discounts, and other costs are excluded. Months are informational only and do not change the loss rate.
 
-## Hand-written agent
+## Structured request planner
 
-`app.agent_loop.run_agent()` uses a bounded, deterministic router with a maximum of three steps. It detects explicit calculation requests and extracts quantity, price, duration, and optional loss percentages from the current message and supplied history. When inputs are missing, it asks for them and does not calculate. It calls `answer_question()` for agricultural facts and reports its citations. Combined requests call both capabilities. The arithmetic is always performed by `app.tools`, never by the LLM. This version has no persistent conversation store; callers pass history when needed.
+`app.agent_planner.plan_agent_request()` returns a constrained JSON plan that
+classifies a request as calculation, agricultural knowledge, mixed, or
+clarification. Unambiguous common calculations use a local fast path; ambiguous
+wording is sent to the configured model with `prompts/agent_planner.txt`. The
+model extracts intent and directly stated values only—it must not calculate,
+invent missing values, or provide chain-of-thought. Extracted numbers are
+checked against the current request before execution.
+
+The graph dispatches plans to deterministic Decimal tools for profit, revenue,
+break-even, storage loss, cost totals, percentages, price comparisons, and basic
+arithmetic. Agricultural questions use `answer_question()` and its citations;
+mixed plans call both. Follow-ups are generated from each operation's required
+inputs. For example, profit needs quantity, sale prices, and expenses, but does
+not require storage months or storage-loss percentages.
+
+`app.agent_loop.run_agent()` uses the same planner and deterministic execution
+functions for non-graph callers. Unit tests mock model-planner responses, so
+they require no paid API calls.
 
 ## LangGraph workflow and memory
 
-`app.graph` represents the work as `understand_request`, `decide_tool`, `retrieve_agricultural_context`, `calculate_storage_break_even`, `generate_response`, `approval`, and `finalize_response` nodes. Conditional edges skip capabilities the request does not need. A per-thread checkpointer stores messages and workflow state; the same `thread_id` resumes the same conversation, while distinct IDs have separate checkpoints.
+`app.graph` represents the work as `understand_request`, `decide_tool`,
+`retrieve_agricultural_context`, `calculate_request`, `generate_response`,
+`approval`, and `finalize_response` nodes. Conditional edges skip capabilities
+the request does not need. Each request resets its prior answer, citations, and
+tool outputs. A per-thread checkpointer stores messages and workflow state;
+prior numeric values are supplied to planning only when the user explicitly
+refers to them, and only the referenced fields are reused.
 
 The graph uses LangGraph's local `MemorySaver` checkpointer. It persists only for the lifetime of the Python process, is not shared between workers, and is cleared on restart. For durable deployments, configure a persistent LangGraph checkpointer such as PostgreSQL and add authentication/authorization around thread IDs. The current API has no user identity layer, so a thread ID is a conversation key, not an access-control credential.
 
@@ -56,7 +79,7 @@ flowchart TD
     A([Start]) --> B[understand_request]
     B --> C{decide_tool}
     C -->|facts needed| D[retrieve_agricultural_context]
-    C -->|calculation needed| E[calculate_storage_break_even]
+    C -->|calculation needed| E[calculate_request]
     C -->|neither| F[generate_response]
     D --> G{calculation also needed?}
     G -->|yes| E

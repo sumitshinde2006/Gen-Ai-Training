@@ -49,6 +49,321 @@ def _fmt(d: Decimal) -> str:
     return str(d.quantize(CENT, rounding=ROUND_HALF_UP))
 
 
+def _fmt_inr(d: Decimal) -> str:
+    """Format a currency amount with Indian-style digit grouping."""
+    whole, fraction = _fmt(d).split(".")
+    sign = ""
+    if whole.startswith("-"):
+        sign, whole = "-", whole[1:]
+    if len(whole) > 3:
+        last = whole[-3:]
+        leading = whole[:-3]
+        groups = []
+        while leading:
+            groups.append(leading[-2:])
+            leading = leading[:-2]
+        whole = ",".join(reversed(groups)) + "," + last
+    return f"{sign}{whole}.{fraction}"
+
+
+def profit_calculation(
+    quantity_kg: Any,
+    selling_groups: list[dict[str, Any]],
+    expenses: Any = None,
+    *,
+    operation: str = "profit",
+    expense_items: list[dict[str, Any]] | None = None,
+) -> dict[str, Any]:
+    """Calculate revenue or net profit from one or more sale-price groups.
+
+    Each group has a percentage of total quantity and a selling price per kg.
+    Profit calculations require expenses; revenue calculations do not.
+    """
+    quantity = _decimal(quantity_kg, "quantity_kg")
+    if quantity <= 0:
+        raise ToolInputError("quantity must be greater than zero.")
+    if operation not in {"profit", "revenue"}:
+        raise ToolInputError("operation must be 'profit' or 'revenue'.")
+    if not isinstance(selling_groups, list) or not selling_groups:
+        raise ToolInputError("At least one selling price is required.")
+    if operation == "profit" and expenses is None and not expense_items:
+        raise ToolInputError("expenses are required to calculate net profit.")
+
+    parsed_groups = []
+    total_percentage = Decimal("0")
+    total_revenue = Decimal("0")
+    for index, group in enumerate(selling_groups, start=1):
+        if not isinstance(group, dict):
+            raise ToolInputError(f"selling_groups[{index}] must be an object.")
+        percentage = _decimal(group.get("percentage"), f"selling_groups[{index}].percentage")
+        price = _decimal(group.get("price_per_kg"), f"selling_groups[{index}].price_per_kg")
+        if percentage <= 0 or percentage > 100:
+            raise ToolInputError("Each selling percentage must be greater than 0 and at most 100.")
+        if price < 0:
+            raise ToolInputError("Selling prices must not be negative.")
+        quantity_for_group = quantity * percentage / 100
+        revenue = (quantity_for_group * price).quantize(CENT, rounding=ROUND_HALF_UP)
+        total_percentage += percentage
+        total_revenue += revenue
+        parsed_groups.append({
+            "percentage": _fmt(percentage),
+            "quantity_kg": _fmt(quantity_for_group),
+            "selling_price_per_kg": _fmt(price),
+            "revenue": _fmt(revenue),
+        })
+
+    if total_percentage != 100:
+        raise ToolInputError(
+            f"Selling percentages total {_fmt(total_percentage)}%, not 100%; "
+            "please correct the percentages."
+        )
+
+    total_revenue = total_revenue.quantize(CENT, rounding=ROUND_HALF_UP)
+    parsed_expenses = []
+    if expense_items is not None:
+        if not isinstance(expense_items, list):
+            raise ToolInputError("expense_items must be a list.")
+        for index, item in enumerate(expense_items, start=1):
+            if not isinstance(item, dict):
+                raise ToolInputError(f"expense_items[{index}] must be an object.")
+            amount = _decimal(item.get("amount"), f"expense_items[{index}].amount")
+            label = str(item.get("label") or f"Expense {index}")
+            parsed_expenses.append({"label": label, "amount": amount})
+        cost = sum(
+            (item["amount"] for item in parsed_expenses), Decimal("0")
+        )
+    else:
+        cost = _decimal(expenses, "expenses") if expenses is not None else Decimal("0")
+    if cost < 0:
+        raise ToolInputError("expenses must not be negative.")
+    if any(item["amount"] < 0 for item in parsed_expenses):
+        raise ToolInputError("Expenses must not be negative.")
+    net_profit = (total_revenue - cost).quantize(CENT, rounding=ROUND_HALF_UP)
+
+    result: dict[str, Any] = {
+        "operation": operation,
+        "quantity_kg": _fmt(quantity),
+        "selling_groups": parsed_groups,
+        "total_revenue": _fmt(total_revenue),
+        "expenses": _fmt(cost),
+        "expense_items": [
+            {"label": item["label"], "amount": _fmt(item["amount"])}
+            for item in parsed_expenses
+        ],
+        "net_profit": _fmt(net_profit) if operation == "profit" else None,
+    }
+    if operation == "profit":
+        outcome = "profit" if net_profit >= 0 else "loss"
+        result["step_by_step"] = (
+            "Sales calculation:\n"
+            + "\n".join(
+                f"  {group['percentage']}%: {group['quantity_kg']} kg × "
+                f"₹{_fmt_inr(Decimal(group['selling_price_per_kg']))}/kg "
+                f"= ₹{_fmt_inr(Decimal(group['revenue']))}"
+                for group in parsed_groups
+            )
+            + f"\nTotal revenue: ₹{_fmt_inr(total_revenue)}"
+            + (
+                "\n" + "\n".join(
+                    f"{item['label']}: ₹{_fmt_inr(item['amount'])}"
+                    for item in parsed_expenses
+                )
+                if parsed_expenses else ""
+            )
+            + f"\nExpenses: ₹{_fmt_inr(cost)}"
+            + f"\nNet {outcome}: ₹{_fmt_inr(abs(net_profit))}"
+        )
+    else:
+        result["step_by_step"] = f"Total revenue: ₹{_fmt_inr(total_revenue)}"
+    return result
+
+
+def storage_loss_calculation(
+    quantity: Any, loss_percent: Any, *, unit: str = "kg"
+) -> dict[str, Any]:
+    """Calculate lost and remaining stock from a quantity and loss percentage."""
+    amount = _decimal(quantity, "quantity")
+    percent = _decimal(loss_percent, "loss_percent")
+    normalized_unit = unit.casefold()
+    if normalized_unit not in {
+        "kg", "kilogram", "kilograms", "quintal", "quintals", "qtl",
+        "ton", "tons", "tonne", "tonnes", "metric ton", "metric tons",
+    }:
+        raise ToolInputError("unit must be kilograms, quintals, or tonnes.")
+    if normalized_unit in {"quintal", "quintals", "qtl"}:
+        normalized_unit = "quintals"
+    elif normalized_unit in {"ton", "tons", "tonne", "tonnes", "metric ton", "metric tons"}:
+        normalized_unit = "tonnes"
+    else:
+        normalized_unit = "kg"
+    if amount <= 0:
+        raise ToolInputError("quantity must be greater than zero.")
+    if percent < 0 or percent >= 100:
+        raise ToolInputError("loss_percent must be at least 0 and below 100.")
+    lost = (amount * percent / 100).quantize(CENT, rounding=ROUND_HALF_UP)
+    remaining = (amount - lost).quantize(CENT, rounding=ROUND_HALF_UP)
+    return {
+        "quantity": _fmt(amount),
+        "unit": normalized_unit,
+        "loss_percent": _fmt(percent),
+        "lost_quantity": _fmt(lost),
+        "remaining_quantity": _fmt(remaining),
+        "remaining_stock_kg": (
+            _fmt(remaining * KG_PER_QUINTAL)
+            if normalized_unit == "quintals"
+            else _fmt(remaining * 1000) if normalized_unit == "tonnes"
+            else _fmt(remaining)
+        ),
+        "step_by_step": (
+            f"Storage loss: { _fmt(amount) } {normalized_unit} × "
+            f"{_fmt(percent)}% = {_fmt(lost)} {normalized_unit} lost. "
+            f"Remaining stock: {_fmt(remaining)} {normalized_unit}."
+        ),
+    }
+
+
+def cost_total_calculation(cost_items: list[dict[str, Any]]) -> dict[str, Any]:
+    """Sum explicitly supplied cost items without estimating missing expenses."""
+    if not isinstance(cost_items, list) or not cost_items:
+        raise ToolInputError("At least one cost amount is required.")
+    parsed = []
+    total = Decimal("0")
+    for index, item in enumerate(cost_items, start=1):
+        if not isinstance(item, dict):
+            raise ToolInputError(f"cost_items[{index}] must be an object.")
+        amount = _decimal(item.get("amount"), f"cost_items[{index}].amount")
+        if amount < 0:
+            raise ToolInputError("Costs must not be negative.")
+        label = str(item.get("label") or f"Cost {index}")
+        parsed.append({"label": label, "amount": _fmt(amount)})
+        total += amount
+    return {
+        "cost_items": parsed,
+        "total_cost": _fmt(total),
+        "step_by_step": (
+            "\n".join(f"{item['label']}: ₹{item['amount']}" for item in parsed)
+            + f"\nTotal cost: ₹{_fmt_inr(total)}"
+        ),
+    }
+
+
+def percentage_calculation(rate: Any, base: Any) -> dict[str, Any]:
+    """Calculate a stated percentage of a base amount."""
+    percentage = _decimal(rate, "rate")
+    amount = _decimal(base, "base")
+    if percentage < 0:
+        raise ToolInputError("rate must not be negative.")
+    result = (amount * percentage / 100).quantize(CENT, rounding=ROUND_HALF_UP)
+    return {
+        "rate": _fmt(percentage),
+        "base": _fmt(amount),
+        "result": _fmt(result),
+        "step_by_step": (
+            f"{_fmt(percentage)}% of {_fmt_inr(amount)} = ₹{_fmt_inr(result)}"
+        ),
+    }
+
+
+def price_comparison_calculation(values: list[dict[str, Any]]) -> dict[str, Any]:
+    """Compare two or more values after converting compatible units."""
+    if not isinstance(values, list) or len(values) < 2:
+        raise ToolInputError("At least two comparable values are required.")
+    parsed = []
+    normalized_unit = None
+    for index, item in enumerate(values, start=1):
+        if not isinstance(item, dict):
+            raise ToolInputError(f"values[{index}] must be an object.")
+        value = _decimal(item.get("value"), f"values[{index}].value")
+        unit = str(item.get("unit") or "").strip().casefold().replace(" ", "_")
+        if unit in {"per_quintal", "quintal_price", "rs_per_quintal", "inr_per_quintal"}:
+            value /= KG_PER_QUINTAL
+            unit = "per_kg"
+        elif unit in {
+            "per_tonne", "per_ton", "tonne_price", "ton_price",
+            "rs_per_tonne", "inr_per_tonne", "rs_per_ton", "inr_per_ton",
+        }:
+            value /= 1000
+            unit = "per_kg"
+        elif unit in {"quintal", "quintals", "qtl"}:
+            value *= KG_PER_QUINTAL
+            unit = "kg"
+        elif unit in {"kilogram", "kilograms"}:
+            unit = "kg"
+        if normalized_unit is None:
+            normalized_unit = unit
+        elif unit != normalized_unit:
+            raise ToolInputError("Values must use comparable units.")
+        parsed.append({
+            "label": str(item.get("label") or f"Value {index}"),
+            "value": value,
+            "unit": unit,
+        })
+
+    low = min(parsed, key=lambda item: item["value"])
+    high = max(parsed, key=lambda item: item["value"])
+    difference = high["value"] - low["value"]
+    baseline = parsed[0]["value"]
+    percentage_change = (
+        ((parsed[-1]["value"] - baseline) / abs(baseline) * 100).quantize(
+            CENT, rounding=ROUND_HALF_UP
+        )
+        if baseline != 0 else None
+    )
+    return {
+        "values": [
+            {
+                "label": item["label"],
+                "value": _fmt(item["value"]),
+                "unit": item["unit"],
+            }
+            for item in parsed
+        ],
+        "difference": _fmt(difference),
+        "unit": normalized_unit,
+        "percentage_change_from_first": (
+            _fmt(percentage_change) if percentage_change is not None else None
+        ),
+        "step_by_step": (
+            f"{high['label']} is higher than {low['label']} by "
+            f"{_fmt_inr(difference)} {normalized_unit}."
+            + (
+                f" Change from {parsed[0]['label']} to {parsed[-1]['label']}: "
+                f"{_fmt(percentage_change)}%."
+                if percentage_change is not None else ""
+            )
+        ),
+    }
+
+
+def arithmetic_calculation(operator: str, operands: list[Any]) -> dict[str, Any]:
+    """Evaluate a basic arithmetic sequence using Decimal, never eval()."""
+    if operator not in {"add", "subtract", "multiply", "divide"}:
+        raise ToolInputError("operator must be add, subtract, multiply, or divide.")
+    if not isinstance(operands, list) or len(operands) < 2:
+        raise ToolInputError("At least two operands are required.")
+    numbers = [_decimal(value, f"operands[{index}]") for index, value in enumerate(operands)]
+    result = numbers[0]
+    for value in numbers[1:]:
+        if operator == "add":
+            result += value
+        elif operator == "subtract":
+            result -= value
+        elif operator == "multiply":
+            result *= value
+        else:
+            if value == 0:
+                raise ToolInputError("Division by zero is not allowed.")
+            result /= value
+    result = result.quantize(CENT, rounding=ROUND_HALF_UP)
+    symbol = {"add": "+", "subtract": "−", "multiply": "×", "divide": "÷"}[operator]
+    return {
+        "operator": operator,
+        "operands": [_fmt(number) for number in numbers],
+        "result": _fmt(result),
+        "step_by_step": f" {symbol} ".join(_fmt(number) for number in numbers) + f" = {_fmt(result)}",
+    }
+
+
 def storage_break_even(
     quantity_quintals: Any,
     todays_price_per_quintal: Any,
@@ -115,7 +430,10 @@ def storage_break_even(
     else:
         loss_pct = _decimal(expected_storage_loss_percent, "expected_storage_loss_percent")
         if loss_pct < 0 or loss_pct >= 100:
-            raise ToolInputError("expected_storage_loss_percent must be between 0 and 100.")
+            raise ToolInputError(
+                "expected_storage_loss_percent must be between 0 and 100 "
+                "(loss must be below 100 percent)."
+            )
         loss_percents  = (loss_pct,)
         is_range       = False
         loss_display   = _fmt(loss_pct)
@@ -227,6 +545,7 @@ def storage_break_even(
         "additional_costs_breakdown": {k: _fmt(v) for k, v in parsed_additional.items()},
         "total_additional_costs": _fmt(total_additional),
         "total_investment": _fmt(total_investment),
+        "todays_gross_revenue": _fmt(purchase_cost),
         # Loss metadata
         "expected_storage_loss_percent": loss_display,
         "loss_input_status": (
@@ -270,6 +589,8 @@ def storage_break_even(
         result.update({
             "lost_quantity_kg": sc["lost_quantity_kg"],
             "lost_quantity_quintals": sc["lost_quantity_quintals"],
+            "expected_lost_quantity_kg": sc["lost_quantity_kg"],
+            "expected_lost_quantity_quintals": sc["lost_quantity_quintals"],
             "remaining_saleable_quantity_kg": sc["remaining_saleable_quantity_kg"],
             "remaining_saleable_quantity_quintals": sc["remaining_saleable_quantity_quintals"],
             "break_even_selling_price_per_kg": sc["break_even_selling_price_per_kg"],
