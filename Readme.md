@@ -58,7 +58,7 @@ independently verify its availability.
 
 | Service | URL / status |
 |---|---|
-| Streamlit application | [https://gen-ai-training-1.onrender.com](https://gen-ai-training-1.onrender.com) — URL supplied; not independently verified |
+| Streamlit application | [https://gen-ai-training-1.onrender.com](https://gen-ai-training-1.onrender.com) |
 | FastAPI API | https://kanda-guide.onrender.com/ — verified HTTP 200 |
 | FastAPI `/health` | https://kanda-guide.onrender.com/health — verified HTTP 200 |
 
