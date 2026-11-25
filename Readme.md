@@ -17,7 +17,7 @@
 | Render deployment | API health was historically verified; frontend URL is supplied below but was not independently checked in this update. |
 | API URL | https://kanda-guide.onrender.com/ |
 | API health URL | https://kanda-guide.onrender.com/health — verified HTTP 200 |
-| Streamlit UI URL | [https://gen-ai-training-1.onrender.com](https://gen-ai-training-1.onrender.com) — provided by the project owner; not independently checked in this update. |
+| Streamlit UI URL | [https://gen-ai-training-1.onrender.com](https://gen-ai-training-1.onrender.com)  |
 
 ### GitHub Actions
 
