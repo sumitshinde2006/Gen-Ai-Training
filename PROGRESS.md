@@ -3,6 +3,7 @@
 ## Historical milestones
 
 The existing project history is retained here; deployment and CI statements below are historical entries from the project README, not a new live-service verification.
+The prior Day 14 checklist marked every item complete; the release and validation statuses below were rechecked rather than carried forward as current evidence.
 
 - [x] Day 1-4: Python introduction, variety records and operations, data ingestion, FastAPI, and smart search.
 - [x] Checkpoint 1: LLM/RAG learning documentation and recorded HTTP checks for the existing API.
@@ -20,7 +21,8 @@ The existing project history is retained here; deployment and CI statements belo
 - [x] Ran the credentialed Groq evaluation (`eval/run_eval.py`): both 15-question configurations completed; no answer evaluations failed or were skipped. Latest metrics and scoring limitations are recorded in `eval/evaluation_summary.md`.
 - [ ] Build the Docker image locally: **blocked** because the Docker CLI could not connect to `dockerDesktopLinuxEngine`; the Docker daemon was unavailable.
 - [x] Inspected the existing `final` tag. The local and remote tag already point to commit `91da6990b2895e70a00bfb530e25395c806936ce`. It is being left untouched; moving an existing remote tag would require rewriting the tag and is not authorized by the current instructions.
-- [ ] Complete the new Day 14 documentation commit and verify the branch push; record the resulting Git state in the final report.
+- [x] Created and pushed Day 14 documentation/evaluation commit `9a623652e21938d412e2628c49f5da4e995dbaf4` (`day-14: complete KandaGuide interview documentation`). The `origin/main` ref was verified at that commit before this tracker update.
+- [ ] Retarget `final` to the new Day 14 commit: not done because the existing remote tag would have to be rewritten, and no authorization to replace it was given.
 
 ## Data quality and evaluation limitations
 
