@@ -66,6 +66,8 @@ In the latest recorded run (2026-11-24 UTC), Configuration B achieved 100% retri
 
 The repository provides a Dockerfile, a Docker Compose setup for the FastAPI API and Streamlit UI, and a Render Blueprint with separate API and UI services. These files describe deployment configuration; they do not prove that every configured service is currently available. GitHub Actions is configured to run Ruff, pytest, and a Docker image build.
 
+The project owner supplied the [KandaGuide frontend URL](https://gen-ai-training-1.onrender.com); this update records the link but does not independently verify availability.
+
 For this Day 14 verification, `python -m pytest -q` completed with **120 passed and one deprecation warning**, and `python -m ruff check .` passed. The credentialed Groq evaluation completed both configurations with no failed or skipped questions. The local Docker build could not run because the Docker CLI could not connect to the Docker Desktop Linux engine; the daemon was unavailable. The configured CI workflow and deployment files are not substitutes for that local build result or a current live deployment check.
 
 ## Source pointers

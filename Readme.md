@@ -10,14 +10,14 @@
 
 ## CI and deployment status
 
-| Project tracker item | Verified status |
+| Project tracker item | Status / evidence |
 |---|---|
 | PR #1 (`feature/ci-cd-deployment`) | **Merged** on 21 November 2026; merge commit `aa4b9a992a1ca61396c4c1be2c9e3cb52660a`. |
 | CI workflow | **Passed** on merge commit: Ruff, Pytest, and Docker build jobs completed successfully. |
-| Render deployment | API deployed and publicly reachable; UI service URL is not yet verified. |
+| Render deployment | API health was historically verified; frontend URL is supplied below but was not independently checked in this update. |
 | API URL | https://kanda-guide.onrender.com/ |
 | API health URL | https://kanda-guide.onrender.com/health — verified HTTP 200 |
-| Streamlit UI URL | Not verified; actual public UI service URL is not available. |
+| Streamlit UI URL | [https://gen-ai-training-1.onrender.com](https://gen-ai-training-1.onrender.com) — provided by the project owner; not independently checked in this update. |
 
 ### GitHub Actions
 
@@ -52,12 +52,13 @@ Blueprint matches the repository configuration.
 The public API deployment was verified on 22 November 2026:
 https://kanda-guide.onrender.com/health returned HTTP 200 with
 `{"status":"OK","message":"KandaGuide API is running"}`. The API root and
-OpenAPI document also returned HTTP 200. The public Streamlit UI URL remains
-unverified because no UI service URL was supplied.
+OpenAPI document also returned HTTP 200. The project owner has supplied the
+public Streamlit UI URL below; this update records that URL but does not
+independently verify its availability.
 
-| Service | Verified URL / status |
+| Service | URL / status |
 |---|---|
-| Streamlit application | Not verified; actual Render service URL unavailable |
+| Streamlit application | [https://gen-ai-training-1.onrender.com](https://gen-ai-training-1.onrender.com) — URL supplied; not independently verified |
 | FastAPI API | https://kanda-guide.onrender.com/ — verified HTTP 200 |
 | FastAPI `/health` | https://kanda-guide.onrender.com/health — verified HTTP 200 |
 
