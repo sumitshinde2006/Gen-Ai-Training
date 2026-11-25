@@ -1,28 +1,28 @@
 # RAG evaluation summary
 
-Evaluation timestamp (UTC): 2026-11-22T00:53:27+00:00. Both configurations use isolated temporary Chroma indexes; the existing persistent collection is untouched. The evaluation set contains the original 15 questions.
+Evaluation timestamp (UTC): 2026-11-24T23:58:03+00:00. Both configurations use isolated temporary Chroma indexes; the existing persistent collection is untouched. The evaluation set contains the original 15 questions.
 
 | Metric | Configuration A | Configuration B |
 |---|---:|---:|
 | Chunk size | 400 words | 600 words |
 | Top-k | 3 | 5 |
 | Questions | 15 | 15 |
-| Retrieval hit rate | 84.62% | 100.0% |
-| Answer correctness (all 15 questions) | 40.0% | 53.33% |
-| Citation correctness (all 15 questions) | 26.67% | 26.67% |
+| Retrieval hit rate | 92.31% | 100.0% |
+| Answer correctness (all 15 questions) | 86.67% | 93.33% |
+| Citation correctness (all 15 questions) | 20.0% | 20.0% |
 | Grounded answer rate (all answerable questions) | 7.69% | 7.69% |
 | Correct abstention rate (both unanswerable questions) | 100.0% (2/2) | 100.0% (2/2) |
 | Unsupported-answer rate (unanswerable questions) | 0.0% | 0.0% |
 | Groq answer calls completed / failed | 13 / 0 | 13 / 0 |
 | All answer evaluations completed / failed / skipped | 15 / 0 / 0 | 15 / 0 / 0 |
-| Partial completed-response observations | 6/15 passed the answer proxy; grounded 1/13 | 8/15 passed the answer proxy; grounded 1/13 |
+| Partial completed-response observations | 13/15 passed the answer proxy; grounded 1/13 | 14/15 passed the answer proxy; grounded 1/13 |
 | Q6 exact refusal | True | True |
-| Mean retrieval latency | 26.94 ms | 27.23 ms |
+| Mean retrieval latency | 22.12 ms | 22.02 ms |
 | Failed or skipped questions | None | None |
 
 ## Winner
 
-**Configuration B.** It had the higher primary quality score (43.59% vs. 46.92%).
+**Configuration B.** It had the higher primary quality score (53.59% vs. 55.25%).
 
 ## Scoring and comparison method
 

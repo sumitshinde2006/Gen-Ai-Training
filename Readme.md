@@ -497,25 +497,28 @@ Sanjivani University – SJ-09 Agriculture
 
 ## Evaluation results
 
-The complete run used 15 evaluation questions with isolated temporary Chroma
-indexes and the existing sentence-transformer model. Groq answer generation
-completed for all 15 questions in both configurations.
+Latest evaluation run: 2026-11-24 23:58:03 UTC. It used 15 evaluation
+questions, isolated temporary Chroma indexes, and the existing
+sentence-transformer model. Groq answer generation completed for all 15
+questions in both configurations, with no failed or skipped evaluations.
 
 | Metric | Config A (400/top-3) | Config B (600/top-5) |
 |---|---:|---:|
-| Retrieval hit rate | 84.62% | 100.0% |
-| Answer correctness | 40.0% | 53.33% |
-| Citation correctness | 26.67% | 26.67% |
+| Retrieval hit rate | 92.31% | 100.0% |
+| Answer correctness proxy | 86.67% | 93.33% |
+| Citation correctness | 20.0% | 20.0% |
 | Grounded answers | 7.69% | 7.69% |
 | Correct abstentions | 100.0% (2/2) | 100.0% (2/2) |
 | Winner | - | **Configuration B selected** |
 
 **Selection:** Configuration B won because it had the higher primary quality
-score: 46.92%, compared with 43.59% for Configuration A. The primary score is
+score: 55.25%, compared with 53.59% for Configuration A. The primary score is
 the unweighted mean of answer correctness, citation correctness, grounded
 answer percentage, and correct-abstention percentage. Retrieval hit rate is
-used only as a tie-breaker. These figures are keyword/citation proxies, not
-semantic ground truth.
+used only as a tie-breaker. Correctness is based on expected-keyword coverage,
+and citation/groundedness checks are proxies, not semantic or claim-level
+verification. In particular, citation correctness and grounded-answer scores
+remain low despite the higher retrieval and answer-keyword scores.
 
 Evaluation materials: [dataset](eval/eval_set.json), [runner](eval/run_eval.py), [Configuration A results](eval/results_config_a.json), [Configuration B results](eval/results_config_b.json), and [summary](eval/evaluation_summary.md). Answer correctness uses at least 60% expected-keyword coverage as a transparent proxy, not objective ground truth. Citation correctness checks cited chunk IDs, source matches, and expected sources. Groundedness also checks expected-keyword coverage in retrieved context. See the summary for full scoring and winner criteria.
 

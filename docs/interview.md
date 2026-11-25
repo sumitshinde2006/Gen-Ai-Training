@@ -1,121 +1,76 @@
-# KandaGuide Interview Guide
+# KandaGuide Interview Preparation
 
-## 60-second pitch
+## 60-second project pitch
 
-KandaGuide is an agricultural assistant focused on onion and garlic growing
-information. It combines source-grounded retrieval with calculations that need
-to be exact. The FastAPI backend serves `/ask` for cited answers and `/agent`
-for requests that may need agricultural evidence, a calculation, or both. The
-agent uses a structured planner and LangGraph to route requests, while
-deterministic Python tools use `Decimal` for profit, revenue, break-even,
-storage-loss, and related calculations. When the request is unclear, the
-assistant asks for essential missing information instead of inventing it.
-Each new request starts with fresh values; previous values are reused only
-when the user explicitly refers to them. I focused on separating model
-interpretation from arithmetic, keeping agricultural answers evidence-backed,
-and testing the routing and calculations without paid API calls.
+KandaGuide helps onion and garlic farmers find agricultural information without having to search through several documents themselves. It combines source-linked variety records and agricultural HTML/PDF references with a FastAPI service and a Streamlit interface. Its retrieval-augmented generation, or RAG, pipeline searches those sources and can return an answer with source citations or abstain when the available evidence is insufficient. A bounded agent workflow can route a request to agricultural retrieval, deterministic calculation tools, or both; Python `Decimal` calculations handle arithmetic rather than asking the language model to do it. The document search uses sentence-transformer embeddings and a persistent Chroma vector store, while the project also retains its structured-record search. The practical goal is to make variety, season, maturity, yield, and storage information easier to find and to keep answers traceable to their sources—not to replace local agronomic advice or promise that every source claim is reconciled.
 
-## Hardest problem: math routed to the storage workflow
+## Hardest technical problem: representing agricultural facts faithfully
 
-**Situation:** A complete profit question could trigger a follow-up asking for
-storage months or storage-loss assumptions. Those values were not needed to
-calculate profit.
+The hardest data challenge is deciding whether two agricultural numbers really conflict. Variety pages, handbooks, and field-demonstration reports may refer to different seasons, locations, maturity stages, or trial conditions. If those context fields are lost, a valid difference can look like a contradiction.
 
-**Task:** Fix the routing and follow-up behavior without removing RAG,
-rewriting the application, or allowing an LLM to perform arithmetic.
+For example, the DOGR source record for Bhima Raj gives different yield ranges for Kharif, late Kharif, and Rabi. The MANAGE reference separately reports demonstration yields for Bhima Raj in Maharashtra: 235 q/ha in Kharif and 415 q/ha in late Kharif. Converting units (10 q/ha = 1 t/ha) puts these demonstration values in the same broad range as the DOGR figures, but the records still describe different source contexts and should not be presented as one interchangeable measurement. The ingested dataset keeps variety-level season text and a source URL; some yield and maturity fields retain season-specific details inside a text value.
 
-**Action:** I traced the request through the planner, graph, tools, and
-conversation state. The workflow was sending too many calculations through a
-storage break-even path, whose inputs differ from a profit calculation. I
-added structured intent planning with a local fast path and a constrained
-model fallback for less obvious requests. The graph now routes knowledge,
-calculation, and mixed requests separately. Python tools validate the
-extracted inputs and perform arithmetic deterministically. Each request also
-resets stale outputs; past values are considered only when the user explicitly
-refers to them.
+The ingestion code converts numeric `q/ha` and `quintals/ha` expressions to `t/ha`, and the structured records distinguish some maturity values after transplanting from notes such as days after sowing. The document chunker also keeps the source URL, title, and PDF page for each chunk. These are useful safeguards, but they do **not** amount to full claim-level reconciliation:
 
-**Result:** Complete profit requests no longer need storage information, while
-genuinely missing values can still trigger a focused follow-up. Regression
-tests cover calculations, mixed RAG and calculation requests, context
-isolation, and API routes. The latest full validation completed with 119
-passing tests and Ruff passing; model calls in unit tests are mocked.
+- The unit conversion is textual and the stored yield values remain strings.
+- A record can contain multiple seasons and season-specific numbers in the same field.
+- `source_url` is attached to the record, not independently to every numerical claim.
+- Some maturity entries remain ambiguous. For example, an NHB record stores “140-145 days” under `maturity_days_after_transplanting` even though the value itself does not name a reference stage. The DOGR parser also treats a maturity string containing “transplant” as transplant-based without requiring the phrase “after transplanting”.
+- Chroma chunk provenance records source/page/title, but the chunk metadata does not normalize each numeric claim into its own season- and condition-specific fact.
 
-## Ten likely interview questions
+The current pipeline can retrieve source-backed material and include citations; it does not automatically adjudicate competing agricultural claims. The lesson was to preserve the original wording and provenance, convert units transparently, and avoid treating season, location, trial type, or “days after sowing/transplanting” as optional decoration. A stronger future data model would store each claim separately with its original and normalized value, unit, variety, season, maturity reference point, conditions, and exact source/page. That claim-level structure is a proposed improvement, not a feature the current code fully implements.
+
+Relevant implementation and source evidence: [`app/ingest.py`](../app/ingest.py), [`app/chunking.py`](../app/chunking.py), [`data/records.json`](../data/records.json), [`data/raw/manage_reference.txt`](../data/raw/manage_reference.txt), and [`docs/semantic-search.md`](./semantic-search.md).
+
+## Ten likely interview questions and answers
 
 ### 1. What problem does KandaGuide solve?
 
-It gives onion and garlic growers a way to ask agricultural questions against
-the project's source material and to perform practical calculations. The
-answer path depends on the request: source-backed questions use retrieval,
-while arithmetic uses calculation tools.
+It helps onion and garlic growers and other agricultural users find information about varieties, growing seasons, maturity, yield, and storage. It searches project records and agricultural documents, and it can perform supported calculations. It is an information aid, not a personalized agronomic recommendation service.
 
-### 2. Can you describe the architecture?
+### 2. What is RAG, and why is it used?
 
-The project has a FastAPI backend, a Streamlit UI, agricultural records and
-documents, and a RAG pipeline backed by Chroma. `/ask` handles source-based
-questions. `/agent` uses a LangGraph workflow to classify the request, choose
-RAG, a calculation tool, or both, and assemble the response.
+Retrieval-Augmented Generation first retrieves relevant material from a knowledge collection and then gives that evidence to a language model to help form an answer. KandaGuide uses this pattern so answers can be tied to the project's agricultural sources rather than relying only on what a model learned during training. Retrieval does not guarantee correctness, so the application also checks for usable evidence, returns citations, and can abstain.
 
-### 3. Why use RAG instead of fine-tuning?
+### 3. How does document ingestion work?
 
-The agricultural answers need to stay tied to the project's documents and
-records, and should include citations or acknowledge when support is missing.
-RAG lets the application retrieve that evidence at request time without
-baking changing source material into model weights.
+The document pipeline reads supported HTML and PDF files under `data/raw/`. BeautifulSoup extracts HTML text, and pypdf extracts PDF text page by page. The separate structured-record ingestion code parses DOGR variety pages and includes records for varieties from an NHB source. Document chunks are then embedded and indexed in Chroma. Keeping these as separate paths matters: source-linked variety records and semantic document chunks are related, but they are not the same dataset.
 
-### 4. How does the agent choose a tool?
+### 4. What is chunking, and why is it necessary?
 
-It creates a structured plan with an intent such as calculation, knowledge,
-mixed, or clarification. Common, unambiguous calculations use a local fast
-path. Less obvious requests can use the configured model to classify intent
-and extract stated values. The model is not trusted to calculate or invent
-missing inputs; Python validates the plan before execution.
+Chunking splits long documents into smaller passages so a search can return relevant sections instead of passing an entire handbook to the model. KandaGuide's default chunker aims for 500 words with 75 words of overlap, grouping sentences where possible. Overlap helps retain context across boundaries. Chunks also retain source, title, and, for PDFs, the original page number so retrieved evidence can be cited.
 
-### 5. How do you keep calculations reliable?
+### 5. How does vector search work?
 
-The calculation tools use Python `Decimal` arithmetic and explicit unit
-conversion. They validate required values, percentage totals, and invalid
-denominators, and return a calculation breakdown. Missing essential values
-lead to a focused follow-up rather than an assumed default.
+The application converts each chunk and each user query into a vector, which is a list of numbers representing text. Chroma compares the query vector with stored chunk vectors and returns nearby matches. KandaGuide configures cosine distance and an HNSW approximate-nearest-neighbor index. A closer vector is a relevance signal, not proof that the passage is correct or sufficient.
 
-### 6. How do you keep agricultural answers grounded?
+### 6. What is the role of embeddings and ChromaDB?
 
-Knowledge requests use the existing retrieval pipeline. Retrieved source
-passages inform the response, and the API returns citations. If supporting
-evidence is unavailable, the system can abstain instead of making an
-unsupported claim.
+The default embedding model is `sentence-transformers/all-MiniLM-L6-v2`. It encodes both documents and queries into a shared vector space. ChromaDB persists the document vectors and metadata, allowing the application to retrieve likely relevant chunks later. The metadata includes the source, title, and page where available. If the configured embedding model changes, the index must be rebuilt so document and query vectors remain compatible.
 
-### 7. How do you prevent stale conversation data from affecting a new
-calculation?
+### 7. What is the difference between RAG and Agentic AI?
 
-The graph resets per-request answer, citation, and tool-output state. Prior
-values are not automatically merged into a new request. The planner receives
-prior values only when the user explicitly refers to earlier context, and
-only the referenced fields are reused.
+RAG is the evidence-retrieval and answer-generation pattern. Agentic AI adds controlled decision-making about what operation to perform. KandaGuide's agent can choose agricultural retrieval, a deterministic calculation, both, or a clarification. The agent reuses the RAG pipeline; it does not replace it.
 
-### 8. What was the hardest bug, and how did you solve it?
+### 8. How does the agent select and execute tools?
 
-The hardest bug was a complete profit request being routed through
-storage-break-even logic, causing irrelevant questions about storage months
-and loss. I traced the workflow, separated calculation intent from tool
-requirements, added deterministic calculation routing, and covered the
-behavior with regression tests. I also addressed stale values in the
-conversation state so a correct route would not still use the wrong inputs.
+The request planner first uses local rules for clear, common requests. Less obvious requests may use the configured language model to classify intent and extract values the user actually supplied. The plan is validated, then the workflow routes to RAG, deterministic Python calculation tools, or both. Python tools perform calculations using `Decimal`; the model is not used as the arithmetic engine. Some storage-decision workflows pause for user approval. The graph's `MemorySaver` is in-process memory, so it is cleared on restart and is not shared across workers.
 
-### 9. How did you test the system without incurring API costs?
+### 9. How are answer accuracy and citations evaluated?
 
-I tested the deterministic tools directly and exercised graph and API
-workflows with mocked planner and LLM responses. The suite covers calculation
-results, missing inputs, mixed knowledge and math requests, context isolation,
-and the `/health`, `/ask`, and `/agent` endpoints. The latest run reported
-119 passing tests; Ruff also passed.
+The repository includes a 15-question RAG evaluation that compares two chunk-size/top-k configurations using isolated temporary indexes. It checks retrieval against expected sources, answer keyword coverage, citation chunk/source matching, support keywords in retrieved text, and exact abstention on unanswerable questions. These are reproducible proxies, not semantic or claim-level verification.
 
-### 10. What are the current limitations, and what would you improve next?
+In the latest recorded run (2026-11-24 UTC), Configuration B achieved 100% retrieval hit rate and 93.33% answer keyword-proxy correctness, but citation correctness was 20% and the grounded-answer proxy was 7.69%. Both configurations abstained correctly on the two unanswerable questions. Those results show that retrieving a relevant source is not enough: citation and answer grounding still need improvement.
 
-Ambiguous requests that do not match the local planner need a configured LLM
-provider. The LangGraph `MemorySaver` is process-local, so state is not
-durable across restarts or shared across workers. The API also does not yet
-provide a user identity layer for authorizing thread IDs. Next, I would
-evaluate planner behavior on a broader set of real paraphrases, then add a
-persistent checkpointer and authenticated conversation ownership before a
-multi-worker deployment.
+### 10. How is the application deployed and tested?
+
+The repository provides a Dockerfile, a Docker Compose setup for the FastAPI API and Streamlit UI, and a Render Blueprint with separate API and UI services. These files describe deployment configuration; they do not prove that every configured service is currently available. GitHub Actions is configured to run Ruff, pytest, and a Docker image build.
+
+For this Day 14 verification, `python -m pytest -q` completed with **120 passed and one deprecation warning**, and `python -m ruff check .` passed. The credentialed Groq evaluation completed both configurations with no failed or skipped questions. The local Docker build could not run because the Docker CLI could not connect to the Docker Desktop Linux engine; the daemon was unavailable. The configured CI workflow and deployment files are not substitutes for that local build result or a current live deployment check.
+
+## Source pointers
+
+- [`docs/agentic-ai.md`](./agentic-ai.md) — planner, graph, tools, memory, approval, and limitations.
+- [`docs/semantic-search.md`](./semantic-search.md) — chunking, embeddings, vector search, and provenance.
+- [`eval/evaluation_summary.md`](../eval/evaluation_summary.md) — latest RAG evaluation metrics and scoring caveats.
+- [`Readme.md`](../Readme.md) — project scope, source notes, deployment configuration, and test instructions.

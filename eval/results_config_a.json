@@ -1,5 +1,5 @@
 {
-  "evaluation_timestamp_utc": "2026-11-22T00:53:27+00:00",
+  "evaluation_timestamp_utc": "2026-11-24T23:58:03+00:00",
   "configuration": {
     "name": "A",
     "chunk_size_words": 400,
@@ -16,15 +16,15 @@
     "questions_evaluated": 15,
     "answerable_questions": 13,
     "unanswerable_questions": 2,
-    "retrieval_hit_rate_percent": 84.62,
-    "answer_correctness_percent": 40.0,
-    "answer_correctness_proxy_percent": 40.0,
+    "retrieval_hit_rate_percent": 92.31,
+    "answer_correctness_percent": 86.67,
+    "answer_correctness_proxy_percent": 86.67,
     "answer_correctness_scored": 15,
-    "answer_correctness_correct": 6,
-    "citation_correctness_percent": 26.67,
-    "citation_accuracy_percent": 26.67,
+    "answer_correctness_correct": 13,
+    "citation_correctness_percent": 20.0,
+    "citation_accuracy_percent": 20.0,
     "citation_correctness_scored": 15,
-    "citation_correctness_correct": 4,
+    "citation_correctness_correct": 3,
     "grounded_answer_percent": 7.69,
     "grounded_answer_scored": 13,
     "grounded_answer_correct": 1,
@@ -39,7 +39,7 @@
     "answer_evaluations_skipped": 0,
     "answer_evaluations_failed": 0,
     "execution_errors": [],
-    "average_retrieval_latency_ms": 26.94,
+    "average_retrieval_latency_ms": 22.12,
     "llm_evaluation_status": "completed",
     "answer_correctness_method": "For answerable questions, at least 60% of manually prepared expected_keywords must occur in the answer. For unanswerable questions, the exact response \"I don't know.\" is required. This transparent keyword/refusal proxy is not a semantic judge.",
     "citation_correctness_method": "A response passes if every emitted citation's chunk ID exists in the retrieved chunks, its source matches that chunk, and the source is listed in expected_sources. An abstention with no citations is not treated as a correct citation for an answerable question.",
@@ -59,7 +59,7 @@
           "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
           "page": 81,
           "title": "Good Agricultural Practices in Onion and Garlic Production",
-          "distance": 0.320656418800354
+          "distance": 0.3206566572189331
         },
         {
           "chunk_id": "b35873edfc253b085e90a0ead69c288ffd280538ce45f5ac8d2f45d5341b7ce5",
@@ -67,7 +67,7 @@
           "source": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
           "page": null,
           "title": "Varieties Developed",
-          "distance": 0.3312870264053345
+          "distance": 0.33128708600997925
         },
         {
           "chunk_id": "8c625f0ceb72ce48813d2eadde34517f6da8b656b606a918b3dc9d5435829e43",
@@ -75,34 +75,30 @@
           "source": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
           "page": null,
           "title": "Varieties Developed",
-          "distance": 0.33483022451400757
+          "distance": 0.33483028411865234
         }
       ],
       "retrieval_hit": true,
-      "answer": "Bhima Light Red and Bhima Prasanskaran [Source: Good Agricultural Practices in Onion and Garlic Production, Page 81] [Source: Varieties Developed]",
+      "answer": "Onion varieties listed for Rabi: Bhima Light Red, Bhima Raj, Bhima Red, Bhima Kiran, Bhima Shakti, Bhima Shweta, Bhima Prasanskaran, Agrifound White.",
       "citations": [
         {
-          "title": "Good Agricultural Practices in Onion and Garlic Production",
-          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
-          "page": 81,
-          "chunk_id": "478173282c2516e7a7c07e09e02883d96a49dd0cf5b7c4b04255892164b2d3b6"
+          "title": "Bhima Light Red",
+          "source": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
+          "source_url": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
+          "page": null,
+          "chunk_id": "record:33e20ab3e0bf654942eb62679dba0453e03f2de5b5dde1edddae795a644e51f5"
         },
         {
-          "title": "Varieties Developed",
-          "source": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
+          "title": "Agrifound White",
+          "source": "https://nhb.gov.in/pdf/vegetable/onion/oni013.pdf",
+          "source_url": "https://nhb.gov.in/pdf/vegetable/onion/oni013.pdf",
           "page": null,
-          "chunk_id": "b35873edfc253b085e90a0ead69c288ffd280538ce45f5ac8d2f45d5341b7ce5"
-        },
-        {
-          "title": "Varieties Developed",
-          "source": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
-          "page": null,
-          "chunk_id": "8c625f0ceb72ce48813d2eadde34517f6da8b656b606a918b3dc9d5435829e43"
+          "chunk_id": "record:6e43c07ca7fb11dc60e8654724bfc424988777ca0d48cbe29cc4c65d2cdfbf06"
         }
       ],
-      "confidence": "medium",
-      "answer_correctness": false,
-      "answer_correctness_proxy": false,
+      "confidence": "high",
+      "answer_correctness": true,
+      "answer_correctness_proxy": true,
       "citation_correctness": false,
       "supported_by_retrieved_context": true,
       "grounded_answer": false,
@@ -120,6 +116,14 @@
       "answerable": true,
       "retrieved_chunks": [
         {
+          "chunk_id": "229ef68f2bb792fcd9e4682056c4793ab5967f98175be070d841cee1a49f8ff7",
+          "text": "DUS Test Characteristics of Garlic Density of leaves, Number of leaves per pseudostem, Foliage attitude, Leaf intensity of green colour, Leaf waxiness, Leaf length (longest leaf), Leaf width (widest leaf), Leaf shape in cross section (in middle of the longest leaf), Pseudostem length (up to first emerged green leaf), Pseudostem width of the base, Intensity of anthocyanin colouration at base, Flowering stem curvature, Flowering stem length (special characteristics for temperate condition), Bulbils, Time of maturity (from date of planting), Bulb size (diameter), Bulb shape in longitudinal section, Bulb shape in cross section, Position of cloves at tip of bulb, Position of root disc, Bulb shape of base, Compactness of cloves, Ground colour of dry external scales, Anthocyanin stripes on dry external scales, Number of cloves, Distribution of cloves, External cloves, Skin adherence of dry external scales, Clove size (diameter), Colour of scale and Colour of flesh. Maintenance of Onion and Garlic Varieties ICAR-DOGR is maintaining 47 rabi and 11 kharif varieties of onion and 31 varieties of garlic (Table 1a-1c). Eleven kharif onion varieties are Agrifound Dark Red, Arka Kalyan, B-780, Bhima Raj, Bhima Red, Bhima Shubhra, Bhima Shweta, Bhima Safed, Bhima Super, Bhima Dark Red and N-53. Rest of onion varieties are maintained during rabi season. However, Bhima Raj, Bhima Red and Bhima Shweta are maintained in both kharif and rabi seasons. Out of these varieties, all the long day onion and garlic varieties are being maintained at ICAR-CITH, Srinagar and multiplier type onion varieties are being maintained at TNAU, Coimbatore. All the short-day varieties of onion and garlic are being maintained at ICAR-DOGR, Rajgurunagar, Pune as well as ICAR-IARI, New Delhi. The onion varieties are being maintained as per the mandate during kharif and rabi seasons whereas garlic varieties were maintained during rabi season.",
+          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
+          "page": 80,
+          "title": "Good Agricultural Practices in Onion and Garlic Production",
+          "distance": 0.3640363812446594
+        },
+        {
           "chunk_id": "cefa48d1e78319e93b33368432549fb1415a29c02fe3f72f31e2b0cfa34014b9",
           "text": "78 (a) Variability in DUS onion varieties (b) Variability in DUS garlic varieties Fig3: Variability in DUS onion and garlic varieties.",
           "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
@@ -128,28 +132,28 @@
           "distance": 0.3654671907424927
         },
         {
-          "chunk_id": "6ae09c9a663c10056c5234fc2bf19149e88895ff8c323600efc108b169dbc8fb",
-          "text": "DUS Test Characteristics of Garlic Density of leaves, Number of leaves per pseudostem, Foliage attitude, Leaf intensity of green colour, Leaf waxiness, Leaf length (longest leaf), Leaf width (widest leaf), Leaf shape in cross section (in middle of the longest leaf), Pseudostem length (up to first emerged green leaf), Pseudostem width of the base, Intensity of anthocyanin colouration at base, Flowering stem curvature, Flowering stem length (special characteristics for temperate condition), Bulbils, Time of maturity (from date of planting), Bulb size (diameter), B ulb shape in longitudinal section, Bulb shape in cross section, Position of cloves at tip of bulb, Position of root disc, Bulb shape of base, Compactness of cloves, Ground colour of dry external scales, Anthocyanin stripes on dry external scales, Number of cloves, Distribution of cloves, External cloves, Skin adherence of dry external scales, Clove size (diameter), Colour of scale and Colour of flesh. Maintenance of Onion and Garlic Varieties ICAR-DOGR is maintaining 47 rabi and 11 kharif varieties of onion and 31 varieties of garlic (Table 1a-1c). Eleven kharif onion varieties are Agrifound Dark Red, Arka Kalyan, B-780, Bhima Raj, Bhima Red, Bhima Shubhra, Bhima Shweta, Bhima Safed, Bhima Super, Bhima Dark Red and N-53. Rest of onion varieties are maintained during rabi season. However, Bhima Raj, Bhima Red and Bhima Shweta are maintained in both kharif and rabi seasons. Out of these varieties, all the long day onion and garlic varieties are being maintained at ICAR -CITH, Srinagar and multiplier type onion varieties are being maintained at TNAU, Coimbatore. All the short -day varieties of onion and garlic are being maintained at ICAR -DOGR, Rajgurunagar, Pune as well as ICAR -IARI, New Delhi. The onion varieties are being maintained as per the mandate during kharif and rabi seasons whereas garlic varieties were maintained during rabi season.",
-          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
-          "page": 80,
-          "title": "Good Agricultural Practices in Onion and Garlic Production",
-          "distance": 0.3678715229034424
-        },
-        {
-          "chunk_id": "fa0d89446b9266909dbe5e8f7fb0534ac55647a0f30066c348cd2d3013caaebd",
-          "text": "The major visible quality changes that are perceived in peeled garlic are sprouting, rooting and discolorati on apart from the invisible nutritional quality changes. Garlic can be peeled either manually or mechanically. Selection of packaging ‘material is very important to reduce weight loss by controlling the respiration rate and to augment the storage life. Storage at 0 to 5°C is imperative to maintain good quality of peeled garlic, storage temperatures above 5°C will result in pink and brown discoloration on the damaged areas and also favors root and sprout development (Cantwell, 2016). Modified atmosphere pack aging (MAP) may also be effective in preserving quality of stored garlic cloves. A reasonable expected storage -life of commercially peeled and modified atmosphere packaged garlic is 3 -4 weeks at 0°C, 2 -3 weeks at 5°C; and 1 -2 weeks at 10°C and pungency (thiosulfinate and pyruvate Concentrations) decreases with time and the decrease is greater at higher storage temperatures (Tanamati, 2016). Hot water dip treatments at 55°Cfor 10 min is effective in reducing sprout and adventitious root growth in cloves stored at 10°C and >95% RH. Hot water dip treatment at 60°C for 2.5 min is also effective in inhibiting sprout and foot growth without any injury (Cantwell et al., 2003). Dehydrated garlic flakes Dehydration also extends the shelf-life by retaining sensorial characteristics compared to those of fresh products. Dehydration decreases the water activity of the material, reduces microbiological activity,",
-          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
-          "page": 97,
-          "title": "Good Agricultural Practices in Onion and Garlic Production",
-          "distance": 0.3829832077026367
+          "chunk_id": "1d77b3a706eb9035a798ff25f7a66d48f137b968172940e2f1d1af6a94aa275a",
+          "text": "Garlic Climate and Soil Seasons Garlic Varieties Field Preparation Planting Fertilizers Weeding Irrigation Cropping System Intercropping Pests & Diseases Storage Climate and Soil Climate Garlic is grown under wide range of climatic conditions. However, it cannot withstand too hot and too cold temperatures. It requires cool and moist climate during vegetative growth and bulb development stages but warm dry weather during maturity. In general, cool growing period results in higher yield than warm conditions. Exposure of young plants to 20°C or lower temperature for 1-2 months depending upon the variety hastens subsequent bulbing. Plants that are not exposed to such climatic conditions may fail to produce bulbs or produce smaller bulbs. However, longer exposure to low temperature may produce bulbils in the axils of the leaves, which reduce the bulb yield. The critical day length for bulbing is 10-12 h for short day garlic and 13-14 h for long day garlic. Soil Garlic can be successfully cultivated in a wide range of soil types, but well drained fertile loamy soil with a pH of 6-8 is desirable for growing this crop. Like onion, garlic is sensitive to highly acidic, alkali and saline soils and water logging conditions. Soils with high organic matter are preferred, due to their increased moisture and nutrient holding capacity.These are less prone to crusting and compaction. In heavy soils, the bulbs produced may be deformed. Bulbs become discoloured in poorly drained soils. The threshold electrical conductivity of a saturation extract (ECe) for garlic crop is 3.9 dS/m. When the ECe level exceeds this, crop yield starts declining. Seasons Planting and harvesting time of garlic in different regions of India State Season Time of planting Time of harvesting Chhattisgarh, Gujarat, Madhya Pradesh and Maharashtra Kharif June-July October-November Rabi September-November March Tamil Nadu Kharif June-July October-November Rabi October-November March-April Karnataka Kharif June-July October-November Rabi September-October March Andhra Pradesh Rabi September-October March Bihar, Haryana, Punjab, Rajasthan, Uttar Pradesh and Uttarkhand Rabi October-November March-April Odisha and West Bengal Rabi October-November March Hilly areas (Long day types) Rabi September May Garlic Varieties The following varieties are recommended for various seasons and regions of the country. Varieties developed by ICAR-DOGR Bhima Omkar This variety has been recommended for cultivation in the states of Delhi, Gujarat, Haryana, and Rajasthan . It matures in 120-135 days and average yield is 8-14 t/ha . It produces medium size compact white bulbs.",
+          "source": "https://dogr.res.in/index.php/component/content/article/garlicagropedia?layout=edit",
+          "page": null,
+          "title": "garlicagropedia",
+          "distance": 0.3854929804801941
         }
       ],
-      "retrieval_hit": false,
-      "answer": "I don't know.",
-      "citations": [],
-      "confidence": "low",
-      "answer_correctness": false,
-      "answer_correctness_proxy": false,
+      "retrieval_hit": true,
+      "answer": "Garlic varieties and the values recorded in the dataset:\n- Bhima Omkar: yield 10-12 t/ha; storage life 6-8 months.\n- Bhima Purple: yield 6-8 t/ha; storage life 6-8 months.",
+      "citations": [
+        {
+          "title": "Bhima Omkar",
+          "source": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
+          "source_url": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
+          "page": null,
+          "chunk_id": "record:367f8938c70b455e28492d5cf53f5d83eaa5d895ad17116725c6e642efbd8d67"
+        }
+      ],
+      "confidence": "high",
+      "answer_correctness": true,
+      "answer_correctness_proxy": true,
       "citation_correctness": false,
       "supported_by_retrieved_context": true,
       "grounded_answer": false,
@@ -175,47 +179,43 @@
           "distance": 0.3047219514846802
         },
         {
-          "chunk_id": "54e29cb1af9a701a2c4d5644d18a47bfbbaca6c50d3528f06c5185af3f5755ce",
-          "text": "Improved onion varieties after 1986: Bhima Red, Bhi ma Raj, Bhima Super, Bhima Kiran, Bhima Shakti, Bhima Dark Red, Bhima Light Red, Bhima Shubra, Bhima Shweta, Bhima Safed, Baswant-780, Pusa Madhavi, Arka Niketan, Arka Kalyan, Arka Bindu, Arka Pragati, Arka Pitambar, Arka Lalima (F1 hybrid), Arka Kirtiman (F1 hybrid), Phule Safed, Phule Suwarna, Phule Samarth, HOS -1, Agrifound Dark Red, Agrifound Light Red, Agrifound White, L-28, Agrifound Rose, Agrifound Red (Multiplier), Line-355, Udaipur 102, Udaipur 103, Punjab Naroya, Punjab White, Punjab White,VL -3 (Long day), Akola Safed, Rajasthan Onion-1 and Aprita (RO-59) etc. Table 2: Notified varieties of Onion by CVRC S. No. Variety Developed by Year of Release Suitable for State Season 1 Bhima Shakti ICAR-DOGR, Rajgurunagar S.O. 692(E). - 5.2.2019 Andhra Pradesh, Chhattisgarh, Karnataka, Madhya Pradesh, Maharashtra, Odisha Late Kharif and Rabi 2 Bhima Light Red ICAR-DOGR, Rajgurunagar S.O. 261(E). - 16th January, 2018 Karnataka and Tamil Nadu. Rabi",
+          "chunk_id": "7ce00e22feb4cf2e5ab13e55fc9b788fd62fd4d0286efdd16147659c839f35b8",
+          "text": "Improved onion varieties after 1986: Bhima Red, Bhima Raj, Bhima Super, Bhima Kiran, Bhima Shakti, Bhima Dark Red, Bhima Light Red, Bhima Shubra, Bhima Shweta, Bhima Safed, Baswant-780, Pusa Madhavi, Arka Niketan, Arka Kalyan, Arka Bindu, Arka Pragati, Arka Pitambar, Arka Lalima (F1 hybrid), Arka Kirtiman (F1 hybrid), Phule Safed, Phule Suwarna, Phule Samarth, HOS-1, Agrifound Dark Red, Agrifound Light Red, Agrifound White, L-28, Agrifound Rose, Agrifound Red (Multiplier), Line-355, Udaipur 102, Udaipur 103, Punjab Naroya, Punjab White, Punjab White,VL-3 (Long day), Akola Safed, Rajasthan Onion-1 and Aprita (RO-59) etc. Table 2: Notified varieties of Onion by CVRC S. No. Variety Developed by Year of Release Suitable for State Season 1 Bhima Shakti ICAR-DOGR, Rajgurunagar S.O. 692(E). - 5.2.2019 Andhra Pradesh, Chhattisgarh, Karnataka, Madhya Pradesh, Maharashtra, Odisha Late Kharif and Rabi 2 Bhima Light Red ICAR-DOGR, Rajgurunagar S.O. 261(E). - 16th January, 2018 Karnataka and Tamil Nadu. Rabi",
           "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
           "page": 18,
           "title": "Good Agricultural Practices in Onion and Garlic Production",
-          "distance": 0.3048747777938843
+          "distance": 0.3153808116912842
         },
         {
-          "chunk_id": "95eb69c787223815095db397369fe2988bd78890cde4705c4089a5082197d914",
-          "text": "19 Chapter 3 IMPROVED VARIETIES OF ONION FOR ENHANCING THE PRODUCTION Y.P. Khade*, R. B. Kale, Soumia P.S., B.R. Bibwe, V. Karuppaiah and V. Mahajan. ICAR-Directorate of Onion and Garlic Research, Pune-410505 *Email: yogesh.iari@gmail.com As onion crop is biannual in nature, it takes almost 10 -12 years to develop or purify a new variety hence one should have about its varietal development. Onion is cultivated in all the three seasons in India i.e., kharif, late kharif and rabi season, there fore, varieties also need to be developed for suitability in different seasons. In our country, onion varietal development programmes were strengthened under All India Network Research Project on Onion and Garlic (AINRPOG) through SAU’s and ICAR institutes. So far, more than 50 varieties of onion including hybrids and multiplier onion have been developed and released for different locations and seasons at state and national level. Being a cross pollinated crop, onion always provide scope for selection as natural variability is created constantly. The systematic breeding programme was started in early 90’s at Pimpalgaon Baswant, Nashik, later on at IARI, New Delhi. The early maturity varieties developed through selection viz., N- 2-4-2 are dominating in onion production. Selection of suitable bulb crop varieties: Selection of variety for cultivation of onion and garlic depends on multiple factors such as agro -climatic situation, market demand and market destinations, preference of consumers. Agro-climatic situation: In India, there is large variation in agro-climatic situation including soil type, climate, rainfall, day -length. The one variety which is suitable in one region may not be suitable in another region. The varieties developed by different research institutes are tested in different locations and the recommendation of the suitable varieties for particular state or location has given. Therefore, bulb cultivator should consider the recommendations of the research institutes while selecting the varieties for cultivation. Market demand and market destinations: Bulb cultivator should consider market demand and market destinations while selecting the varieties for cultivation. In India, some markets are famous for specific quality of onion such as Nashik (Lasalgaon market) is famous for red onion. Therefore, farmers should consider market destination such as local market or export of onion. If farmer is exporting the onion which variety is suitable for export and which county demands which type of onion these factors must be considered while selecting the varieties for cultivation.",
+          "chunk_id": "c170fa386c6e567fb103bb87688851db16d34818dc5a43263cd5472dd7206617",
+          "text": "19 Chapter 3 IMPROVED VARIETIES OF ONION FOR ENHANCING THE PRODUCTION Y.P. Khade*, R. B. Kale, Soumia P.S., B.R. Bibwe, V. Karuppaiah and V. Mahajan. ICAR-Directorate of Onion and Garlic Research, Pune-410505 *Email: yogesh.iari@gmail.com As onion crop is biannual in nature, it takes almost 10-12 years to develop or purify a new variety hence one should have about its varietal development. Onion is cultivated in all the three seasons in India i.e., kharif, late kharif and rabi season, therefore, varieties also need to be developed for suitability in different seasons. In our country, onion varietal development programmes were strengthened under All India Network Research Project on Onion and Garlic (AINRPOG) through SAU’s and ICAR institutes. So far, more than 50 varieties of onion including hybrids and multiplier onion have been developed and released for different locations and seasons at state and national level. Being a cross pollinated crop, onion always provide scope for selection as natural variability is created constantly. The systematic breeding programme was started in early 90’s at Pimpalgaon Baswant, Nashik, later on at IARI, New Delhi. The early maturity varieties developed through selection viz., N- 2-4-2 are dominating in onion production. Selection of suitable bulb crop varieties: Selection of variety for cultivation of onion and garlic depends on multiple factors such as agro-climatic situation, market demand and market destinations, preference of consumers. Agro-climatic situation: In India, there is large variation in agro-climatic situation including soil type, climate, rainfall, day-length. The one variety which is suitable in one region may not be suitable in another region. The varieties developed by different research institutes are tested in different locations and the recommendation of the suitable varieties for particular state or location has given. Therefore, bulb cultivator should consider the recommendations of the research institutes while selecting the varieties for cultivation. Market demand and market destinations: Bulb cultivator should consider market demand and market destinations while selecting the varieties for cultivation. In India, some markets are famous for specific quality of onion such as Nashik (Lasalgaon market) is famous for red onion. Therefore, farmers should consider market destination such as local market or export of onion. If farmer is exporting the onion which variety is suitable for export and which county demands which type of onion these factors must be considered while selecting the varieties for cultivation.",
           "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
           "page": 26,
           "title": "Good Agricultural Practices in Onion and Garlic Production",
-          "distance": 0.3256281018257141
+          "distance": 0.3184731602668762
         }
       ],
       "retrieval_hit": false,
-      "answer": "Bhima Shakti [Source: Good Agricultural Practices in Onion and Garlic Production, Page 81] [Source: Good Agricultural Practices in Onion and Garlic Production, Page 18] [Source: Good Agricultural Practices in Onion and Garlic Production, Page 26]",
+      "answer": "Onion varieties listed for Kharif: Bhima Dark Red, Bhima Raj, Bhima Red, Bhima Super, Bhima Shweta, Bhima Shubra, Bhima Safed, N-53, Agrifound Dark Red, Agrifound White.",
       "citations": [
         {
-          "title": "Good Agricultural Practices in Onion and Garlic Production",
-          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
-          "page": 81,
-          "chunk_id": "478173282c2516e7a7c07e09e02883d96a49dd0cf5b7c4b04255892164b2d3b6"
+          "title": "Bhima Dark Red",
+          "source": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
+          "source_url": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
+          "page": null,
+          "chunk_id": "record:160b56dc93f57f759de7745173deb544489c70cd8725890908e82b9f452da710"
         },
         {
-          "title": "Good Agricultural Practices in Onion and Garlic Production",
-          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
-          "page": 18,
-          "chunk_id": "54e29cb1af9a701a2c4d5644d18a47bfbbaca6c50d3528f06c5185af3f5755ce"
-        },
-        {
-          "title": "Good Agricultural Practices in Onion and Garlic Production",
-          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
-          "page": 26,
-          "chunk_id": "95eb69c787223815095db397369fe2988bd78890cde4705c4089a5082197d914"
+          "title": "N-53",
+          "source": "https://nhb.gov.in/pdf/vegetable/onion/oni013.pdf",
+          "source_url": "https://nhb.gov.in/pdf/vegetable/onion/oni013.pdf",
+          "page": null,
+          "chunk_id": "record:6f90481ac9d52ba3a3bcdf9e908a4a0104923349c3a40663d0a15ad4dd06b7ff"
         }
       ],
-      "confidence": "medium",
-      "answer_correctness": false,
-      "answer_correctness_proxy": false,
+      "confidence": "high",
+      "answer_correctness": true,
+      "answer_correctness_proxy": true,
       "citation_correctness": false,
       "supported_by_retrieved_context": true,
       "grounded_answer": false,
@@ -238,7 +238,7 @@
           "source": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
           "page": null,
           "title": "Varieties Developed",
-          "distance": 0.23130720853805542
+          "distance": 0.2313070297241211
         },
         {
           "chunk_id": "50dc14caaecc4f9331742bf2ead189227e953561f1086c1a99dda246c3865515",
@@ -246,7 +246,7 @@
           "source": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
           "page": null,
           "title": "Varieties Developed",
-          "distance": 0.303952693939209
+          "distance": 0.3039526343345642
         },
         {
           "chunk_id": "81edc26fb616a8b787d41a64ec693f3374624f2761238ebb7cddc89f78cebc54",
@@ -254,35 +254,24 @@
           "source": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
           "page": null,
           "title": "Varieties Developed",
-          "distance": 0.3540189862251282
+          "distance": 0.35401904582977295
         }
       ],
       "retrieval_hit": true,
-      "answer": "115 days after transplanting [Source: Varieties Developed]",
+      "answer": "For Bhima Light Red, the recorded maturity period is 115 days after transplanting.",
       "citations": [
         {
-          "title": "Varieties Developed",
+          "title": "Bhima Light Red",
           "source": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
+          "source_url": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
           "page": null,
-          "chunk_id": "b35873edfc253b085e90a0ead69c288ffd280538ce45f5ac8d2f45d5341b7ce5"
-        },
-        {
-          "title": "Varieties Developed",
-          "source": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
-          "page": null,
-          "chunk_id": "50dc14caaecc4f9331742bf2ead189227e953561f1086c1a99dda246c3865515"
-        },
-        {
-          "title": "Varieties Developed",
-          "source": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
-          "page": null,
-          "chunk_id": "81edc26fb616a8b787d41a64ec693f3374624f2761238ebb7cddc89f78cebc54"
+          "chunk_id": "record:33e20ab3e0bf654942eb62679dba0453e03f2de5b5dde1edddae795a644e51f5"
         }
       ],
       "confidence": "high",
-      "answer_correctness": false,
-      "answer_correctness_proxy": false,
-      "citation_correctness": true,
+      "answer_correctness": true,
+      "answer_correctness_proxy": true,
+      "citation_correctness": false,
       "supported_by_retrieved_context": true,
       "grounded_answer": false,
       "correct_abstention": null,
@@ -299,20 +288,20 @@
       "answerable": true,
       "retrieved_chunks": [
         {
+          "chunk_id": "e14260451b06dbf67025e0681def27efc104c5301fe8951f3ba3026800cb17e5",
+          "text": "161 Fig. 9. Green onion sale (Arunachal Pradesh) Table 8: Performance of frontline demonstration trials in Nagaland Season Variety Germination Percentage Average weight of one fresh bulb (g) Marketable bulb yield (q/ha) Kharif Green onion Bhima Super Bhima Dark Red Local Bhima Super Bhima Dark Red Local 94 92 70 - - - 80.00 75.00 58.00 - - - 225 220 180 390 420 250 Rabi Green onion Bhima Kiran Local Bhima Kiran Local 95 75 - - 82.00 75.00 - - 275 240 350 220 Demonstrations conducted in Meghalaya in kharif revealed that the germination percentage (95), average bulb weight (80g) and yield (220 q/ha) of Bhima Super was the highest. Bhima Dark Red (215q/ha) also yielded more than local variety (160 q/ha). Regarding green onion, Bhima Dark Red (400 q/ha) was yielded the highest. Demonstrations conducted in Nagaland in kharif revealed that the germination percentage (94), average bulb weight (80g) and yield (225 q/ha) of Bhima Super was the highest. Bhima Dark Red (220 q/ha) also yielded more than local variety (180 q/ha). Regarding green onion in kharif season, Bhima Dark Red (420 q/ha) was the highest yielding variety. Demonstrations conducted in rabi season revealed that the germination percentage (95) and yield of Bhima Kiran (275 q/ha) was the highest in rabi demonstrations. Regarding green onion, Bhima Kiran (350 q/ha) was the highest yielded variety. Demonstrations conducted in Manipur in kharif revealed that the germination percentage (92), average bulb weight (80g) and yield (224 q/ha) of Bhima Super was the highest. Bhima Dark Red (218 q/ha) also yielded more than local variety (180 q/ha). Regarding green onion, Bhima Dark Red (360 q/ha) yielded the highest. The germination percentage (94), average bulb weight (82g) and yield (275 q/ha)",
+          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
+          "page": 168,
+          "title": "Good Agricultural Practices in Onion and Garlic Production",
+          "distance": 0.2760268449783325
+        },
+        {
           "chunk_id": "b35873edfc253b085e90a0ead69c288ffd280538ce45f5ac8d2f45d5341b7ce5",
           "text": "Onion Varieties Bhima Light Red Bhima Light Red Medium maturing variety with light red globe bulbs, thin neck, and excellent storage qualities. Recommended States: Karnataka, Tamil Nadu Season: Rabi Maturity: 115 days after transplanting Yield: 385 q/ha",
           "source": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
           "page": null,
           "title": "Varieties Developed",
-          "distance": 0.27997922897338867
-        },
-        {
-          "chunk_id": "41ad1a3a3273cc8fddc9261742a5afb7e46127a257d3bb54ac6670ff608d789d",
-          "text": "161 Fig. 9. Green onion sale (Arunachal Pradesh) Table 8: Performance of frontline demonstration trials in Nagaland Season Variety Germination Percentage Average weight of one fresh bulb (g) Marketable bulb yield (q/ha) Kharif Green onion Bhima Super Bhima Dark Red Local Bhima Super Bhima Dark Red Local 94 92 70 - - - 80.00 75.00 58.00 - - - 225 220 180 390 420 250 Rabi Green onion Bhima Kiran Local Bhima Kiran Local 95 75 - - 82.00 75.00 - - 275 240 350 220 Demonstrations conducted in Meghalaya in kharif revealed that the germination percentage (95), average bulb weight (80g) and yield (220 q/ha) of Bhima Super was the highest. Bhima Dark Red (215q/ha) also yielded more than local variety (160 q/ha). Regardin g green onion, Bhima Dark Red (400 q/ha) was yielded the highest. Demonstrations conducted in Nagaland in kharif revealed that the germination percentage (94), average bulb weight (80g) and yield (225 q/ha) of Bhima Super was the highest. Bhima Dark Red (220 q/ha) also yielded more than local variety (180 q/ha). Regarding green onion in kharif season, Bhima Dark Red (420 q/ha) was the highest yielding variety. Demonstrations conducted in rabi season revealed that the germination percentage (95) and yield of Bhima Kiran (275 q/ha) was the highest in rabi demonstrations. Regarding green onion, Bhima Kiran (350 q/ha) was the highest yielded variety. Demonstrations conducted in Manipur in kharif revealed that the germination percentage (92), average bulb weight (80g) and yield (224 q/ha) of Bhima Super was the highest. Bhima Dark Red (218 q/ha) also yielded more than local variety (180 q/ha). Regarding green onion, Bhima Dark Red (360 q/ha) yielded the highest. The germination percentage (94), average bulb weight (82g) and yield (275 q/ha)",
-          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
-          "page": 168,
-          "title": "Good Agricultural Practices in Onion and Garlic Production",
-          "distance": 0.2801198959350586
+          "distance": 0.27997928857803345
         },
         {
           "chunk_id": "ecd45a5bbf4c0faf8e954d679558e04298235cde0399a24195983cb6588ef315",
@@ -320,34 +309,23 @@
           "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
           "page": 167,
           "title": "Good Agricultural Practices in Onion and Garlic Production",
-          "distance": 0.30617964267730713
+          "distance": 0.3061800003051758
         }
       ],
       "retrieval_hit": true,
-      "answer": "385 q/ha [Source: Varieties Developed] [Source: Good Agricultural Practices in Onion and Garlic Production, Page 168] [Source: Good Agricultural Practices in Onion and Garlic Production, Page 167]",
+      "answer": "For Bhima Light Red, the recorded yield is 38.5 t/ha.",
       "citations": [
         {
-          "title": "Varieties Developed",
+          "title": "Bhima Light Red",
           "source": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
+          "source_url": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
           "page": null,
-          "chunk_id": "b35873edfc253b085e90a0ead69c288ffd280538ce45f5ac8d2f45d5341b7ce5"
-        },
-        {
-          "title": "Good Agricultural Practices in Onion and Garlic Production",
-          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
-          "page": 168,
-          "chunk_id": "41ad1a3a3273cc8fddc9261742a5afb7e46127a257d3bb54ac6670ff608d789d"
-        },
-        {
-          "title": "Good Agricultural Practices in Onion and Garlic Production",
-          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
-          "page": 167,
-          "chunk_id": "ecd45a5bbf4c0faf8e954d679558e04298235cde0399a24195983cb6588ef315"
+          "chunk_id": "record:33e20ab3e0bf654942eb62679dba0453e03f2de5b5dde1edddae795a644e51f5"
         }
       ],
       "confidence": "high",
-      "answer_correctness": false,
-      "answer_correctness_proxy": false,
+      "answer_correctness": true,
+      "answer_correctness_proxy": true,
       "citation_correctness": false,
       "supported_by_retrieved_context": false,
       "grounded_answer": false,
@@ -365,28 +343,28 @@
       "answerable": false,
       "retrieved_chunks": [
         {
-          "chunk_id": "d794e844abb65593964a88207cef24aab9af639f9cdd0d8cc8f397ee7fee82fe",
-          "text": "129 wholesale, retail prices and market arrival of onion in Maharashtra during 2016 to 2018 revealed that average wholesale market price was Rs. 1172.6 /q and a verage retail price was Rs. 1775.8/q. The wholesale prices of onion were found above the average during August to February except September and below the average during March to July. Highest average drop in wholesale price (62.60%) was found in the month of May and highest average increase in price (29.70%) was found in the month of November. Similarly, the retail prices of onion were found above the average during August to February and below the average during March to July. Highest average drop in retai l price (51.64 %) was found in the month of May and highest average increase in price (30.94%) was found in the month of November. Successful storage of rabi (April-May) harvested onion with minimum losses till the kharif crop arises in the market (October-November) will be helpful in getting more price to the onion. Fig 2. Monthly market arrival and wholesale as well as retail Prices fluctuation in major onion markets of Maharashtra  Regional concentration in production In India, onion production is concentrated to a few states while consumption requirement and demand is countrywide. Five states, Maharashtra, Karnataka, Madhya Pradesh, Gujarat and Rajasthan account for about 77 per cent of onio n production with Maharashtra alone accounting for more than 39 per cent. Therefore majority of the onion production originates only in seven states and supplied to other states.  Low level of processing Onion processing facilities are meager despite Nashik district being a major production centre. Though Nashik is considered as onion capital, Bhavnagar district of Gujarat has emerged as a hub for onion processing in India. Only 3-4% of the onion production is processed in India. Indian dehydrated onion has very limited domestic market, but has well demand in the USA, Europe and some parts of South America. There is vast scope to set up onion processing industries that also can spur the contract farming in the region.  Export irregularities Due to fluctuations in domestic price, to overcome the shortage at domestic markets, government imposes curbs on onion exports. Minimum export prices (MEP) have been imposed on onions several times to restrict the import.",
+          "chunk_id": "344b241924978ed996095a3d300830ce248de0a1b5ddd9c262a91229d30154f2",
+          "text": "129 wholesale, retail prices and market arrival of onion in Maharashtra during 2016 to 2018 revealed that average wholesale market price was Rs. 1172.6 /q and average retail price was Rs. 1775.8/q. The wholesale prices of onion were found above the average during August to February except September and below the average during March to July. Highest average drop in wholesale price (62.60%) was found in the month of May and highest average increase in price (29.70%) was found in the month of November. Similarly, the retail prices of onion were found above the average during August to February and below the average during March to July. Highest average drop in retail price (51.64 %) was found in the month of May and highest average increase in price (30.94%) was found in the month of November. Successful storage of rabi (April-May) harvested onion with minimum losses till the kharif crop arises in the market (October-November) will be helpful in getting more price to the onion. Fig 2. Monthly market arrival and wholesale as well as retail Prices fluctuation in major onion markets of Maharashtra  Regional concentration in production In India, onion production is concentrated to a few states while consumption requirement and demand is countrywide. Five states, Maharashtra, Karnataka, Madhya Pradesh, Gujarat and Rajasthan account for about 77 per cent of onion production with Maharashtra alone accounting for more than 39 per cent. Therefore majority of the onion production originates only in seven states and supplied to other states.  Low level of processing Onion processing facilities are meager despite Nashik district being a major production centre. Though Nashik is considered as onion capital, Bhavnagar district of Gujarat has emerged as a hub for onion processing in India. Only 3-4% of the onion production is processed in India. Indian dehydrated onion has very limited domestic market, but has well demand in the USA, Europe and some parts of South America. There is vast scope to set up onion processing industries that also can spur the contract farming in the region.  Export irregularities Due to fluctuations in domestic price, to overcome the shortage at domestic markets, government imposes curbs on onion exports. Minimum export prices (MEP) have been imposed on onions several times to restrict the import.",
           "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
           "page": 136,
           "title": "Good Agricultural Practices in Onion and Garlic Production",
-          "distance": 0.40269923210144043
+          "distance": 0.4184519052505493
         },
         {
-          "chunk_id": "c25db5a5e0a242f07562b1894e75297bdc90cf9bbfd7535b6cd3f4ab814ef166",
-          "text": "The production and productivity of onion in Mirzapur has been increased by 93% and 32%, respectively after intervention of ICAR -DOGR in collaboration with Agrimitra FPO and GKRDF. The area under onion cultivation in Mirzapur district increased from 352 ha (2016 -17) to 515 ha (2018 -19) whereas production of onion increased from 4887 t (2016-17) to 9414 t (2018-19). Productivity of onion has been increased from 13.8 t/ha (2016- 17) to 18.3 t/ha (2018-19) (Source: Dept. of Agri., Govt. of UP). The most of the area expansion was in kharif season due to high profitability. The demonstrations led to conclusion that the eastern part of Uttar Pradesh is suitable for kharif onion production. It requires to extend onion production technology in these pockets of the country to solve the issue of onion price fluctuation during the months of October to November.",
+          "chunk_id": "9349a635d6aac07fe541f0f872411cffeba363df40ec5b1a565f44f75e99a3e7",
+          "text": "The production and productivity of onion in Mirzapur has been increased by 93% and 32%, respectively after intervention of ICAR-DOGR in collaboration with Agrimitra FPO and GKRDF. The area under onion cultivation in Mirzapur district increased from 352 ha (2016-17) to 515 ha (2018-19) whereas production of onion increased from 4887 t (2016-17) to 9414 t (2018-19). Productivity of onion has been increased from 13.8 t/ha (2016- 17) to 18.3 t/ha (2018-19) (Source: Dept. of Agri., Govt. of UP). The most of the area expansion was in kharif season due to high profitability. The demonstrations led to conclusion that the eastern part of Uttar Pradesh is suitable for kharif onion production. It requires to extend onion production technology in these pockets of the country to solve the issue of onion price fluctuation during the months of October to November.",
           "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
           "page": 162,
           "title": "Good Agricultural Practices in Onion and Garlic Production",
-          "distance": 0.435752809047699
+          "distance": 0.4357527494430542
         },
         {
-          "chunk_id": "a9337af72aa718401672f37b27fb7a6359656d0abdcd19097bf55d795a90e518",
-          "text": "155 onion cultivation due to hike of onion price in the market as well as drastic decrease in onion production due to erratic rainfall ca using water stagnation in the fields during current kharif season. The farmers sold their onion at Rs. 40-60 per kg and got the income up to 4.80 lakh per acre. Mr. Virendra Kumar from Jalalpur Mafi, Chunar, Mirzapur (UP) raised onion bulb crop as per ICAR- DOGR recommended technology and produced 87 q per acre marketable bulb yield. He earned net income of Rs. 4.80 lakh per acre as his onion bulbs were sold at the rate of Rs. 57 per kg in the market whereas one lady farmer Mrs. Geeta Devi from Bagahi, Chunar, Mirzapur (UP) produced 59 q per acre onion bulbs by following ICAR -DOGR recommendations and earned Rs. 3.27 lakh net income. Her onion bulbs were sold at the rate of Rs. 58 per kg during kharif 2019. Table 5: Performance of onion production by selected farmers during kharif 2019 Name of farmer Onion varieties Yield/ Acre (q) Rate of sold onion bulbs (Rs. /kg) Benefit gain (Rs. /Acre) Mr. Santosh Kumar Singh Village- Jalalpur Mafi, Chunar, Mirzapur (UP) Bhima Dark Red 48.57 56.7 2,55,238/- Mr. Manoj Kumar Singh Village- Jalalpur Mafi, Chunar, Mirzapur (UP) Bhima Dark Red 50.79 44.0 2,03,587/- Mr. Virendra Kumar Village- Jalalpur Mafi, Chunar, Mirzapur (UP) Bhima Dark Red 87.30 57.3 4,80,325/- Mr. Dilip Kumar Singh Village- Jalalpur Mafi, Chunar, Mirzapur (UP) Bhima Dark Red 93.6 36.0 3,07,270/- Mrs. Geeta Devi Village- Bagahi, Chunar, Mirzapur (UP) Bhima Super 59.37 58.5 3,27,111/- Demonstrations on onion production have been conducted successfully by ICAR-DOGR in 300 acres in selected areas of Mirzapur which can be extended in Rajgadh and Shikhar block of Mirzapur as well as adjoining districts of Sonbhadra, Varanasi and Chandauli. The production and productivity of onion in Mirzapur has been increased by 93% and 32%, respectively after intervention of ICAR -DOGR in collaboration with Agrimitra FPO and GKRDF. The area under onion cultivation in Mirzapur district increased from 352 ha (2016 -17) to 515 ha (2018 -19) whereas production of onion increased from 4887 t (2016-17) to 9414 t (2018-19). Productivity of onion has been increased from 13.8 t/ha (2016- 17) to 18.3 t/ha (2018-19) (Source: Dept. of Agri., Govt. of UP). The most of the area expansion was in kharif season due to high profitability.",
+          "chunk_id": "2743d68e48e157558de9759d6fed9a1d2a1030adb1c5e0abfea2696d9c123780",
+          "text": "155 onion cultivation due to hike of onion price in the market as well as drastic decrease in onion production due to erratic rainfall causing water stagnation in the fields during current kharif season. The farmers sold their onion at Rs. 40-60 per kg and got the income up to 4.80 lakh per acre. Mr. Virendra Kumar from Jalalpur Mafi, Chunar, Mirzapur (UP) raised onion bulb crop as per ICAR- DOGR recommended technology and produced 87 q per acre marketable bulb yield. He earned net income of Rs. 4.80 lakh per acre as his onion bulbs were sold at the rate of Rs. 57 per kg in the market whereas one lady farmer Mrs. Geeta Devi from Bagahi, Chunar, Mirzapur (UP) produced 59 q per acre onion bulbs by following ICAR-DOGR recommendations and earned Rs. 3.27 lakh net income. Her onion bulbs were sold at the rate of Rs. 58 per kg during kharif 2019. Table 5: Performance of onion production by selected farmers during kharif 2019 Name of farmer Onion varieties Yield/ Acre (q) Rate of sold onion bulbs (Rs. /kg) Benefit gain (Rs. /Acre) Mr. Santosh Kumar Singh Village- Jalalpur Mafi, Chunar, Mirzapur (UP) Bhima Dark Red 48.57 56.7 2,55,238/- Mr. Manoj Kumar Singh Village- Jalalpur Mafi, Chunar, Mirzapur (UP) Bhima Dark Red 50.79 44.0 2,03,587/- Mr. Virendra Kumar Village- Jalalpur Mafi, Chunar, Mirzapur (UP) Bhima Dark Red 87.30 57.3 4,80,325/- Mr. Dilip Kumar Singh Village- Jalalpur Mafi, Chunar, Mirzapur (UP) Bhima Dark Red 93.6 36.0 3,07,270/- Mrs. Geeta Devi Village- Bagahi, Chunar, Mirzapur (UP) Bhima Super 59.37 58.5 3,27,111/- Demonstrations on onion production have been conducted successfully by ICAR-DOGR in 300 acres in selected areas of Mirzapur which can be extended in Rajgadh and Shikhar block of Mirzapur as well as adjoining districts of Sonbhadra, Varanasi and Chandauli. The production and productivity of onion in Mirzapur has been increased by 93% and 32%, respectively after intervention of ICAR-DOGR in collaboration with Agrimitra FPO and GKRDF. The area under onion cultivation in Mirzapur district increased from 352 ha (2016-17) to 515 ha (2018-19) whereas production of onion increased from 4887 t (2016-17) to 9414 t (2018-19). Productivity of onion has been increased from 13.8 t/ha (2016- 17) to 18.3 t/ha (2018-19) (Source: Dept. of Agri., Govt. of UP). The most of the area expansion was in kharif season due to high profitability.",
           "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
           "page": 162,
           "title": "Good Agricultural Practices in Onion and Garlic Production",
-          "distance": 0.46213793754577637
+          "distance": 0.46109163761138916
         }
       ],
       "retrieval_hit": null,
@@ -417,15 +395,15 @@
           "source": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
           "page": null,
           "title": "Varieties Developed",
-          "distance": 0.38702160120010376
+          "distance": 0.38702166080474854
         },
         {
-          "chunk_id": "ea3134a101b5e5583dfa4d759eb81230f719106b2d8ee702666a53dcfa859cbd",
-          "text": "162 of Bhima Kiran was the highest followed by Bhima Shakti (90), average bulb weight (80g) and yield (268 q/ha) in rabi demonstrations. Regarding green onion, Bhima Shakti (395 q/ha) yielded the highest. It was followed by Bhima Kiran (380 q/ha) yielded more than local variety (255 q/ha). Fig. 10.Green onion in Nagaland Table 9: Performance of frontline demonstration trials in Manipur Season Variety Germination Percentage Average weight of one fresh bulb (g) Marketable bulb yield (q/ha) Kharif Green onion Bhima Super Bhima Dark Red Local Bhima Super Bhima Dark Red Local 92 90 75 - - - 80.00 75.00 62.00 - - - 224 218 180 340 360 240 Rabi Green onion Bhima Kiran Bhima Shakti Local Bhima Kiran Bhima Shakti Local 94 90 78 - - - 82.00 80.00 74.00 - - - 275 268 225 380 395 255 The varieties developed by ICAR -DOGR were found superior over the local cultivars in all the demonstrations. Impact of activities carried out in NEH region  The farmers of NEH region received 20 -22 t/ha yield of ICAR -DOGR onion varieties. Rabi onion bulbs can be successfully grown in NEH states like Arunachal Pradesh, Manipur, Meghalaya, Nagaland, Tripura and Sikkim.",
+          "chunk_id": "fc8f9aba73e21328a32634d9b8094c87d14ae69e306684bc92807c8ddd615e09",
+          "text": "162 of Bhima Kiran was the highest followed by Bhima Shakti (90), average bulb weight (80g) and yield (268 q/ha) in rabi demonstrations. Regarding green onion, Bhima Shakti (395 q/ha) yielded the highest. It was followed by Bhima Kiran (380 q/ha) yielded more than local variety (255 q/ha). Fig. 10.Green onion in Nagaland Table 9: Performance of frontline demonstration trials in Manipur Season Variety Germination Percentage Average weight of one fresh bulb (g) Marketable bulb yield (q/ha) Kharif Green onion Bhima Super Bhima Dark Red Local Bhima Super Bhima Dark Red Local 92 90 75 - - - 80.00 75.00 62.00 - - - 224 218 180 340 360 240 Rabi Green onion Bhima Kiran Bhima Shakti Local Bhima Kiran Bhima Shakti Local 94 90 78 - - - 82.00 80.00 74.00 - - - 275 268 225 380 395 255 The varieties developed by ICAR-DOGR were found superior over the local cultivars in all the demonstrations. Impact of activities carried out in NEH region  The farmers of NEH region received 20-22 t/ha yield of ICAR-DOGR onion varieties. Rabi onion bulbs can be successfully grown in NEH states like Arunachal Pradesh, Manipur, Meghalaya, Nagaland, Tripura and Sikkim.",
           "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
           "page": 169,
           "title": "Good Agricultural Practices in Onion and Garlic Production",
-          "distance": 0.4071369171142578
+          "distance": 0.40713679790496826
         },
         {
           "chunk_id": "b35873edfc253b085e90a0ead69c288ffd280538ce45f5ac8d2f45d5341b7ce5",
@@ -437,28 +415,17 @@
         }
       ],
       "retrieval_hit": true,
-      "answer": "Suitable for storage up to 5-6 months [Source: Varieties Developed] [Source: Good Agricultural Practices in Onion and Garlic Production, Page 169]",
+      "answer": "For Bhima Kiran, the recorded storage-life information is: Suitable for storage up to 5-6 months.",
       "citations": [
         {
-          "title": "Varieties Developed",
+          "title": "Bhima Kiran",
           "source": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
+          "source_url": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
           "page": null,
-          "chunk_id": "81edc26fb616a8b787d41a64ec693f3374624f2761238ebb7cddc89f78cebc54"
-        },
-        {
-          "title": "Good Agricultural Practices in Onion and Garlic Production",
-          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
-          "page": 169,
-          "chunk_id": "ea3134a101b5e5583dfa4d759eb81230f719106b2d8ee702666a53dcfa859cbd"
-        },
-        {
-          "title": "Varieties Developed",
-          "source": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
-          "page": null,
-          "chunk_id": "b35873edfc253b085e90a0ead69c288ffd280538ce45f5ac8d2f45d5341b7ce5"
+          "chunk_id": "record:512dd78ae6ff25d77fc20e8fcacd8dcbf6dde7c7930abcfade73e955c9b34aca"
         }
       ],
-      "confidence": "medium",
+      "confidence": "high",
       "answer_correctness": true,
       "answer_correctness_proxy": true,
       "citation_correctness": false,
@@ -486,12 +453,12 @@
           "distance": 0.19426321983337402
         },
         {
-          "chunk_id": "609f890104d7d76534c5b77a86f636f7333c9a322546777a665c41cfa199fd33",
-          "text": "Title: Good Agricultural Practices in Onion and Garlic Production. Editors: Dr. R. B. Kale, Dr. S. S. Gadge, Dr. B. Venkata Rao, Dr. V. Mahajan and Dr. Major Singh Edition: 2022. All rights reserved. ISBN: 978-93-91668-35-8 Copyright: © 2022. National Institute of Agricultural Extension Management (MANAGE) and ICAR- Directorate of Onion and Garlic Research, Pune, Maharashtra Citation: Kale R. B., Gadge, S. S., Venkata Rao B., Mahajan, V. and Singh, M. (2022). Good Agricultural Practices in Onion and Garlic Production is a joint endeavour of National Institute of Agricultural Extension Management (MANAGE) & ICAR - Directorate of Onion and Garlic Research, Rajgurunagar. This e -book is jointly edited and published by ICAR- Directorate of Onion and Garlic Research, Pune, Maharashtra and National Institute of Agricultural Extension Management (MANAGE), Hyderabad to educate agricultural extension officers, students, research scholars, academicians in the field of agriculture and allied sectors. The information published in this ebook is for educational and knowledge sharing purpose only. Neither the publisher nor the contributors, authors and editors assume any liability for any damage or injury to persons or property from any use of methods, instructions, or ideas contained in the e - book. No part of this publication may be reproduced or transmitted withou t prior permission of the publishers. Published for Dr. P. Chandra Shekara, Director General, National Institute of Agricultural Extension Management (MANAGE), Hyderabad, India by Dr. Srinivasacharyulu Attaluri, Program Officer, MANAGE and printed at MANAGE, Hyderabad as e-publication",
+          "chunk_id": "dcb4a81f9f602808b051b96cceb5636ec759d8ebb2771bddf5108f745786d2dd",
+          "text": "Title: Good Agricultural Practices in Onion and Garlic Production. Editors: Dr. R. B. Kale, Dr. S. S. Gadge, Dr. B. Venkata Rao, Dr. V. Mahajan and Dr. Major Singh Edition: 2022. All rights reserved. ISBN: 978-93-91668-35-8 Copyright: © 2022. National Institute of Agricultural Extension Management (MANAGE) and ICAR- Directorate of Onion and Garlic Research, Pune, Maharashtra Citation: Kale R. B., Gadge, S. S., Venkata Rao B., Mahajan, V. and Singh, M. (2022). Good Agricultural Practices in Onion and Garlic Production is a joint endeavour of National Institute of Agricultural Extension Management (MANAGE) & ICAR- Directorate of Onion and Garlic Research, Rajgurunagar. This e-book is jointly edited and published by ICAR- Directorate of Onion and Garlic Research, Pune, Maharashtra and National Institute of Agricultural Extension Management (MANAGE), Hyderabad to educate agricultural extension officers, students, research scholars, academicians in the field of agriculture and allied sectors. The information published in this ebook is for educational and knowledge sharing purpose only. Neither the publisher nor the contributors, authors and editors assume any liability for any damage or injury to persons or property from any use of methods, instructions, or ideas contained in the e- book. No part of this publication may be reproduced or transmitted without prior permission of the publishers. Published for Dr. P. Chandra Shekara, Director General, National Institute of Agricultural Extension Management (MANAGE), Hyderabad, India by Dr. Srinivasacharyulu Attaluri, Program Officer, MANAGE and printed at MANAGE, Hyderabad as e-publication",
           "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
           "page": 3,
           "title": "Good Agricultural Practices in Onion and Garlic Production",
-          "distance": 0.262989342212677
+          "distance": 0.2629894018173218
         },
         {
           "chunk_id": "b157776cfeed964df6001fa5db6e8a4ac6c858217b9f09320b2b1cfbf1f87265",
@@ -499,11 +466,11 @@
           "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
           "page": 114,
           "title": "Good Agricultural Practices in Onion and Garlic Production",
-          "distance": 0.2713828682899475
+          "distance": 0.27138251066207886
         }
       ],
       "retrieval_hit": true,
-      "answer": "Follow the pre‑harvest practices listed in the Good Agricultural Practices guide:\n1. Field preparation – ploughing, harrowing, roto‑tilling, land leveling, etc.\n2. Bed preparation.\n3. Nursery preparation – raising seedlings.\n4. Methods of planting – seed sowing (broadcasting or drilling) or planting bulbs directly, or transplanting.\n5. Irrigation and fertilizer application.\n6. Intercultural operations – spraying, weeding, etc. [Source: Good Agricultural Practices in Onion and Garlic Production, Page 2] [Source: Good Agricultural Practices in Onion and Garlic Production, Page 3] [Source: Good Agricultural Practices in Onion and Garlic Production, Page 114]",
+      "answer": "Follow these pre‑harvest practices: 1) Field preparation – ploughing, harrowing, roto‑tilling, land leveling; 2) Bed preparation; 3) Nursery preparation (seedling raising); 4) Planting – seed sowing (broadcasting or drilling) or bulb planting, or transplanting; 5) Irrigation and fertilizer application; 6) Intercultural operations – weeding, spraying, etc.; 7) Harvesting and post‑harvest handling such as curing, sorting, grading, storage. [Source: Good Agricultural Practices in Onion and Garlic Production, Page 2] [Source: Good Agricultural Practices in Onion and Garlic Production, Page 3] [Source: Good Agricultural Practices in Onion and Garlic Production, Page 114]",
       "citations": [
         {
           "title": "Good Agricultural Practices in Onion and Garlic Production",
@@ -515,7 +482,7 @@
           "title": "Good Agricultural Practices in Onion and Garlic Production",
           "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
           "page": 3,
-          "chunk_id": "609f890104d7d76534c5b77a86f636f7333c9a322546777a665c41cfa199fd33"
+          "chunk_id": "dcb4a81f9f602808b051b96cceb5636ec759d8ebb2771bddf5108f745786d2dd"
         },
         {
           "title": "Good Agricultural Practices in Onion and Garlic Production",
@@ -549,7 +516,7 @@
           "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
           "page": 84,
           "title": "Good Agricultural Practices in Onion and Garlic Production",
-          "distance": 0.5321922898292542
+          "distance": 0.5321922302246094
         },
         {
           "chunk_id": "eadf047df6bd1788e73ee16b5557c916e55699fa1a8fe8dadedf4e51742c8549",
@@ -557,23 +524,31 @@
           "source": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
           "page": null,
           "title": "Varieties Developed",
-          "distance": 0.5503295660018921
+          "distance": 0.5503296256065369
         },
         {
-          "chunk_id": "d3fa5300196f9b2f4683cceafaa57e78514111e8261fe7c2882ebb6f3cd2e8bb",
-          "text": "147 Pratappur, Ramnagar, Purushottampur, Bhopti and Govindpur. For demonstration purpose, 4 kg onion seed was provided by the Directorate to each farmer. Demonstrations in other states Demonstrations were also conducted in Morena (kharif, 10 demos of Bhima Super) and Shajapur (rabi, 13 demos of Bhima Shubhra) district of Madhya Pradesh, Gadakh (late kharif, 16 demos of Bhima Shubhra and Bhima Shweta) district of Karnataka, Morbi ( rabi, 5 demos of Bhima Shweta), Dahod (late kharif, 2 demos of Bhima Raj, Bhima Shakti, Bhima Super, Bhima Red and Bhima Shubhra) and Bhavnagar (late kharif, 4 demos of Bhima Shubhra and Bhima Shweta) districts of Gujarat, Jalore (rabi, 2 demos of Bhima Shakti) district of Rajasthan and Kurnool (rabi, 3 demos of Bhima Shubhra, Bhima Shweta and Bhima Safed) district of Andhra Pradesh. Recommendations made by the Directorate were followed in all trials. Performance of frontline demonstrations in Maharashtra The performance of frontline demonstration trials in Maharashtra is given in Table 10.1 Table 1: Performance of frontline demonstration trials in Maharashtra Season Variety Germination Percentage Average weight of one fresh bulb (g) Marketable yield (q/ha) Kharif Bhima Super Bhima Shweta Bhima Safed Bhima Raj Bhima Red Bhima Dark Red Local 96 95 96 94 92 98 80 76.00 78.00 76.00 75.00 76.00 80.00 65.00 245 220 225 235 230 265 175 Late Kharif Bhima Shakti Bhima Super Bhima Raj Bhima Red Bhima Shubhra Local 93 94 95 90 94 75 90.00 82.00 75.00 83.50 85.00 70.25 450 375 415 425 410 320 Rabi Bhima Shakti Bhima Kiran Local 96 93 75 80.00 75.00 72.00 420 415 270 The demonstrations in Maharashtra in kharif season revealed that the germination percentage (98), average bulb weight (80g) and yield (265 q/ha) of Bhima Dark Red was the highest. Bhima Super (245 q/ha), Bhima Raj (235 q/ha), Bhima Red (230 q/ha), Bhima Safed (225 q/ha), Bhima Shweta (220 q/ha) also yielded more than local variety (175 q/ha). The germination percentage (95) of Bhima Raj, average bulb weight (90 g) and the yield (450 q/ha) of Bhima Shakti were the highest in late kharif demonstrations in Maharashtra. Bhima Red (425 q/ha),",
+          "chunk_id": "088d9fe3dbdc703e5944cc750c5b314f9cb70430a9bea602486a73b602b948e9",
+          "text": "147 Pratappur, Ramnagar, Purushottampur, Bhopti and Govindpur. For demonstration purpose, 4 kg onion seed was provided by the Directorate to each farmer. Demonstrations in other states Demonstrations were also conducted in Morena (kharif, 10 demos of Bhima Super) and Shajapur (rabi, 13 demos of Bhima Shubhra) district of Madhya Pradesh, Gadakh (late kharif, 16 demos of Bhima Shubhra and Bhima Shweta) district of Karnataka, Morbi (rabi, 5 demos of Bhima Shweta), Dahod (late kharif, 2 demos of Bhima Raj, Bhima Shakti, Bhima Super, Bhima Red and Bhima Shubhra) and Bhavnagar (late kharif, 4 demos of Bhima Shubhra and Bhima Shweta) districts of Gujarat, Jalore (rabi, 2 demos of Bhima Shakti) district of Rajasthan and Kurnool (rabi, 3 demos of Bhima Shubhra, Bhima Shweta and Bhima Safed) district of Andhra Pradesh. Recommendations made by the Directorate were followed in all trials. Performance of frontline demonstrations in Maharashtra The performance of frontline demonstration trials in Maharashtra is given in Table 10.1 Table 1: Performance of frontline demonstration trials in Maharashtra Season Variety Germination Percentage Average weight of one fresh bulb (g) Marketable yield (q/ha) Kharif Bhima Super Bhima Shweta Bhima Safed Bhima Raj Bhima Red Bhima Dark Red Local 96 95 96 94 92 98 80 76.00 78.00 76.00 75.00 76.00 80.00 65.00 245 220 225 235 230 265 175 Late Kharif Bhima Shakti Bhima Super Bhima Raj Bhima Red Bhima Shubhra Local 93 94 95 90 94 75 90.00 82.00 75.00 83.50 85.00 70.25 450 375 415 425 410 320 Rabi Bhima Shakti Bhima Kiran Local 96 93 75 80.00 75.00 72.00 420 415 270 The demonstrations in Maharashtra in kharif season revealed that the germination percentage (98), average bulb weight (80g) and yield (265 q/ha) of Bhima Dark Red was the highest. Bhima Super (245 q/ha), Bhima Raj (235 q/ha), Bhima Red (230 q/ha), Bhima Safed (225 q/ha), Bhima Shweta (220 q/ha) also yielded more than local variety (175 q/ha). The germination percentage (95) of Bhima Raj, average bulb weight (90 g) and the yield (450 q/ha) of Bhima Shakti were the highest in late kharif demonstrations in Maharashtra. Bhima Red (425 q/ha),",
           "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
           "page": 154,
           "title": "Good Agricultural Practices in Onion and Garlic Production",
-          "distance": 0.5514222979545593
+          "distance": 0.5514222383499146
         }
       ],
       "retrieval_hit": true,
-      "answer": "I don't know.",
-      "citations": [],
-      "confidence": "low",
-      "answer_correctness": false,
-      "answer_correctness_proxy": false,
+      "answer": "For Bhima Prasanskaran, the recorded season: Rabi and development location: Rajgurunagar, Pune, Maharashtra and region: Gujarat, Maharashtra, Karnataka, Telangana, Andhra Pradesh and Tamil Nadu.",
+      "citations": [
+        {
+          "title": "Bhima Prasanskaran",
+          "source": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
+          "source_url": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
+          "page": null,
+          "chunk_id": "record:fcef5a517f73f169edac9971e483055ef9dca0bb8dfd1500e28b2d9162faf730"
+        }
+      ],
+      "confidence": "high",
+      "answer_correctness": true,
+      "answer_correctness_proxy": true,
       "citation_correctness": false,
       "supported_by_retrieved_context": false,
       "grounded_answer": false,
@@ -596,23 +571,23 @@
           "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
           "page": 26,
           "title": "Good Agricultural Practices in Onion and Garlic Production",
-          "distance": 0.3593871593475342
+          "distance": 0.3593870997428894
         },
         {
-          "chunk_id": "95eb69c787223815095db397369fe2988bd78890cde4705c4089a5082197d914",
-          "text": "19 Chapter 3 IMPROVED VARIETIES OF ONION FOR ENHANCING THE PRODUCTION Y.P. Khade*, R. B. Kale, Soumia P.S., B.R. Bibwe, V. Karuppaiah and V. Mahajan. ICAR-Directorate of Onion and Garlic Research, Pune-410505 *Email: yogesh.iari@gmail.com As onion crop is biannual in nature, it takes almost 10 -12 years to develop or purify a new variety hence one should have about its varietal development. Onion is cultivated in all the three seasons in India i.e., kharif, late kharif and rabi season, there fore, varieties also need to be developed for suitability in different seasons. In our country, onion varietal development programmes were strengthened under All India Network Research Project on Onion and Garlic (AINRPOG) through SAU’s and ICAR institutes. So far, more than 50 varieties of onion including hybrids and multiplier onion have been developed and released for different locations and seasons at state and national level. Being a cross pollinated crop, onion always provide scope for selection as natural variability is created constantly. The systematic breeding programme was started in early 90’s at Pimpalgaon Baswant, Nashik, later on at IARI, New Delhi. The early maturity varieties developed through selection viz., N- 2-4-2 are dominating in onion production. Selection of suitable bulb crop varieties: Selection of variety for cultivation of onion and garlic depends on multiple factors such as agro -climatic situation, market demand and market destinations, preference of consumers. Agro-climatic situation: In India, there is large variation in agro-climatic situation including soil type, climate, rainfall, day -length. The one variety which is suitable in one region may not be suitable in another region. The varieties developed by different research institutes are tested in different locations and the recommendation of the suitable varieties for particular state or location has given. Therefore, bulb cultivator should consider the recommendations of the research institutes while selecting the varieties for cultivation. Market demand and market destinations: Bulb cultivator should consider market demand and market destinations while selecting the varieties for cultivation. In India, some markets are famous for specific quality of onion such as Nashik (Lasalgaon market) is famous for red onion. Therefore, farmers should consider market destination such as local market or export of onion. If farmer is exporting the onion which variety is suitable for export and which county demands which type of onion these factors must be considered while selecting the varieties for cultivation.",
+          "chunk_id": "c170fa386c6e567fb103bb87688851db16d34818dc5a43263cd5472dd7206617",
+          "text": "19 Chapter 3 IMPROVED VARIETIES OF ONION FOR ENHANCING THE PRODUCTION Y.P. Khade*, R. B. Kale, Soumia P.S., B.R. Bibwe, V. Karuppaiah and V. Mahajan. ICAR-Directorate of Onion and Garlic Research, Pune-410505 *Email: yogesh.iari@gmail.com As onion crop is biannual in nature, it takes almost 10-12 years to develop or purify a new variety hence one should have about its varietal development. Onion is cultivated in all the three seasons in India i.e., kharif, late kharif and rabi season, therefore, varieties also need to be developed for suitability in different seasons. In our country, onion varietal development programmes were strengthened under All India Network Research Project on Onion and Garlic (AINRPOG) through SAU’s and ICAR institutes. So far, more than 50 varieties of onion including hybrids and multiplier onion have been developed and released for different locations and seasons at state and national level. Being a cross pollinated crop, onion always provide scope for selection as natural variability is created constantly. The systematic breeding programme was started in early 90’s at Pimpalgaon Baswant, Nashik, later on at IARI, New Delhi. The early maturity varieties developed through selection viz., N- 2-4-2 are dominating in onion production. Selection of suitable bulb crop varieties: Selection of variety for cultivation of onion and garlic depends on multiple factors such as agro-climatic situation, market demand and market destinations, preference of consumers. Agro-climatic situation: In India, there is large variation in agro-climatic situation including soil type, climate, rainfall, day-length. The one variety which is suitable in one region may not be suitable in another region. The varieties developed by different research institutes are tested in different locations and the recommendation of the suitable varieties for particular state or location has given. Therefore, bulb cultivator should consider the recommendations of the research institutes while selecting the varieties for cultivation. Market demand and market destinations: Bulb cultivator should consider market demand and market destinations while selecting the varieties for cultivation. In India, some markets are famous for specific quality of onion such as Nashik (Lasalgaon market) is famous for red onion. Therefore, farmers should consider market destination such as local market or export of onion. If farmer is exporting the onion which variety is suitable for export and which county demands which type of onion these factors must be considered while selecting the varieties for cultivation.",
           "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
           "page": 26,
           "title": "Good Agricultural Practices in Onion and Garlic Production",
-          "distance": 0.3761395812034607
+          "distance": 0.3779740333557129
         },
         {
-          "chunk_id": "4a9ea83328e485fbd5aeec1ac5510b0a5fdff34fd4ada5c3b8fd8adcb4a070b7",
-          "text": "11 Varieties: Varietal selection plays an important role in enhancing productivity of onion. Varieties are notified by either the Central Varietal Release Committee (CVRC) or State Varietal Release Committee (SVRC) for commercial utilization. Hence, these are extensively evaluated for their performance in multi -location trials conducted under the AICVIP/ AINRPOG, which play a key role in testing, identification and release of new varieties. Onion is biennial c rop and takes almost 12 to 14 years to purify or develop a new variety which is cumbersome. Varieties in onion were developed by different SAUs and ICAR institutes and tested under coordinated/ network project for release at national level for different ag ro- climatic conditions. Till now, about 65 onion varieties including 2 F1 hybrids and 6 multiplier type have been developed and released from public sectors for different colors (light red, dark red, white and yellow), types (common, rose and multiplier t ype), locations (short and long day) and seasons ( kharif, late kharif and rabi) at state or national level. Out of which, ten onion varieties are from ICAR -DOGR notified by CVRC. A number of cultivars have been developed and released in India and occupies a large area under cultivation, however still a substantial area is under the cultivation of local cultivar or land races. There is urgent need to develop onion cultivars for processing, salad purposes and for resistant to biotic and abiotic stresses. Some of the varieties developed before 1986 and after 1986 are given below. Extant onion varieties before 1986: N-2-4-1, N-53, N-257-9-1, Pusa Red, Pusa White Flat, Pusa White Round, Pusa Ratnar, S-131, Early Grano, Punjab Selection, Punjab Red Round, Punjab-48, Punjab Red Round, CO-1(Multiplier), CO-2, CO-3, CO-4, MDU-1, Hissar 2, Kalyanpur Red Round, Udaipur 101, Brown Spanish (Long day) and VL-1 (Long day) etc. Improved onion varieties after 1986: Bhima Red, Bhi ma Raj, Bhima Super, Bhima Kiran, Bhima Shakti, Bhima Dark Red, Bhima Light Red, Bhima Shubra, Bhima Shweta, Bhima Safed, Baswant-780, Pusa Madhavi, Arka Niketan, Arka Kalyan, Arka Bindu, Arka Pragati, Arka Pitambar, Arka Lalima (F1 hybrid), Arka Kirtiman (F1 hybrid), Phule Safed, Phule Suwarna, Phule Samarth, HOS -1, Agrifound Dark Red, Agrifound Light Red, Agrifound White, L-28, Agrifound Rose, Agrifound Red (Multiplier), Line-355, Udaipur 102, Udaipur 103, Punjab Naroya, Punjab White, Punjab White,VL -3 (Long day), Akola Safed, Rajasthan Onion-1 and Aprita (RO-59) etc.",
+          "chunk_id": "238a255e8abab0217ad9d668c5cc4c205042a468072b7f677ce21491ef331797",
+          "text": "11 Varieties: Varietal selection plays an important role in enhancing productivity of onion. Varieties are notified by either the Central Varietal Release Committee (CVRC) or State Varietal Release Committee (SVRC) for commercial utilization. Hence, these are extensively evaluated for their performance in multi-location trials conducted under the AICVIP/ AINRPOG, which play a key role in testing, identification and release of new varieties. Onion is biennial crop and takes almost 12 to 14 years to purify or develop a new variety which is cumbersome. Varieties in onion were developed by different SAUs and ICAR institutes and tested under coordinated/ network project for release at national level for different agro- climatic conditions. Till now, about 65 onion varieties including 2 F1 hybrids and 6 multiplier type have been developed and released from public sectors for different colors (light red, dark red, white and yellow), types (common, rose and multiplier type), locations (short and long day) and seasons (kharif, late kharif and rabi) at state or national level. Out of which, ten onion varieties are from ICAR-DOGR notified by CVRC. A number of cultivars have been developed and released in India and occupies a large area under cultivation, however still a substantial area is under the cultivation of local cultivar or land races. There is urgent need to develop onion cultivars for processing, salad purposes and for resistant to biotic and abiotic stresses. Some of the varieties developed before 1986 and after 1986 are given below. Extant onion varieties before 1986: N-2-4-1, N-53, N-257-9-1, Pusa Red, Pusa White Flat, Pusa White Round, Pusa Ratnar, S-131, Early Grano, Punjab Selection, Punjab Red Round, Punjab-48, Punjab Red Round, CO-1(Multiplier), CO-2, CO-3, CO-4, MDU-1, Hissar 2, Kalyanpur Red Round, Udaipur 101, Brown Spanish (Long day) and VL-1 (Long day) etc. Improved onion varieties after 1986: Bhima Red, Bhima Raj, Bhima Super, Bhima Kiran, Bhima Shakti, Bhima Dark Red, Bhima Light Red, Bhima Shubra, Bhima Shweta, Bhima Safed, Baswant-780, Pusa Madhavi, Arka Niketan, Arka Kalyan, Arka Bindu, Arka Pragati, Arka Pitambar, Arka Lalima (F1 hybrid), Arka Kirtiman (F1 hybrid), Phule Safed, Phule Suwarna, Phule Samarth, HOS-1, Agrifound Dark Red, Agrifound Light Red, Agrifound White, L-28, Agrifound Rose, Agrifound Red (Multiplier), Line-355, Udaipur 102, Udaipur 103, Punjab Naroya, Punjab White, Punjab White,VL-3 (Long day), Akola Safed, Rajasthan Onion-1 and Aprita (RO-59) etc. Table 2: Notified varieties of Onion by CVRC S. No.",
           "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
           "page": 18,
           "title": "Good Agricultural Practices in Onion and Garlic Production",
-          "distance": 0.39464467763900757
+          "distance": 0.3841423988342285
         }
       ],
       "retrieval_hit": null,
@@ -643,15 +618,7 @@
           "source": "https://dogr.res.in/index.php/component/content/article/garlicagropedia?layout=edit",
           "page": null,
           "title": "garlicagropedia",
-          "distance": 0.4091043472290039
-        },
-        {
-          "chunk_id": "6ae09c9a663c10056c5234fc2bf19149e88895ff8c323600efc108b169dbc8fb",
-          "text": "DUS Test Characteristics of Garlic Density of leaves, Number of leaves per pseudostem, Foliage attitude, Leaf intensity of green colour, Leaf waxiness, Leaf length (longest leaf), Leaf width (widest leaf), Leaf shape in cross section (in middle of the longest leaf), Pseudostem length (up to first emerged green leaf), Pseudostem width of the base, Intensity of anthocyanin colouration at base, Flowering stem curvature, Flowering stem length (special characteristics for temperate condition), Bulbils, Time of maturity (from date of planting), Bulb size (diameter), B ulb shape in longitudinal section, Bulb shape in cross section, Position of cloves at tip of bulb, Position of root disc, Bulb shape of base, Compactness of cloves, Ground colour of dry external scales, Anthocyanin stripes on dry external scales, Number of cloves, Distribution of cloves, External cloves, Skin adherence of dry external scales, Clove size (diameter), Colour of scale and Colour of flesh. Maintenance of Onion and Garlic Varieties ICAR-DOGR is maintaining 47 rabi and 11 kharif varieties of onion and 31 varieties of garlic (Table 1a-1c). Eleven kharif onion varieties are Agrifound Dark Red, Arka Kalyan, B-780, Bhima Raj, Bhima Red, Bhima Shubhra, Bhima Shweta, Bhima Safed, Bhima Super, Bhima Dark Red and N-53. Rest of onion varieties are maintained during rabi season. However, Bhima Raj, Bhima Red and Bhima Shweta are maintained in both kharif and rabi seasons. Out of these varieties, all the long day onion and garlic varieties are being maintained at ICAR -CITH, Srinagar and multiplier type onion varieties are being maintained at TNAU, Coimbatore. All the short -day varieties of onion and garlic are being maintained at ICAR -DOGR, Rajgurunagar, Pune as well as ICAR -IARI, New Delhi. The onion varieties are being maintained as per the mandate during kharif and rabi seasons whereas garlic varieties were maintained during rabi season.",
-          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
-          "page": 80,
-          "title": "Good Agricultural Practices in Onion and Garlic Production",
-          "distance": 0.4272230863571167
+          "distance": 0.4091041088104248
         },
         {
           "chunk_id": "04b602bb61fefc12e5eca3f0ee4e420e6d13ea0d63eb028ed292ced8b9b52794",
@@ -659,11 +626,19 @@
           "source": "https://dogr.res.in/index.php/component/content/article/garlicagropedia?layout=edit",
           "page": null,
           "title": "garlicagropedia",
-          "distance": 0.43241167068481445
+          "distance": 0.4324113726615906
+        },
+        {
+          "chunk_id": "229ef68f2bb792fcd9e4682056c4793ab5967f98175be070d841cee1a49f8ff7",
+          "text": "DUS Test Characteristics of Garlic Density of leaves, Number of leaves per pseudostem, Foliage attitude, Leaf intensity of green colour, Leaf waxiness, Leaf length (longest leaf), Leaf width (widest leaf), Leaf shape in cross section (in middle of the longest leaf), Pseudostem length (up to first emerged green leaf), Pseudostem width of the base, Intensity of anthocyanin colouration at base, Flowering stem curvature, Flowering stem length (special characteristics for temperate condition), Bulbils, Time of maturity (from date of planting), Bulb size (diameter), Bulb shape in longitudinal section, Bulb shape in cross section, Position of cloves at tip of bulb, Position of root disc, Bulb shape of base, Compactness of cloves, Ground colour of dry external scales, Anthocyanin stripes on dry external scales, Number of cloves, Distribution of cloves, External cloves, Skin adherence of dry external scales, Clove size (diameter), Colour of scale and Colour of flesh. Maintenance of Onion and Garlic Varieties ICAR-DOGR is maintaining 47 rabi and 11 kharif varieties of onion and 31 varieties of garlic (Table 1a-1c). Eleven kharif onion varieties are Agrifound Dark Red, Arka Kalyan, B-780, Bhima Raj, Bhima Red, Bhima Shubhra, Bhima Shweta, Bhima Safed, Bhima Super, Bhima Dark Red and N-53. Rest of onion varieties are maintained during rabi season. However, Bhima Raj, Bhima Red and Bhima Shweta are maintained in both kharif and rabi seasons. Out of these varieties, all the long day onion and garlic varieties are being maintained at ICAR-CITH, Srinagar and multiplier type onion varieties are being maintained at TNAU, Coimbatore. All the short-day varieties of onion and garlic are being maintained at ICAR-DOGR, Rajgurunagar, Pune as well as ICAR-IARI, New Delhi. The onion varieties are being maintained as per the mandate during kharif and rabi seasons whereas garlic varieties were maintained during rabi season.",
+          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
+          "page": 80,
+          "title": "Good Agricultural Practices in Onion and Garlic Production",
+          "distance": 0.4400191903114319
         }
       ],
       "retrieval_hit": true,
-      "answer": "Select individual cloves from seed bulbs just before planting, twist off outer skins, keep the basal plate intact, choose big cloves (>1.5 g) and reject small, diseased or damaged ones. Dip the selected cloves in a 0.1 % carbendazim solution before planting. Plant the cloves vertically 2 cm below the soil surface, spacing plants 10 cm apart within a row and rows 15 cm apart. [Source: garlicagropedia] [Source: Good Agricultural Practices in Onion and Garlic Production, Page 80]",
+      "answer": "Select individual cloves from seed bulbs, twist off outer skins, keep the basal plate intact, choose big cloves (>1.5 g) and reject small, diseased or damaged ones. Dip the selected cloves in a 0.1 % carbendazim solution just before planting. Plant the cloves vertically 2 cm below the soil surface, with 10 cm spacing between plants and 15 cm spacing between rows. [Source: garlicagropedia] [Source: Good Agricultural Practices in Onion and Garlic Production, Page 80]",
       "citations": [
         {
           "title": "garlicagropedia",
@@ -672,16 +647,16 @@
           "chunk_id": "1d77b3a706eb9035a798ff25f7a66d48f137b968172940e2f1d1af6a94aa275a"
         },
         {
-          "title": "Good Agricultural Practices in Onion and Garlic Production",
-          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
-          "page": 80,
-          "chunk_id": "6ae09c9a663c10056c5234fc2bf19149e88895ff8c323600efc108b169dbc8fb"
-        },
-        {
           "title": "garlicagropedia",
           "source": "https://dogr.res.in/index.php/component/content/article/garlicagropedia?layout=edit",
           "page": null,
           "chunk_id": "04b602bb61fefc12e5eca3f0ee4e420e6d13ea0d63eb028ed292ced8b9b52794"
+        },
+        {
+          "title": "Good Agricultural Practices in Onion and Garlic Production",
+          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
+          "page": 80,
+          "chunk_id": "229ef68f2bb792fcd9e4682056c4793ab5967f98175be070d841cee1a49f8ff7"
         }
       ],
       "confidence": "low",
@@ -704,6 +679,14 @@
       "answerable": true,
       "retrieved_chunks": [
         {
+          "chunk_id": "d3c994fd3dfb32e5dd2aca7f6ad3eba4cc4050fb0ed87129649390fe548ceef7",
+          "text": "Selection of packaging ‘material is very important to reduce weight loss by controlling the respiration rate and to augment the storage life. Storage at 0 to 5°C is imperative to maintain good quality of peeled garlic, storage temperatures above 5°C will result in pink and brown discoloration on the damaged areas and also favors root and sprout development (Cantwell, 2016). Modified atmosphere packaging (MAP) may also be effective in preserving quality of stored garlic cloves. A reasonable expected storage-life of commercially peeled and modified atmosphere packaged garlic is 3-4 weeks at 0°C, 2-3 weeks at 5°C; and 1-2 weeks at 10°C and pungency (thiosulfinate and pyruvate Concentrations) decreases with time and the decrease is greater at higher storage temperatures (Tanamati, 2016). Hot water dip treatments at 55°Cfor 10 min is effective in reducing sprout and adventitious root growth in cloves stored at 10°C and >95% RH. Hot water dip treatment at 60°C for 2.5 min is also effective in inhibiting sprout and foot growth without any injury (Cantwell et al., 2003). Dehydrated garlic flakes Dehydration also extends the shelf-life by retaining sensorial characteristics compared to those of fresh products. Dehydration decreases the water activity of the material, reduces microbiological activity,",
+          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
+          "page": 97,
+          "title": "Good Agricultural Practices in Onion and Garlic Production",
+          "distance": 0.3258019685745239
+        },
+        {
           "chunk_id": "1d77b3a706eb9035a798ff25f7a66d48f137b968172940e2f1d1af6a94aa275a",
           "text": "Garlic Climate and Soil Seasons Garlic Varieties Field Preparation Planting Fertilizers Weeding Irrigation Cropping System Intercropping Pests & Diseases Storage Climate and Soil Climate Garlic is grown under wide range of climatic conditions. However, it cannot withstand too hot and too cold temperatures. It requires cool and moist climate during vegetative growth and bulb development stages but warm dry weather during maturity. In general, cool growing period results in higher yield than warm conditions. Exposure of young plants to 20°C or lower temperature for 1-2 months depending upon the variety hastens subsequent bulbing. Plants that are not exposed to such climatic conditions may fail to produce bulbs or produce smaller bulbs. However, longer exposure to low temperature may produce bulbils in the axils of the leaves, which reduce the bulb yield. The critical day length for bulbing is 10-12 h for short day garlic and 13-14 h for long day garlic. Soil Garlic can be successfully cultivated in a wide range of soil types, but well drained fertile loamy soil with a pH of 6-8 is desirable for growing this crop. Like onion, garlic is sensitive to highly acidic, alkali and saline soils and water logging conditions. Soils with high organic matter are preferred, due to their increased moisture and nutrient holding capacity.These are less prone to crusting and compaction. In heavy soils, the bulbs produced may be deformed. Bulbs become discoloured in poorly drained soils. The threshold electrical conductivity of a saturation extract (ECe) for garlic crop is 3.9 dS/m. When the ECe level exceeds this, crop yield starts declining. Seasons Planting and harvesting time of garlic in different regions of India State Season Time of planting Time of harvesting Chhattisgarh, Gujarat, Madhya Pradesh and Maharashtra Kharif June-July October-November Rabi September-November March Tamil Nadu Kharif June-July October-November Rabi October-November March-April Karnataka Kharif June-July October-November Rabi September-October March Andhra Pradesh Rabi September-October March Bihar, Haryana, Punjab, Rajasthan, Uttar Pradesh and Uttarkhand Rabi October-November March-April Odisha and West Bengal Rabi October-November March Hilly areas (Long day types) Rabi September May Garlic Varieties The following varieties are recommended for various seasons and regions of the country. Varieties developed by ICAR-DOGR Bhima Omkar This variety has been recommended for cultivation in the states of Delhi, Gujarat, Haryana, and Rajasthan . It matures in 120-135 days and average yield is 8-14 t/ha . It produces medium size compact white bulbs.",
           "source": "https://dogr.res.in/index.php/component/content/article/garlicagropedia?layout=edit",
@@ -712,20 +695,12 @@
           "distance": 0.3338480591773987
         },
         {
-          "chunk_id": "fa0d89446b9266909dbe5e8f7fb0534ac55647a0f30066c348cd2d3013caaebd",
-          "text": "The major visible quality changes that are perceived in peeled garlic are sprouting, rooting and discolorati on apart from the invisible nutritional quality changes. Garlic can be peeled either manually or mechanically. Selection of packaging ‘material is very important to reduce weight loss by controlling the respiration rate and to augment the storage life. Storage at 0 to 5°C is imperative to maintain good quality of peeled garlic, storage temperatures above 5°C will result in pink and brown discoloration on the damaged areas and also favors root and sprout development (Cantwell, 2016). Modified atmosphere pack aging (MAP) may also be effective in preserving quality of stored garlic cloves. A reasonable expected storage -life of commercially peeled and modified atmosphere packaged garlic is 3 -4 weeks at 0°C, 2 -3 weeks at 5°C; and 1 -2 weeks at 10°C and pungency (thiosulfinate and pyruvate Concentrations) decreases with time and the decrease is greater at higher storage temperatures (Tanamati, 2016). Hot water dip treatments at 55°Cfor 10 min is effective in reducing sprout and adventitious root growth in cloves stored at 10°C and >95% RH. Hot water dip treatment at 60°C for 2.5 min is also effective in inhibiting sprout and foot growth without any injury (Cantwell et al., 2003). Dehydrated garlic flakes Dehydration also extends the shelf-life by retaining sensorial characteristics compared to those of fresh products. Dehydration decreases the water activity of the material, reduces microbiological activity,",
-          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
-          "page": 97,
-          "title": "Good Agricultural Practices in Onion and Garlic Production",
-          "distance": 0.36384183168411255
-        },
-        {
           "chunk_id": "2cc0bb1a84177758ddcd5eb6e33c02f7ea7b2f23f77dec06ff40ceeb6a2a1c9a",
           "text": "53  Sorting of bulbs should be done at the field level, which eliminates pathogen inoculum during storage.  After curing, bulbs can be stored at a low temperature (2-12 oC) and humidity (80%).  Storage condition should be well ventilated. Avoid high temperature and high relative humidity during storage conditions.",
           "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
           "page": 60,
           "title": "Good Agricultural Practices in Onion and Garlic Production",
-          "distance": 0.3845825791358948
+          "distance": 0.3845827579498291
         }
       ],
       "retrieval_hit": true,
@@ -756,7 +731,7 @@
           "source": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
           "page": null,
           "title": "Varieties Developed",
-          "distance": 0.2860473394393921
+          "distance": 0.286047101020813
         },
         {
           "chunk_id": "50dc14caaecc4f9331742bf2ead189227e953561f1086c1a99dda246c3865515",
@@ -764,42 +739,31 @@
           "source": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
           "page": null,
           "title": "Varieties Developed",
-          "distance": 0.31578415632247925
+          "distance": 0.315784215927124
         },
         {
-          "chunk_id": "54e29cb1af9a701a2c4d5644d18a47bfbbaca6c50d3528f06c5185af3f5755ce",
-          "text": "Improved onion varieties after 1986: Bhima Red, Bhi ma Raj, Bhima Super, Bhima Kiran, Bhima Shakti, Bhima Dark Red, Bhima Light Red, Bhima Shubra, Bhima Shweta, Bhima Safed, Baswant-780, Pusa Madhavi, Arka Niketan, Arka Kalyan, Arka Bindu, Arka Pragati, Arka Pitambar, Arka Lalima (F1 hybrid), Arka Kirtiman (F1 hybrid), Phule Safed, Phule Suwarna, Phule Samarth, HOS -1, Agrifound Dark Red, Agrifound Light Red, Agrifound White, L-28, Agrifound Rose, Agrifound Red (Multiplier), Line-355, Udaipur 102, Udaipur 103, Punjab Naroya, Punjab White, Punjab White,VL -3 (Long day), Akola Safed, Rajasthan Onion-1 and Aprita (RO-59) etc. Table 2: Notified varieties of Onion by CVRC S. No. Variety Developed by Year of Release Suitable for State Season 1 Bhima Shakti ICAR-DOGR, Rajgurunagar S.O. 692(E). - 5.2.2019 Andhra Pradesh, Chhattisgarh, Karnataka, Madhya Pradesh, Maharashtra, Odisha Late Kharif and Rabi 2 Bhima Light Red ICAR-DOGR, Rajgurunagar S.O. 261(E). - 16th January, 2018 Karnataka and Tamil Nadu. Rabi",
+          "chunk_id": "7ce00e22feb4cf2e5ab13e55fc9b788fd62fd4d0286efdd16147659c839f35b8",
+          "text": "Improved onion varieties after 1986: Bhima Red, Bhima Raj, Bhima Super, Bhima Kiran, Bhima Shakti, Bhima Dark Red, Bhima Light Red, Bhima Shubra, Bhima Shweta, Bhima Safed, Baswant-780, Pusa Madhavi, Arka Niketan, Arka Kalyan, Arka Bindu, Arka Pragati, Arka Pitambar, Arka Lalima (F1 hybrid), Arka Kirtiman (F1 hybrid), Phule Safed, Phule Suwarna, Phule Samarth, HOS-1, Agrifound Dark Red, Agrifound Light Red, Agrifound White, L-28, Agrifound Rose, Agrifound Red (Multiplier), Line-355, Udaipur 102, Udaipur 103, Punjab Naroya, Punjab White, Punjab White,VL-3 (Long day), Akola Safed, Rajasthan Onion-1 and Aprita (RO-59) etc. Table 2: Notified varieties of Onion by CVRC S. No. Variety Developed by Year of Release Suitable for State Season 1 Bhima Shakti ICAR-DOGR, Rajgurunagar S.O. 692(E). - 5.2.2019 Andhra Pradesh, Chhattisgarh, Karnataka, Madhya Pradesh, Maharashtra, Odisha Late Kharif and Rabi 2 Bhima Light Red ICAR-DOGR, Rajgurunagar S.O. 261(E). - 16th January, 2018 Karnataka and Tamil Nadu. Rabi",
           "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
           "page": 18,
           "title": "Good Agricultural Practices in Onion and Garlic Production",
-          "distance": 0.358217716217041
+          "distance": 0.32753562927246094
         }
       ],
       "retrieval_hit": true,
-      "answer": "Kharif [Source: Varieties Developed] [Source: Good Agricultural Practices in Onion and Garlic Production, Page 18]",
+      "answer": "For Bhima Dark Red, the recorded season: Kharif.",
       "citations": [
         {
-          "title": "Varieties Developed",
+          "title": "Bhima Dark Red",
           "source": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
+          "source_url": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
           "page": null,
-          "chunk_id": "b35873edfc253b085e90a0ead69c288ffd280538ce45f5ac8d2f45d5341b7ce5"
-        },
-        {
-          "title": "Varieties Developed",
-          "source": "https://www.dogr.res.in/index.php/research/varieties-developed?layout=edit",
-          "page": null,
-          "chunk_id": "50dc14caaecc4f9331742bf2ead189227e953561f1086c1a99dda246c3865515"
-        },
-        {
-          "title": "Good Agricultural Practices in Onion and Garlic Production",
-          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
-          "page": 18,
-          "chunk_id": "54e29cb1af9a701a2c4d5644d18a47bfbbaca6c50d3528f06c5185af3f5755ce"
+          "chunk_id": "record:160b56dc93f57f759de7745173deb544489c70cd8725890908e82b9f452da710"
         }
       ],
       "confidence": "high",
-      "answer_correctness": false,
-      "answer_correctness_proxy": false,
+      "answer_correctness": true,
+      "answer_correctness_proxy": true,
       "citation_correctness": false,
       "supported_by_retrieved_context": true,
       "grounded_answer": false,
@@ -817,12 +781,20 @@
       "answerable": true,
       "retrieved_chunks": [
         {
-          "chunk_id": "8fea126ef716e1b82af4eb1f494b209dd8ab34ef09c60d34616b7d5a4ca1b0f4",
-          "text": "7 garlic and popularizing the new technologies among the farmers. The directorate is marching ahead with the mission to promote overall growth of onion and garlic in terms of enhancement of quality production, export and processing. ICAR -DOGR has All India Network Research Project on Onion and Garlic (AINROG) with 12 main and 14 voluntary centers across the country, with DOGR as the coordinating center. Since the establishment, with the efforts in research and transfer of technology the area under onion and garlic cultivation has increased more than three times, production has increased five times and productivity has increased almost two times. To inculcate the Good Agricultural Practices among the farmers, ICAR-DOGR has made good efforts in the following areas:  ICAR- DOGR has developed ten onion and two garlic vari eties based on genetic improvement and selection. All these varieties have been released at national level.  Kharif season is characterized by heavy rainfall which leads to poor drainage and incidence of diseases like anthracnose, purple blotch and Stemphylum blight. These factors led to low yield during kharif season. Keeping this in view, ICAR -DOGR factors c developed kharif onion production technology to increase kharif onion yield.  To achieve per drop more crop motto, micro irrigation and fertig ation technology has been developed.  Integrated Nutrient Management technology is developed to use balanced fertilizers by farmers and enhance the nutrient use efficiency.  To control the weed menace in onion and garlic crops recommendation of package of practices are developed.  Round the year production, aggravate pests and disease problem in onion. To sustain the productivity. Directorate has formulated Integrated Pest and Disease Management (IPDM) strategies.  Uneven production of onion round the year ca uses price fluctuation and therefore improved open ventilated onion storage structures of 5, 10, 15, 25 and 50 MT have been developed and these are widely adopted by the farmers mainly in Maharashtra which is onion b owl of the country.  To store the onion i n bulk quantity, Directorate has developed controlled atmospheric onion storage structure with 1000, 2000 & 5000 MT onion storage capacity which will help in storage of Rabi onion and further assist to stabilize the onion prices has been established  An agr i-business incubation centre has been established at ICAR -DOGR to promote new startups and entrepreneurs in onion and garlic.",
+          "chunk_id": "487145f0131362e98e378f4c64849d6e1c86a4c3b24eb33caa923526f5e48b40",
+          "text": "7 garlic and popularizing the new technologies among the farmers. The directorate is marching ahead with the mission to promote overall growth of onion and garlic in terms of enhancement of quality production, export and processing. ICAR-DOGR has All India Network Research Project on Onion and Garlic (AINROG) with 12 main and 14 voluntary centers across the country, with DOGR as the coordinating center. Since the establishment, with the efforts in research and transfer of technology the area under onion and garlic cultivation has increased more than three times, production has increased five times and productivity has increased almost two times. To inculcate the Good Agricultural Practices among the farmers, ICAR-DOGR has made good efforts in the following areas:  ICAR- DOGR has developed ten onion and two garlic varieties based on genetic improvement and selection. All these varieties have been released at national level.  Kharif season is characterized by heavy rainfall which leads to poor drainage and incidence of diseases like anthracnose, purple blotch and Stemphylum blight. These factors led to low yield during kharif season. Keeping this in view, ICAR-DOGR factors c developed kharif onion production technology to increase kharif onion yield.  To achieve per drop more crop motto, micro irrigation and fertigation technology has been developed.  Integrated Nutrient Management technology is developed to use balanced fertilizers by farmers and enhance the nutrient use efficiency.  To control the weed menace in onion and garlic crops recommendation of package of practices are developed.  Round the year production, aggravate pests and disease problem in onion. To sustain the productivity. Directorate has formulated Integrated Pest and Disease Management (IPDM) strategies.  Uneven production of onion round the year causes price fluctuation and therefore improved open ventilated onion storage structures of 5, 10, 15, 25 and 50 MT have been developed and these are widely adopted by the farmers mainly in Maharashtra which is onion bowl of the country.  To store the onion in bulk quantity, Directorate has developed controlled atmospheric onion storage structure with 1000, 2000 & 5000 MT onion storage capacity which will help in storage of Rabi onion and further assist to stabilize the onion prices has been established  An agri-business incubation centre has been established at ICAR-DOGR to promote new startups and entrepreneurs in onion and garlic.",
           "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
           "page": 14,
           "title": "Good Agricultural Practices in Onion and Garlic Production",
-          "distance": 0.4149019718170166
+          "distance": 0.4141678214073181
+        },
+        {
+          "chunk_id": "8c2a3d978e62d70f72b39defb59bd04b8bd9dbac1d105396beba1cf39fcd0869",
+          "text": "6 the limitation in area lowers its share in country’s total production. Whereas at plains, shorter winter length limits the type grown to mainly the short-day garlics. These garlics are inherently low in yield Fig. 10 State wise area under Garlic cultivation in India (2020) but the area under its cultivation is much higher in plains compared to the hills. Less availability of quality planting material is one of the major constraints in garlic production in India. Considering the achievements of the center, importance of the commodities in trade and intricate future challenges, the NRC was further strengthened and upgraded as Directorate of Onion and Garlic Research (DOGR) along with All India Network Research Project on Onion & Garlic. Over a decade, Fig 11. Onion Export in Lakh tons the center has created infrastructure facilities of high rank and has contributed significantly in increasing the production and productivity of onion and garlic in the country by breeding improved varieties, developing new agricultural practices and by imparting training to stakeholders. The center has identified sustainable and eco-friendly practices for production as well as post-harvest management of onion and garlic to enhance profitability and welfare of the farming community. Recognizing the significance of these two valuable commodities of the nation, Indian Council of Agricultural Research established National Research Center (NRC) for Onion and Garlic in VIII plan with it’s headquarter at Nashik. However, due to technical and working constraints, the Centre could not be established well at Nashik and was shifted to Rajgurunagar in June 1998. Considering the contribution of the center and importance of the commodities, the NRC was further strengthened and upgraded as Directorate of Onion and Garlic Research (DOGR) along with All India Network Research Project on Onion & Garlic. Over a decade, directorate developed good infrastructure facilities and has contributed significantly in enhancing the production and productivity of onion and garlic in the country through research and development in the area like breeding improved varieties, developing new package of practices in production as well as post-harvest management of onion and 193.07 200 87.66 100 34.9 15.06 8.87 10.77 12.44 3.98 3.2 3.78 4.01 6.51 7.9 0 20.00 15.00 10.00 5.00 0.00 17.51 14.49 8.85 4.24 3.69 3.65 3.58 3.04 2.56 2.21 2.11 1.91 Exporting Countries Quantity Expoerted Area ('000 ha)",
+          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
+          "page": 13,
+          "title": "Good Agricultural Practices in Onion and Garlic Production",
+          "distance": 0.4451991319656372
         },
         {
           "chunk_id": "1d77b3a706eb9035a798ff25f7a66d48f137b968172940e2f1d1af6a94aa275a",
@@ -830,37 +802,29 @@
           "source": "https://dogr.res.in/index.php/component/content/article/garlicagropedia?layout=edit",
           "page": null,
           "title": "garlicagropedia",
-          "distance": 0.4500909447669983
-        },
-        {
-          "chunk_id": "d2fd2d6c18d92459403211bbeddfac29ab54fe1a7e505a94e8b736565d8d5881",
-          "text": "6 the limitation in area lowers its share in country’s total production. Whereas at plains, shorter winter length limits the type grown to mainly the short-day garlics. These garlics are inherently low in yield Fig. 10 State wise area under Garlic cultivation in India (2020) but the area under its cultivation is much higher in plains compared to the hills. Less availability of quality planting material is one of the major constraints in garlic production in India. Considering the achievements of the center, importance of the commodities in trade and intricate future challenges, the NRC was further strengthened and upgraded as Directorate of Onion and Garlic Research (DOGR) along with All India Network Research Project on Onion & Garlic. Over a decade, Fig 11. Onion Export in Lakh tons the center has created infrastructure facilities of high rank and has contributed significantly in increasing the production and productivity of onion and garlic in the country by breeding improved varieties, developing new agricultural practices and by im parting training to stakeholders. The center has identified sustainable and eco-friendly practices for production as well as post-harvest management of onion and garlic to enhance profitability and welfare of the farming community. Recognizing the significance of these two valuable commodities of the nation, Indian Council of Agricultural Research established National Research Center (NRC) for Onion and Garlic in VIII plan with it’s headquarter at Nas hik. However, due to technical and working constraints, t he Centre could not be established well at Nas hik and was shifted to Rajgurunagar in June 1998. Considering the contribution of the center and importance of the commodities, the NRC was further strengthened and upgraded as Directorate of Onion and Garlic R esearch (DOGR) along with All India Network Research Project on Onion & Garlic. Over a decade, directorate developed good infrastructure facilities and has contributed significantly in enhancing the production and productivity of onion and garlic in the country through research and development in the area like breeding improved varieties, developing new package of practices in production as well as post -harvest management of onion and 193.07 200 87.66 100 34.9 15.06 8.87 10.77 12.44 3.98 3.2 3.78 4.01 6.51 7.9 0 20.00 15.00 10.00 5.00 0.00 17.51 14.49 8.85 4.24 3.69 3.65 3.58 3.04 2.56 2.21 2.11 1.91 Exporting Countries Quantity Expoerted Area ('000 ha)",
-          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
-          "page": 13,
-          "title": "Good Agricultural Practices in Onion and Garlic Production",
-          "distance": 0.45888805389404297
+          "distance": 0.45009100437164307
         }
       ],
       "retrieval_hit": true,
-      "answer": "The DOGR source lists the harvest periods for garlic in various Indian regions:\n• Chhattisgarh, Gujarat, Madhya Pradesh, Maharashtra – Kharif harvest: Oct–Nov; Rabi harvest: March.\n• Tamil Nadu – Kharif harvest: Oct–Nov; Rabi harvest: March–Apr.\n• Karnataka – Kharif harvest: Oct–Nov; Rabi harvest: Sep–Oct, March.\n• Andhra Pradesh – Rabi harvest: Sep–Oct, March.\n• Bihar, Haryana, Punjab, Rajasthan, Uttar Pradesh, Uttarkhand – Rabi harvest: Oct–Nov, March–Apr.\n• Odisha, West Bengal – Rabi harvest: Oct–Nov, March.\n• Hilly areas (long‑day types) – Rabi harvest: September to May. [Source: Good Agricultural Practices in Onion and Garlic Production, Page 14] [Source: garlicagropedia] [Source: Good Agricultural Practices in Onion and Garlic Production, Page 13]",
+      "answer": "The DOGR source lists the harvest periods for garlic by region:\n• Chhattisgarh, Gujarat, Madhya Pradesh, Maharashtra – harvest in October–November (Kharif) and March (Rabi).\n• Tamil Nadu – harvest in October–November (Kharif) and March–April (Rabi).\n• Karnataka – harvest in October–November (Kharif) and March (Rabi).\n• Andhra Pradesh – harvest in September–October (Rabi) and March (Rabi).\n• Bihar, Haryana, Punjab, Rajasthan, Uttar Pradesh, Uttarakhand – harvest in October–November (Rabi) and March–April (Rabi).\n• Odisha, West Bengal – harvest in October–November (Rabi) and March (Rabi).\n• Hilly areas (long‑day types) – harvest in September (Rabi) and May (Rabi). [Source: Good Agricultural Practices in Onion and Garlic Production, Page 14] [Source: Good Agricultural Practices in Onion and Garlic Production, Page 13] [Source: garlicagropedia]",
       "citations": [
         {
           "title": "Good Agricultural Practices in Onion and Garlic Production",
           "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
           "page": 14,
-          "chunk_id": "8fea126ef716e1b82af4eb1f494b209dd8ab34ef09c60d34616b7d5a4ca1b0f4"
+          "chunk_id": "487145f0131362e98e378f4c64849d6e1c86a4c3b24eb33caa923526f5e48b40"
+        },
+        {
+          "title": "Good Agricultural Practices in Onion and Garlic Production",
+          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
+          "page": 13,
+          "chunk_id": "8c2a3d978e62d70f72b39defb59bd04b8bd9dbac1d105396beba1cf39fcd0869"
         },
         {
           "title": "garlicagropedia",
           "source": "https://dogr.res.in/index.php/component/content/article/garlicagropedia?layout=edit",
           "page": null,
           "chunk_id": "1d77b3a706eb9035a798ff25f7a66d48f137b968172940e2f1d1af6a94aa275a"
-        },
-        {
-          "title": "Good Agricultural Practices in Onion and Garlic Production",
-          "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
-          "page": 13,
-          "chunk_id": "d2fd2d6c18d92459403211bbeddfac29ab54fe1a7e505a94e8b736565d8d5881"
         }
       ],
       "confidence": "low",
@@ -896,19 +860,19 @@
           "source": "https://dogr.res.in/index.php/component/content/article/garlicagropedia?layout=edit",
           "page": null,
           "title": "garlicagropedia",
-          "distance": 0.3703283667564392
+          "distance": 0.37032830715179443
         },
         {
-          "chunk_id": "11d85c1a6702171bc3aa5968e97063a65b668d1540113b4eeb036342451e75b5",
-          "text": "18 exposed directly to the sun. Hence, bulbs should be cured in the field by covering with the foliage of other bulbs in small heap. After 3 -5 days of curing, the roots and tops are clipped which makes bulbs firm and dry and helps in improving their shelf life. The tops should be removed leaving 2.0 -2.5 cm stalk above the bulbs. In the field itself small size bulbs, double and bolter bulbs should be removed and immediately sold out. The good quality selected bulbs should be shade cured in the heap of about 2 -4 feet height for 10-12 days for better storage. It helps to remove field heat and dry scale is formed over the bulb which helps to increase storage life. Pre-mature harvesting increases post-harvest losses due to physiological weight loss, decay and sprouting. In kharif season, bulbs mature in about 90-110 days, but plants remain in the active growth stage and there will not be any top fall. Development of pigments, bulb size and shape are taken as an index for maturity during kharif season. After attaining this condition, top fall can be induced mechanically by rolling empty barrels two or three days before harvesting. Grading: The onion bulbs are classified into three grades based on bulb size i.e. A (> 80 mm), B (50- 80 mm) and C (30-50 mm) grades. In India, grading of onion is usually performed manually either before storage or before marketing. It is a cumbersome process and requires many labourers. The grading with machine reduces labour charges and also increases precision. The ICAR-DOGR has developed manual and motorized grading machines for grading. Onion bulbs can be classified into five categories with grading machine based on the bulb size. The efficiency of manual operated grading machine is five times of the manual grading while the efficiency is almost 20 times with motorized grading machine. The accuracy of grading of onion with grading machine is around 90% as against 70% with manual grading. Storage: Mostly rabi onion are recommended for storage to get better price of the produce to the farmers. Recommended variety should be selected for storage and proper management practices should be followed including timel y management of pest and diseases. Field and shade cured bulb should be stored in recommended bottom ventilated storage structure. Selected and graded bulbs should be filled at height of 4-5 feet in storage.",
+          "chunk_id": "43b27322ca6fd1ceb9ad0c688fb7da918f358dd33758e3d57a841906a5fd25d6",
+          "text": "18 exposed directly to the sun. Hence, bulbs should be cured in the field by covering with the foliage of other bulbs in small heap. After 3-5 days of curing, the roots and tops are clipped which makes bulbs firm and dry and helps in improving their shelf life. The tops should be removed leaving 2.0-2.5 cm stalk above the bulbs. In the field itself small size bulbs, double and bolter bulbs should be removed and immediately sold out. The good quality selected bulbs should be shade cured in the heap of about 2-4 feet height for 10-12 days for better storage. It helps to remove field heat and dry scale is formed over the bulb which helps to increase storage life. Pre-mature harvesting increases post-harvest losses due to physiological weight loss, decay and sprouting. In kharif season, bulbs mature in about 90-110 days, but plants remain in the active growth stage and there will not be any top fall. Development of pigments, bulb size and shape are taken as an index for maturity during kharif season. After attaining this condition, top fall can be induced mechanically by rolling empty barrels two or three days before harvesting. Grading: The onion bulbs are classified into three grades based on bulb size i.e. A (> 80 mm), B (50- 80 mm) and C (30-50 mm) grades. In India, grading of onion is usually performed manually either before storage or before marketing. It is a cumbersome process and requires many labourers. The grading with machine reduces labour charges and also increases precision. The ICAR-DOGR has developed manual and motorized grading machines for grading. Onion bulbs can be classified into five categories with grading machine based on the bulb size. The efficiency of manual operated grading machine is five times of the manual grading while the efficiency is almost 20 times with motorized grading machine. The accuracy of grading of onion with grading machine is around 90% as against 70% with manual grading. Storage: Mostly rabi onion are recommended for storage to get better price of the produce to the farmers. Recommended variety should be selected for storage and proper management practices should be followed including timely management of pest and diseases. Field and shade cured bulb should be stored in recommended bottom ventilated storage structure. Selected and graded bulbs should be filled at height of 4-5 feet in storage.",
           "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
           "page": 25,
           "title": "Good Agricultural Practices in Onion and Garlic Production",
-          "distance": 0.4193892478942871
+          "distance": 0.41938912868499756
         }
       ],
       "retrieval_hit": true,
-      "answer": "Garlic bulbs should first be cured in the field by windrowing for 3–5 days until the foliage turns yellow. After that, they are shade‑cured in a heap 2–4 ft high for 10–12 days to remove heat and excess moisture. Once cured, the bulbs are stored in a bottom‑ventilated storage structure. [Source: Good Agricultural Practices in Onion and Garlic Production, Page 92] [Source: garlicagropedia] [Source: Good Agricultural Practices in Onion and Garlic Production, Page 25]",
+      "answer": "Garlic bulbs should first be cured in the field by windrowing for 3–5 days until the foliage turns yellow. After field curing, the tops are clipped, leaving 2–2.5 cm of stalk, and the bulbs are shade‑cured in a heap 2–4 ft high for 10–12 days to remove heat and excess moisture. Once cured, the bulbs are stored in a bottom‑ventilated storage structure. [Source: Good Agricultural Practices in Onion and Garlic Production, Page 92] [Source: garlicagropedia] [Source: Good Agricultural Practices in Onion and Garlic Production, Page 25]",
       "citations": [
         {
           "title": "Good Agricultural Practices in Onion and Garlic Production",
@@ -926,7 +890,7 @@
           "title": "Good Agricultural Practices in Onion and Garlic Production",
           "source": "https://www.manage.gov.in/publications/eBooks/Good%20Agricultural%20Practices%20in%20Onion%20and%20Garlic.pdf",
           "page": 25,
-          "chunk_id": "11d85c1a6702171bc3aa5968e97063a65b668d1540113b4eeb036342451e75b5"
+          "chunk_id": "43b27322ca6fd1ceb9ad0c688fb7da918f358dd33758e3d57a841906a5fd25d6"
         }
       ],
       "confidence": "medium",
